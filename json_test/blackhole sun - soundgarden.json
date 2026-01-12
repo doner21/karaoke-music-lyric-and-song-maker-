@@ -1,0 +1,2458 @@
+{
+  "meta": {
+    "version": "v1",
+    "videoId": "Y6Kz6aXsBSs",
+    "stemIds": {
+      "vocal": "e3e7ae8d-abef-4039-a9e7-3ad9aeb88343",
+      "band": "e3e7ae8d-abef-4039-a9e7-3ad9aeb88343"
+    },
+    "transcriptionProvider": "audioshake",
+    "createdAt": "2026-01-04T22:42:05.094Z",
+    "lyricsSource": "merged"
+  },
+  "tokens": [
+    {
+      "text": "In",
+      "startMs": 15840,
+      "endMs": 16140,
+      "confidence": null,
+      "lineIndex": 0
+    },
+    {
+      "text": "my",
+      "startMs": 16300,
+      "endMs": 16380,
+      "confidence": null,
+      "lineIndex": 0
+    },
+    {
+      "text": "eyes,",
+      "startMs": 16400,
+      "endMs": 17400,
+      "confidence": null,
+      "lineIndex": 0
+    },
+    {
+      "text": "indisposed",
+      "startMs": 18140,
+      "endMs": 19841,
+      "confidence": null,
+      "lineIndex": 0
+    },
+    {
+      "text": "In",
+      "startMs": 20681,
+      "endMs": 20941,
+      "confidence": null,
+      "lineIndex": 1
+    },
+    {
+      "text": "disguises",
+      "startMs": 20981,
+      "endMs": 22061,
+      "confidence": null,
+      "lineIndex": 1
+    },
+    {
+      "text": "no",
+      "startMs": 22161,
+      "endMs": 22581,
+      "confidence": null,
+      "lineIndex": 1
+    },
+    {
+      "text": "one",
+      "startMs": 22641,
+      "endMs": 23101,
+      "confidence": null,
+      "lineIndex": 1
+    },
+    {
+      "text": "knows",
+      "startMs": 23181,
+      "endMs": 24101,
+      "confidence": null,
+      "lineIndex": 1
+    },
+    {
+      "text": "As",
+      "startMs": 24701,
+      "endMs": 25221,
+      "confidence": null,
+      "lineIndex": 2
+    },
+    {
+      "text": "the",
+      "startMs": 25261,
+      "endMs": 25441,
+      "confidence": null,
+      "lineIndex": 2
+    },
+    {
+      "text": "face",
+      "startMs": 25561,
+      "endMs": 26481,
+      "confidence": null,
+      "lineIndex": 2
+    },
+    {
+      "text": "lies,",
+      "startMs": 26981,
+      "endMs": 27901,
+      "confidence": null,
+      "lineIndex": 2
+    },
+    {
+      "text": "the",
+      "startMs": 27961,
+      "endMs": 28161,
+      "confidence": null,
+      "lineIndex": 2
+    },
+    {
+      "text": "snake",
+      "startMs": 28281,
+      "endMs": 29181,
+      "confidence": null,
+      "lineIndex": 2
+    },
+    {
+      "text": "In",
+      "startMs": 29581,
+      "endMs": 30021,
+      "confidence": null,
+      "lineIndex": 3
+    },
+    {
+      "text": "the",
+      "startMs": 30061,
+      "endMs": 30221,
+      "confidence": null,
+      "lineIndex": 3
+    },
+    {
+      "text": "sun,",
+      "startMs": 30361,
+      "endMs": 30701,
+      "confidence": null,
+      "lineIndex": 3
+    },
+    {
+      "text": "in",
+      "startMs": 30761,
+      "endMs": 31181,
+      "confidence": null,
+      "lineIndex": 3
+    },
+    {
+      "text": "my",
+      "startMs": 31261,
+      "endMs": 31781,
+      "confidence": null,
+      "lineIndex": 3
+    },
+    {
+      "text": "disgrace",
+      "startMs": 31861,
+      "endMs": 33601,
+      "confidence": null,
+      "lineIndex": 3
+    },
+    {
+      "text": "Boiling",
+      "startMs": 34101,
+      "endMs": 34921,
+      "confidence": null,
+      "lineIndex": 4
+    },
+    {
+      "text": "heat,",
+      "startMs": 34981,
+      "endMs": 35681,
+      "confidence": null,
+      "lineIndex": 4
+    },
+    {
+      "text": "summer",
+      "startMs": 36421,
+      "endMs": 37121,
+      "confidence": null,
+      "lineIndex": 4
+    },
+    {
+      "text": "stench",
+      "startMs": 37181,
+      "endMs": 38061,
+      "confidence": null,
+      "lineIndex": 4
+    },
+    {
+      "text": "'Neath",
+      "startMs": 39001,
+      "endMs": 39281,
+      "confidence": null,
+      "lineIndex": 5
+    },
+    {
+      "text": "the",
+      "startMs": 39321,
+      "endMs": 39521,
+      "confidence": null,
+      "lineIndex": 5
+    },
+    {
+      "text": "black,",
+      "startMs": 39581,
+      "endMs": 40061,
+      "confidence": null,
+      "lineIndex": 5
+    },
+    {
+      "text": "the",
+      "startMs": 40121,
+      "endMs": 40281,
+      "confidence": null,
+      "lineIndex": 5
+    },
+    {
+      "text": "sky",
+      "startMs": 40341,
+      "endMs": 40921,
+      "confidence": null,
+      "lineIndex": 5
+    },
+    {
+      "text": "looks",
+      "startMs": 40961,
+      "endMs": 41381,
+      "confidence": null,
+      "lineIndex": 5
+    },
+    {
+      "text": "dead",
+      "startMs": 41581,
+      "endMs": 42441,
+      "confidence": null,
+      "lineIndex": 5
+    },
+    {
+      "text": "Call",
+      "startMs": 42961,
+      "endMs": 43321,
+      "confidence": null,
+      "lineIndex": 6
+    },
+    {
+      "text": "my",
+      "startMs": 43361,
+      "endMs": 43781,
+      "confidence": null,
+      "lineIndex": 6
+    },
+    {
+      "text": "name",
+      "startMs": 43901,
+      "endMs": 44841,
+      "confidence": null,
+      "lineIndex": 6
+    },
+    {
+      "text": "through",
+      "startMs": 44941,
+      "endMs": 46101,
+      "confidence": null,
+      "lineIndex": 6
+    },
+    {
+      "text": "the",
+      "startMs": 46121,
+      "endMs": 46321,
+      "confidence": null,
+      "lineIndex": 6
+    },
+    {
+      "text": "cream",
+      "startMs": 46421,
+      "endMs": 47341,
+      "confidence": null,
+      "lineIndex": 6
+    },
+    {
+      "text": "And",
+      "startMs": 47401,
+      "endMs": 47861,
+      "confidence": null,
+      "lineIndex": 7
+    },
+    {
+      "text": "I'll",
+      "startMs": 47901,
+      "endMs": 48261,
+      "confidence": null,
+      "lineIndex": 7
+    },
+    {
+      "text": "hear",
+      "startMs": 48721,
+      "endMs": 49041,
+      "confidence": null,
+      "lineIndex": 7
+    },
+    {
+      "text": "you",
+      "startMs": 49081,
+      "endMs": 49441,
+      "confidence": null,
+      "lineIndex": 7
+    },
+    {
+      "text": "scream",
+      "startMs": 49541,
+      "endMs": 50541,
+      "confidence": null,
+      "lineIndex": 7
+    },
+    {
+      "text": "again",
+      "startMs": 50581,
+      "endMs": 52741,
+      "confidence": null,
+      "lineIndex": 7
+    },
+    {
+      "text": "Black",
+      "startMs": 54441,
+      "endMs": 54781,
+      "confidence": null,
+      "lineIndex": 8
+    },
+    {
+      "text": "hole",
+      "startMs": 54821,
+      "endMs": 55461,
+      "confidence": null,
+      "lineIndex": 8
+    },
+    {
+      "text": "sun,",
+      "startMs": 55601,
+      "endMs": 56261,
+      "confidence": null,
+      "lineIndex": 8
+    },
+    {
+      "text": "won't",
+      "startMs": 56781,
+      "endMs": 57321,
+      "confidence": null,
+      "lineIndex": 8
+    },
+    {
+      "text": "you",
+      "startMs": 57361,
+      "endMs": 57561,
+      "confidence": null,
+      "lineIndex": 8
+    },
+    {
+      "text": "come?",
+      "startMs": 57641,
+      "endMs": 58481,
+      "confidence": null,
+      "lineIndex": 8
+    },
+    {
+      "text": "Wash",
+      "startMs": 60182,
+      "endMs": 60802,
+      "confidence": null,
+      "lineIndex": 9
+    },
+    {
+      "text": "away",
+      "startMs": 60842,
+      "endMs": 61882,
+      "confidence": null,
+      "lineIndex": 9
+    },
+    {
+      "text": "the",
+      "startMs": 61942,
+      "endMs": 62142,
+      "confidence": null,
+      "lineIndex": 9
+    },
+    {
+      "text": "rain",
+      "startMs": 62202,
+      "endMs": 63522,
+      "confidence": null,
+      "lineIndex": 9
+    },
+    {
+      "text": "Black",
+      "startMs": 63562,
+      "endMs": 63882,
+      "confidence": null,
+      "lineIndex": 10
+    },
+    {
+      "text": "hole",
+      "startMs": 63922,
+      "endMs": 64562,
+      "confidence": null,
+      "lineIndex": 10
+    },
+    {
+      "text": "sun,",
+      "startMs": 64662,
+      "endMs": 65402,
+      "confidence": null,
+      "lineIndex": 10
+    },
+    {
+      "text": "won't",
+      "startMs": 65842,
+      "endMs": 66382,
+      "confidence": null,
+      "lineIndex": 10
+    },
+    {
+      "text": "you",
+      "startMs": 66422,
+      "endMs": 66582,
+      "confidence": null,
+      "lineIndex": 10
+    },
+    {
+      "text": "come?",
+      "startMs": 66662,
+      "endMs": 67442,
+      "confidence": null,
+      "lineIndex": 10
+    },
+    {
+      "text": "Won't",
+      "startMs": 68082,
+      "endMs": 68662,
+      "confidence": null,
+      "lineIndex": 11
+    },
+    {
+      "text": "you",
+      "startMs": 68682,
+      "endMs": 68862,
+      "confidence": null,
+      "lineIndex": 11
+    },
+    {
+      "text": "come,",
+      "startMs": 68922,
+      "endMs": 70342,
+      "confidence": null,
+      "lineIndex": 11
+    },
+    {
+      "text": "won't",
+      "startMs": 70402,
+      "endMs": 70882,
+      "confidence": null,
+      "lineIndex": 11
+    },
+    {
+      "text": "you",
+      "startMs": 70922,
+      "endMs": 71102,
+      "confidence": null,
+      "lineIndex": 11
+    },
+    {
+      "text": "come?",
+      "startMs": 71182,
+      "endMs": 72702,
+      "confidence": null,
+      "lineIndex": 11
+    },
+    {
+      "text": "Stuttering,",
+      "startMs": 75022,
+      "endMs": 76822,
+      "confidence": null,
+      "lineIndex": 12
+    },
+    {
+      "text": "cold",
+      "startMs": 77402,
+      "endMs": 77962,
+      "confidence": null,
+      "lineIndex": 12
+    },
+    {
+      "text": "and",
+      "startMs": 78002,
+      "endMs": 78282,
+      "confidence": null,
+      "lineIndex": 12
+    },
+    {
+      "text": "dead",
+      "startMs": 78342,
+      "endMs": 79042,
+      "confidence": null,
+      "lineIndex": 12
+    },
+    {
+      "text": "Steal",
+      "startMs": 79982,
+      "endMs": 80302,
+      "confidence": null,
+      "lineIndex": 13
+    },
+    {
+      "text": "the",
+      "startMs": 80342,
+      "endMs": 80542,
+      "confidence": null,
+      "lineIndex": 13
+    },
+    {
+      "text": "warm",
+      "startMs": 80602,
+      "endMs": 81062,
+      "confidence": null,
+      "lineIndex": 13
+    },
+    {
+      "text": "wind,",
+      "startMs": 81102,
+      "endMs": 81622,
+      "confidence": null,
+      "lineIndex": 13
+    },
+    {
+      "text": "tired",
+      "startMs": 81702,
+      "endMs": 82382,
+      "confidence": null,
+      "lineIndex": 13
+    },
+    {
+      "text": "friend",
+      "startMs": 82522,
+      "endMs": 83402,
+      "confidence": null,
+      "lineIndex": 13
+    },
+    {
+      "text": "Times",
+      "startMs": 84042,
+      "endMs": 84582,
+      "confidence": null,
+      "lineIndex": 14
+    },
+    {
+      "text": "are",
+      "startMs": 84662,
+      "endMs": 84842,
+      "confidence": null,
+      "lineIndex": 14
+    },
+    {
+      "text": "gone",
+      "startMs": 84882,
+      "endMs": 85882,
+      "confidence": null,
+      "lineIndex": 14
+    },
+    {
+      "text": "for",
+      "startMs": 86002,
+      "endMs": 86162,
+      "confidence": null,
+      "lineIndex": 14
+    },
+    {
+      "text": "honest",
+      "startMs": 86322,
+      "endMs": 87642,
+      "confidence": null,
+      "lineIndex": 14
+    },
+    {
+      "text": "men",
+      "startMs": 87682,
+      "endMs": 88442,
+      "confidence": null,
+      "lineIndex": 14
+    },
+    {
+      "text": "Sometimes",
+      "startMs": 88542,
+      "endMs": 89322,
+      "confidence": null,
+      "lineIndex": 15
+    },
+    {
+      "text": "far",
+      "startMs": 89722,
+      "endMs": 90042,
+      "confidence": null,
+      "lineIndex": 15
+    },
+    {
+      "text": "too",
+      "startMs": 90102,
+      "endMs": 90482,
+      "confidence": null,
+      "lineIndex": 15
+    },
+    {
+      "text": "long",
+      "startMs": 90582,
+      "endMs": 91182,
+      "confidence": null,
+      "lineIndex": 15
+    },
+    {
+      "text": "for",
+      "startMs": 91442,
+      "endMs": 91582,
+      "confidence": null,
+      "lineIndex": 15
+    },
+    {
+      "text": "snakes",
+      "startMs": 91622,
+      "endMs": 92742,
+      "confidence": null,
+      "lineIndex": 15
+    },
+    {
+      "text": "In",
+      "startMs": 93462,
+      "endMs": 93802,
+      "confidence": null,
+      "lineIndex": 16
+    },
+    {
+      "text": "my",
+      "startMs": 93882,
+      "endMs": 94142,
+      "confidence": null,
+      "lineIndex": 16
+    },
+    {
+      "text": "shoes,",
+      "startMs": 94262,
+      "endMs": 94902,
+      "confidence": null,
+      "lineIndex": 16
+    },
+    {
+      "text": "walking",
+      "startMs": 95782,
+      "endMs": 96502,
+      "confidence": null,
+      "lineIndex": 16
+    },
+    {
+      "text": "sleep",
+      "startMs": 96562,
+      "endMs": 97282,
+      "confidence": null,
+      "lineIndex": 16
+    },
+    {
+      "text": "In",
+      "startMs": 98082,
+      "endMs": 98422,
+      "confidence": null,
+      "lineIndex": 17
+    },
+    {
+      "text": "my",
+      "startMs": 98502,
+      "endMs": 98822,
+      "confidence": null,
+      "lineIndex": 17
+    },
+    {
+      "text": "youth,",
+      "startMs": 98902,
+      "endMs": 99443,
+      "confidence": null,
+      "lineIndex": 17
+    },
+    {
+      "text": "I",
+      "startMs": 99483,
+      "endMs": 99703,
+      "confidence": null,
+      "lineIndex": 17
+    },
+    {
+      "text": "pray",
+      "startMs": 99763,
+      "endMs": 100523,
+      "confidence": null,
+      "lineIndex": 17
+    },
+    {
+      "text": "to",
+      "startMs": 100583,
+      "endMs": 100783,
+      "confidence": null,
+      "lineIndex": 17
+    },
+    {
+      "text": "keep",
+      "startMs": 100903,
+      "endMs": 101943,
+      "confidence": null,
+      "lineIndex": 17
+    },
+    {
+      "text": "Heaven",
+      "startMs": 102323,
+      "endMs": 103223,
+      "confidence": null,
+      "lineIndex": 18
+    },
+    {
+      "text": "sent",
+      "startMs": 103403,
+      "endMs": 104263,
+      "confidence": null,
+      "lineIndex": 18
+    },
+    {
+      "text": "hell",
+      "startMs": 104303,
+      "endMs": 105483,
+      "confidence": null,
+      "lineIndex": 18
+    },
+    {
+      "text": "away",
+      "startMs": 105543,
+      "endMs": 106403,
+      "confidence": null,
+      "lineIndex": 18
+    },
+    {
+      "text": "No",
+      "startMs": 106623,
+      "endMs": 107083,
+      "confidence": null,
+      "lineIndex": 19
+    },
+    {
+      "text": "one",
+      "startMs": 107143,
+      "endMs": 107523,
+      "confidence": null,
+      "lineIndex": 19
+    },
+    {
+      "text": "sings",
+      "startMs": 108003,
+      "endMs": 108503,
+      "confidence": null,
+      "lineIndex": 19
+    },
+    {
+      "text": "like",
+      "startMs": 108563,
+      "endMs": 108923,
+      "confidence": null,
+      "lineIndex": 19
+    },
+    {
+      "text": "you",
+      "startMs": 108983,
+      "endMs": 109503,
+      "confidence": null,
+      "lineIndex": 19
+    },
+    {
+      "text": "anymore",
+      "startMs": 109583,
+      "endMs": 112283,
+      "confidence": null,
+      "lineIndex": 19
+    },
+    {
+      "text": "Black",
+      "startMs": 113663,
+      "endMs": 114023,
+      "confidence": null,
+      "lineIndex": 20
+    },
+    {
+      "text": "hole",
+      "startMs": 114063,
+      "endMs": 114723,
+      "confidence": null,
+      "lineIndex": 20
+    },
+    {
+      "text": "sun,",
+      "startMs": 114803,
+      "endMs": 115483,
+      "confidence": null,
+      "lineIndex": 20
+    },
+    {
+      "text": "won't",
+      "startMs": 116003,
+      "endMs": 116523,
+      "confidence": null,
+      "lineIndex": 20
+    },
+    {
+      "text": "you",
+      "startMs": 116563,
+      "endMs": 116763,
+      "confidence": null,
+      "lineIndex": 20
+    },
+    {
+      "text": "come?",
+      "startMs": 116843,
+      "endMs": 117743,
+      "confidence": null,
+      "lineIndex": 20
+    },
+    {
+      "text": "Wash",
+      "startMs": 119403,
+      "endMs": 120043,
+      "confidence": null,
+      "lineIndex": 21
+    },
+    {
+      "text": "away",
+      "startMs": 120083,
+      "endMs": 121103,
+      "confidence": null,
+      "lineIndex": 21
+    },
+    {
+      "text": "the",
+      "startMs": 121203,
+      "endMs": 121383,
+      "confidence": null,
+      "lineIndex": 21
+    },
+    {
+      "text": "rain",
+      "startMs": 121463,
+      "endMs": 122783,
+      "confidence": null,
+      "lineIndex": 21
+    },
+    {
+      "text": "Black",
+      "startMs": 122803,
+      "endMs": 123143,
+      "confidence": null,
+      "lineIndex": 22
+    },
+    {
+      "text": "hole",
+      "startMs": 123183,
+      "endMs": 123843,
+      "confidence": null,
+      "lineIndex": 22
+    },
+    {
+      "text": "sun,",
+      "startMs": 123963,
+      "endMs": 124683,
+      "confidence": null,
+      "lineIndex": 22
+    },
+    {
+      "text": "won't",
+      "startMs": 125123,
+      "endMs": 125643,
+      "confidence": null,
+      "lineIndex": 22
+    },
+    {
+      "text": "you",
+      "startMs": 125683,
+      "endMs": 125863,
+      "confidence": null,
+      "lineIndex": 22
+    },
+    {
+      "text": "come?",
+      "startMs": 125943,
+      "endMs": 126683,
+      "confidence": null,
+      "lineIndex": 22
+    },
+    {
+      "text": "Won't",
+      "startMs": 127383,
+      "endMs": 127943,
+      "confidence": null,
+      "lineIndex": 23
+    },
+    {
+      "text": "you",
+      "startMs": 127963,
+      "endMs": 128143,
+      "confidence": null,
+      "lineIndex": 23
+    },
+    {
+      "text": "come?",
+      "startMs": 128203,
+      "endMs": 131363,
+      "confidence": null,
+      "lineIndex": 23
+    },
+    {
+      "text": "Black",
+      "startMs": 131883,
+      "endMs": 132183,
+      "confidence": null,
+      "lineIndex": 24
+    },
+    {
+      "text": "hole",
+      "startMs": 132243,
+      "endMs": 132863,
+      "confidence": null,
+      "lineIndex": 24
+    },
+    {
+      "text": "sun,",
+      "startMs": 132963,
+      "endMs": 133603,
+      "confidence": null,
+      "lineIndex": 24
+    },
+    {
+      "text": "won't",
+      "startMs": 134143,
+      "endMs": 134683,
+      "confidence": null,
+      "lineIndex": 24
+    },
+    {
+      "text": "you",
+      "startMs": 134743,
+      "endMs": 134923,
+      "confidence": null,
+      "lineIndex": 24
+    },
+    {
+      "text": "come?",
+      "startMs": 135003,
+      "endMs": 136103,
+      "confidence": null,
+      "lineIndex": 24
+    },
+    {
+      "text": "Wash",
+      "startMs": 137543,
+      "endMs": 138163,
+      "confidence": null,
+      "lineIndex": 25
+    },
+    {
+      "text": "away",
+      "startMs": 138223,
+      "endMs": 139244,
+      "confidence": null,
+      "lineIndex": 25
+    },
+    {
+      "text": "the",
+      "startMs": 139284,
+      "endMs": 139504,
+      "confidence": null,
+      "lineIndex": 25
+    },
+    {
+      "text": "rain",
+      "startMs": 139584,
+      "endMs": 140964,
+      "confidence": null,
+      "lineIndex": 25
+    },
+    {
+      "text": "Black",
+      "startMs": 141004,
+      "endMs": 141284,
+      "confidence": null,
+      "lineIndex": 26
+    },
+    {
+      "text": "hole",
+      "startMs": 141364,
+      "endMs": 141964,
+      "confidence": null,
+      "lineIndex": 26
+    },
+    {
+      "text": "sun,",
+      "startMs": 142084,
+      "endMs": 142804,
+      "confidence": null,
+      "lineIndex": 26
+    },
+    {
+      "text": "won't",
+      "startMs": 143244,
+      "endMs": 143764,
+      "confidence": null,
+      "lineIndex": 26
+    },
+    {
+      "text": "you",
+      "startMs": 143804,
+      "endMs": 143984,
+      "confidence": null,
+      "lineIndex": 26
+    },
+    {
+      "text": "come?",
+      "startMs": 144064,
+      "endMs": 144824,
+      "confidence": null,
+      "lineIndex": 26
+    },
+    {
+      "text": "Won't",
+      "startMs": 145484,
+      "endMs": 146064,
+      "confidence": null,
+      "lineIndex": 27
+    },
+    {
+      "text": "you",
+      "startMs": 146084,
+      "endMs": 146264,
+      "confidence": null,
+      "lineIndex": 27
+    },
+    {
+      "text": "come,",
+      "startMs": 146344,
+      "endMs": 151164,
+      "confidence": null,
+      "lineIndex": 27
+    },
+    {
+      "text": "won't",
+      "startMs": 152264,
+      "endMs": 152844,
+      "confidence": null,
+      "lineIndex": 27
+    },
+    {
+      "text": "you",
+      "startMs": 152864,
+      "endMs": 153044,
+      "confidence": null,
+      "lineIndex": 27
+    },
+    {
+      "text": "come?",
+      "startMs": 153124,
+      "endMs": 157824,
+      "confidence": null,
+      "lineIndex": 27
+    },
+    {
+      "text": "Won't",
+      "startMs": 158944,
+      "endMs": 159484,
+      "confidence": null,
+      "lineIndex": 28
+    },
+    {
+      "text": "you",
+      "startMs": 159524,
+      "endMs": 159724,
+      "confidence": null,
+      "lineIndex": 28
+    },
+    {
+      "text": "come,",
+      "startMs": 159824,
+      "endMs": 164604,
+      "confidence": null,
+      "lineIndex": 28
+    },
+    {
+      "text": "won't",
+      "startMs": 165724,
+      "endMs": 166284,
+      "confidence": null,
+      "lineIndex": 28
+    },
+    {
+      "text": "you",
+      "startMs": 166324,
+      "endMs": 166484,
+      "confidence": null,
+      "lineIndex": 28
+    },
+    {
+      "text": "come?",
+      "startMs": 166564,
+      "endMs": 171304,
+      "confidence": null,
+      "lineIndex": 28
+    },
+    {
+      "text": "Hang",
+      "startMs": 206625,
+      "endMs": 206985,
+      "confidence": null,
+      "lineIndex": 29
+    },
+    {
+      "text": "my",
+      "startMs": 207025,
+      "endMs": 207445,
+      "confidence": null,
+      "lineIndex": 29
+    },
+    {
+      "text": "head,",
+      "startMs": 207485,
+      "endMs": 208165,
+      "confidence": null,
+      "lineIndex": 29
+    },
+    {
+      "text": "drown",
+      "startMs": 209165,
+      "endMs": 209605,
+      "confidence": null,
+      "lineIndex": 29
+    },
+    {
+      "text": "my",
+      "startMs": 209665,
+      "endMs": 209925,
+      "confidence": null,
+      "lineIndex": 29
+    },
+    {
+      "text": "fear",
+      "startMs": 210065,
+      "endMs": 210845,
+      "confidence": null,
+      "lineIndex": 29
+    },
+    {
+      "text": "'Til",
+      "startMs": 211505,
+      "endMs": 211945,
+      "confidence": null,
+      "lineIndex": 30
+    },
+    {
+      "text": "you",
+      "startMs": 212005,
+      "endMs": 212265,
+      "confidence": null,
+      "lineIndex": 30
+    },
+    {
+      "text": "all",
+      "startMs": 212325,
+      "endMs": 212845,
+      "confidence": null,
+      "lineIndex": 30
+    },
+    {
+      "text": "just",
+      "startMs": 212885,
+      "endMs": 213325,
+      "confidence": null,
+      "lineIndex": 30
+    },
+    {
+      "text": "disappear",
+      "startMs": 213445,
+      "endMs": 216465,
+      "confidence": null,
+      "lineIndex": 30
+    },
+    {
+      "text": "Black",
+      "startMs": 217885,
+      "endMs": 218206,
+      "confidence": null,
+      "lineIndex": 31
+    },
+    {
+      "text": "hole",
+      "startMs": 218246,
+      "endMs": 218846,
+      "confidence": null,
+      "lineIndex": 31
+    },
+    {
+      "text": "sun,",
+      "startMs": 218966,
+      "endMs": 219606,
+      "confidence": null,
+      "lineIndex": 31
+    },
+    {
+      "text": "won't",
+      "startMs": 220146,
+      "endMs": 220686,
+      "confidence": null,
+      "lineIndex": 31
+    },
+    {
+      "text": "you",
+      "startMs": 220726,
+      "endMs": 220926,
+      "confidence": null,
+      "lineIndex": 31
+    },
+    {
+      "text": "come?",
+      "startMs": 221006,
+      "endMs": 221886,
+      "confidence": null,
+      "lineIndex": 31
+    },
+    {
+      "text": "Wash",
+      "startMs": 223586,
+      "endMs": 224146,
+      "confidence": null,
+      "lineIndex": 32
+    },
+    {
+      "text": "away",
+      "startMs": 224206,
+      "endMs": 225286,
+      "confidence": null,
+      "lineIndex": 32
+    },
+    {
+      "text": "the",
+      "startMs": 225326,
+      "endMs": 225526,
+      "confidence": null,
+      "lineIndex": 32
+    },
+    {
+      "text": "rain",
+      "startMs": 225586,
+      "endMs": 226906,
+      "confidence": null,
+      "lineIndex": 32
+    },
+    {
+      "text": "Black",
+      "startMs": 226966,
+      "endMs": 227266,
+      "confidence": null,
+      "lineIndex": 33
+    },
+    {
+      "text": "hole",
+      "startMs": 227306,
+      "endMs": 227926,
+      "confidence": null,
+      "lineIndex": 33
+    },
+    {
+      "text": "sun,",
+      "startMs": 228066,
+      "endMs": 228786,
+      "confidence": null,
+      "lineIndex": 33
+    },
+    {
+      "text": "won't",
+      "startMs": 229206,
+      "endMs": 229746,
+      "confidence": null,
+      "lineIndex": 33
+    },
+    {
+      "text": "you",
+      "startMs": 229786,
+      "endMs": 229986,
+      "confidence": null,
+      "lineIndex": 33
+    },
+    {
+      "text": "come?",
+      "startMs": 230066,
+      "endMs": 230726,
+      "confidence": null,
+      "lineIndex": 33
+    },
+    {
+      "text": "Won't",
+      "startMs": 231446,
+      "endMs": 232026,
+      "confidence": null,
+      "lineIndex": 34
+    },
+    {
+      "text": "you",
+      "startMs": 232066,
+      "endMs": 232246,
+      "confidence": null,
+      "lineIndex": 34
+    },
+    {
+      "text": "come,",
+      "startMs": 232306,
+      "endMs": 232626,
+      "confidence": null,
+      "lineIndex": 34
+    },
+    {
+      "text": "won't",
+      "startMs": 232666,
+      "endMs": 233606,
+      "confidence": null,
+      "lineIndex": 34
+    },
+    {
+      "text": "you",
+      "startMs": 233626,
+      "endMs": 233766,
+      "confidence": null,
+      "lineIndex": 34
+    },
+    {
+      "text": "come?",
+      "startMs": 234506,
+      "endMs": 235406,
+      "confidence": null,
+      "lineIndex": 34
+    },
+    {
+      "text": "Black",
+      "startMs": 235926,
+      "endMs": 236246,
+      "confidence": null,
+      "lineIndex": 35
+    },
+    {
+      "text": "hole",
+      "startMs": 236286,
+      "endMs": 236906,
+      "confidence": null,
+      "lineIndex": 35
+    },
+    {
+      "text": "sun,",
+      "startMs": 237026,
+      "endMs": 237646,
+      "confidence": null,
+      "lineIndex": 35
+    },
+    {
+      "text": "won't",
+      "startMs": 238166,
+      "endMs": 238686,
+      "confidence": null,
+      "lineIndex": 35
+    },
+    {
+      "text": "you",
+      "startMs": 238726,
+      "endMs": 238946,
+      "confidence": null,
+      "lineIndex": 35
+    },
+    {
+      "text": "come?",
+      "startMs": 238986,
+      "endMs": 239846,
+      "confidence": null,
+      "lineIndex": 35
+    },
+    {
+      "text": "Wash",
+      "startMs": 241566,
+      "endMs": 242126,
+      "confidence": null,
+      "lineIndex": 36
+    },
+    {
+      "text": "away",
+      "startMs": 242186,
+      "endMs": 243226,
+      "confidence": null,
+      "lineIndex": 36
+    },
+    {
+      "text": "the",
+      "startMs": 243246,
+      "endMs": 243466,
+      "confidence": null,
+      "lineIndex": 36
+    },
+    {
+      "text": "rain",
+      "startMs": 243526,
+      "endMs": 244826,
+      "confidence": null,
+      "lineIndex": 36
+    },
+    {
+      "text": "Black",
+      "startMs": 244886,
+      "endMs": 245206,
+      "confidence": null,
+      "lineIndex": 37
+    },
+    {
+      "text": "hole",
+      "startMs": 245226,
+      "endMs": 245846,
+      "confidence": null,
+      "lineIndex": 37
+    },
+    {
+      "text": "sun,",
+      "startMs": 245986,
+      "endMs": 246686,
+      "confidence": null,
+      "lineIndex": 37
+    },
+    {
+      "text": "won't",
+      "startMs": 247146,
+      "endMs": 247666,
+      "confidence": null,
+      "lineIndex": 37
+    },
+    {
+      "text": "you",
+      "startMs": 247706,
+      "endMs": 247866,
+      "confidence": null,
+      "lineIndex": 37
+    },
+    {
+      "text": "come?",
+      "startMs": 247926,
+      "endMs": 248786,
+      "confidence": null,
+      "lineIndex": 37
+    },
+    {
+      "text": "Won't",
+      "startMs": 249386,
+      "endMs": 249926,
+      "confidence": null,
+      "lineIndex": 38
+    },
+    {
+      "text": "you",
+      "startMs": 249966,
+      "endMs": 250146,
+      "confidence": null,
+      "lineIndex": 38
+    },
+    {
+      "text": "come?",
+      "startMs": 250206,
+      "endMs": 253246,
+      "confidence": null,
+      "lineIndex": 38
+    },
+    {
+      "text": "Black",
+      "startMs": 253286,
+      "endMs": 253806,
+      "confidence": null,
+      "lineIndex": 39
+    },
+    {
+      "text": "hole",
+      "startMs": 253846,
+      "endMs": 254106,
+      "confidence": null,
+      "lineIndex": 39
+    },
+    {
+      "text": "sun,",
+      "startMs": 254126,
+      "endMs": 254926,
+      "confidence": null,
+      "lineIndex": 39
+    },
+    {
+      "text": "won't",
+      "startMs": 256066,
+      "endMs": 256666,
+      "confidence": null,
+      "lineIndex": 39
+    },
+    {
+      "text": "you",
+      "startMs": 256686,
+      "endMs": 256866,
+      "confidence": null,
+      "lineIndex": 39
+    },
+    {
+      "text": "come?",
+      "startMs": 256946,
+      "endMs": 257306,
+      "confidence": null,
+      "lineIndex": 39
+    },
+    {
+      "text": "Black",
+      "startMs": 257326,
+      "endMs": 259067,
+      "confidence": null,
+      "lineIndex": 40
+    },
+    {
+      "text": "hole",
+      "startMs": 259107,
+      "endMs": 260607,
+      "confidence": null,
+      "lineIndex": 40
+    },
+    {
+      "text": "sun,",
+      "startMs": 261487,
+      "endMs": 262727,
+      "confidence": null,
+      "lineIndex": 40
+    },
+    {
+      "text": "won't",
+      "startMs": 262767,
+      "endMs": 263307,
+      "confidence": null,
+      "lineIndex": 40
+    },
+    {
+      "text": "you",
+      "startMs": 263347,
+      "endMs": 263547,
+      "confidence": null,
+      "lineIndex": 40
+    },
+    {
+      "text": "come?",
+      "startMs": 263627,
+      "endMs": 264207,
+      "confidence": null,
+      "lineIndex": 40
+    },
+    {
+      "text": "Black",
+      "startMs": 264227,
+      "endMs": 264507,
+      "confidence": null,
+      "lineIndex": 41
+    },
+    {
+      "text": "hole",
+      "startMs": 265667,
+      "endMs": 268427,
+      "confidence": null,
+      "lineIndex": 41
+    },
+    {
+      "text": "sun,",
+      "startMs": 268447,
+      "endMs": 269467,
+      "confidence": null,
+      "lineIndex": 41
+    },
+    {
+      "text": "won't",
+      "startMs": 269507,
+      "endMs": 270067,
+      "confidence": null,
+      "lineIndex": 41
+    },
+    {
+      "text": "you",
+      "startMs": 270107,
+      "endMs": 270267,
+      "confidence": null,
+      "lineIndex": 41
+    },
+    {
+      "text": "come?",
+      "startMs": 270347,
+      "endMs": 274927,
+      "confidence": null,
+      "lineIndex": 41
+    },
+    {
+      "text": "Won't",
+      "startMs": 276007,
+      "endMs": 276547,
+      "confidence": null,
+      "lineIndex": 42
+    },
+    {
+      "text": "you",
+      "startMs": 276587,
+      "endMs": 276807,
+      "confidence": null,
+      "lineIndex": 42
+    },
+    {
+      "text": "come?",
+      "startMs": 276867,
+      "endMs": 278327,
+      "confidence": null,
+      "lineIndex": 42
+    },
+    {
+      "text": "Won't",
+      "startMs": 282687,
+      "endMs": 283267,
+      "confidence": null,
+      "lineIndex": 43
+    },
+    {
+      "text": "you",
+      "startMs": 283287,
+      "endMs": 283467,
+      "confidence": null,
+      "lineIndex": 43
+    },
+    {
+      "text": "come?",
+      "startMs": 283567,
+      "endMs": 288207,
+      "confidence": null,
+      "lineIndex": 43
+    },
+    {
+      "text": "Won't",
+      "startMs": 289267,
+      "endMs": 289787,
+      "confidence": null,
+      "lineIndex": 44
+    },
+    {
+      "text": "you",
+      "startMs": 289827,
+      "endMs": 290007,
+      "confidence": null,
+      "lineIndex": 44
+    },
+    {
+      "text": "come?",
+      "startMs": 290087,
+      "endMs": 292947,
+      "confidence": null,
+      "lineIndex": 44
+    },
+    {
+      "text": "Won't",
+      "startMs": 295887,
+      "endMs": 296367,
+      "confidence": null,
+      "lineIndex": 45
+    },
+    {
+      "text": "you",
+      "startMs": 296407,
+      "endMs": 296627,
+      "confidence": null,
+      "lineIndex": 45
+    },
+    {
+      "text": "come?",
+      "startMs": 296707,
+      "endMs": 300468,
+      "confidence": null,
+      "lineIndex": 45
+    }
+  ],
+  "lines": [
+    {
+      "text": "In my eyes, indisposed\n",
+      "startTokenIndex": 0,
+      "endTokenIndex": 3
+    },
+    {
+      "text": "In disguises no one knows\n",
+      "startTokenIndex": 4,
+      "endTokenIndex": 8
+    },
+    {
+      "text": "As the face lies, the snake\n",
+      "startTokenIndex": 9,
+      "endTokenIndex": 14
+    },
+    {
+      "text": "In the sun, in my disgrace\n\n",
+      "startTokenIndex": 15,
+      "endTokenIndex": 20
+    },
+    {
+      "text": "Boiling heat, summer stench\n",
+      "startTokenIndex": 21,
+      "endTokenIndex": 24
+    },
+    {
+      "text": "'Neath the black, the sky looks dead\n",
+      "startTokenIndex": 25,
+      "endTokenIndex": 31
+    },
+    {
+      "text": "Call my name through the cream\n",
+      "startTokenIndex": 32,
+      "endTokenIndex": 37
+    },
+    {
+      "text": "And I'll hear you scream again\n\n",
+      "startTokenIndex": 38,
+      "endTokenIndex": 43
+    },
+    {
+      "text": "Black hole sun, won't you come?\n",
+      "startTokenIndex": 44,
+      "endTokenIndex": 49
+    },
+    {
+      "text": "Wash away the rain\n",
+      "startTokenIndex": 50,
+      "endTokenIndex": 53
+    },
+    {
+      "text": "Black hole sun, won't you come?\n",
+      "startTokenIndex": 54,
+      "endTokenIndex": 59
+    },
+    {
+      "text": "Won't you come, won't you come?\n\n",
+      "startTokenIndex": 60,
+      "endTokenIndex": 65
+    },
+    {
+      "text": "Stuttering, cold and dead\n",
+      "startTokenIndex": 66,
+      "endTokenIndex": 69
+    },
+    {
+      "text": "Steal the warm wind, tired friend\n",
+      "startTokenIndex": 70,
+      "endTokenIndex": 75
+    },
+    {
+      "text": "Times are gone for honest men\n",
+      "startTokenIndex": 76,
+      "endTokenIndex": 81
+    },
+    {
+      "text": "Sometimes far too long for snakes\n\n",
+      "startTokenIndex": 82,
+      "endTokenIndex": 87
+    },
+    {
+      "text": "In my shoes, walking sleep\n",
+      "startTokenIndex": 88,
+      "endTokenIndex": 92
+    },
+    {
+      "text": "In my youth, I pray to keep\n",
+      "startTokenIndex": 93,
+      "endTokenIndex": 99
+    },
+    {
+      "text": "Heaven sent hell away\n",
+      "startTokenIndex": 100,
+      "endTokenIndex": 103
+    },
+    {
+      "text": "No one sings like you anymore\n\n",
+      "startTokenIndex": 104,
+      "endTokenIndex": 109
+    },
+    {
+      "text": "Black hole sun, won't you come?\n",
+      "startTokenIndex": 110,
+      "endTokenIndex": 115
+    },
+    {
+      "text": "Wash away the rain\n",
+      "startTokenIndex": 116,
+      "endTokenIndex": 119
+    },
+    {
+      "text": "Black hole sun, won't you come?\n",
+      "startTokenIndex": 120,
+      "endTokenIndex": 125
+    },
+    {
+      "text": "Won't you come?\n\n",
+      "startTokenIndex": 126,
+      "endTokenIndex": 128
+    },
+    {
+      "text": "Black hole sun, won't you come?\n",
+      "startTokenIndex": 129,
+      "endTokenIndex": 134
+    },
+    {
+      "text": "Wash away the rain\n",
+      "startTokenIndex": 135,
+      "endTokenIndex": 138
+    },
+    {
+      "text": "Black hole sun, won't you come?\n",
+      "startTokenIndex": 139,
+      "endTokenIndex": 144
+    },
+    {
+      "text": "Won't you come, won't you come?\n",
+      "startTokenIndex": 145,
+      "endTokenIndex": 150
+    },
+    {
+      "text": "Won't you come, won't you come?\n\n",
+      "startTokenIndex": 151,
+      "endTokenIndex": 156
+    },
+    {
+      "text": "Hang my head, drown my fear\n",
+      "startTokenIndex": 157,
+      "endTokenIndex": 162
+    },
+    {
+      "text": "'Til you all just disappear\n\n",
+      "startTokenIndex": 163,
+      "endTokenIndex": 167
+    },
+    {
+      "text": "Black hole sun, won't you come?\n",
+      "startTokenIndex": 168,
+      "endTokenIndex": 173
+    },
+    {
+      "text": "Wash away the rain\n",
+      "startTokenIndex": 174,
+      "endTokenIndex": 177
+    },
+    {
+      "text": "Black hole sun, won't you come?\n",
+      "startTokenIndex": 178,
+      "endTokenIndex": 183
+    },
+    {
+      "text": "Won't you come, won't you come?\n\n",
+      "startTokenIndex": 184,
+      "endTokenIndex": 189
+    },
+    {
+      "text": "Black hole sun, won't you come?\n",
+      "startTokenIndex": 190,
+      "endTokenIndex": 195
+    },
+    {
+      "text": "Wash away the rain\n",
+      "startTokenIndex": 196,
+      "endTokenIndex": 199
+    },
+    {
+      "text": "Black hole sun, won't you come?\n",
+      "startTokenIndex": 200,
+      "endTokenIndex": 205
+    },
+    {
+      "text": "Won't you come?\n\n",
+      "startTokenIndex": 206,
+      "endTokenIndex": 208
+    },
+    {
+      "text": "Black hole sun, won't you come?\n",
+      "startTokenIndex": 209,
+      "endTokenIndex": 214
+    },
+    {
+      "text": "Black hole sun, won't you come?\n",
+      "startTokenIndex": 215,
+      "endTokenIndex": 220
+    },
+    {
+      "text": "Black hole sun, won't you come?\n",
+      "startTokenIndex": 221,
+      "endTokenIndex": 226
+    },
+    {
+      "text": "Won't you come?\n\n",
+      "startTokenIndex": 227,
+      "endTokenIndex": 229
+    },
+    {
+      "text": "Won't you come?\n",
+      "startTokenIndex": 230,
+      "endTokenIndex": 232
+    },
+    {
+      "text": "Won't you come?\n",
+      "startTokenIndex": 233,
+      "endTokenIndex": 235
+    },
+    {
+      "text": "Won't you come?\n",
+      "startTokenIndex": 236,
+      "endTokenIndex": 238
+    }
+  ],
+  "alignment": {
+    "requestedLyricsTokens": [
+      "in",
+      "my",
+      "eyes",
+      "indisposed",
+      "in",
+      "disguises",
+      "no",
+      "one",
+      "knows",
+      "hides",
+      "the",
+      "face",
+      "lies",
+      "the",
+      "snake",
+      "and",
+      "the",
+      "sun",
+      "in",
+      "my",
+      "disgrace",
+      "boiling",
+      "heat",
+      "summer",
+      "stench",
+      "neath",
+      "the",
+      "black",
+      "the",
+      "sky",
+      "looks",
+      "dead",
+      "call",
+      "my",
+      "name",
+      "through",
+      "the",
+      "cream",
+      "and",
+      "i'll",
+      "hear",
+      "you",
+      "scream",
+      "again",
+      "black",
+      "hole",
+      "sun",
+      "won't",
+      "you",
+      "come",
+      "and",
+      "wash",
+      "away",
+      "the",
+      "rain",
+      "black",
+      "hole",
+      "sun",
+      "won't",
+      "you",
+      "come",
+      "won't",
+      "you",
+      "come",
+      "won't",
+      "you",
+      "come",
+      "stuttering",
+      "cold",
+      "and",
+      "damp",
+      "steal",
+      "the",
+      "warm",
+      "wind",
+      "tired",
+      "friend",
+      "times",
+      "are",
+      "gone",
+      "for",
+      "honest",
+      "men",
+      "sometimes",
+      "far",
+      "too",
+      "long",
+      "for",
+      "snakes",
+      "in",
+      "my",
+      "shoes",
+      "walking",
+      "sleep",
+      "in",
+      "my",
+      "youth",
+      "i",
+      "pray",
+      "to",
+      "keep",
+      "heaven",
+      "send",
+      "hell",
+      "away",
+      "no",
+      "one",
+      "sings",
+      "like",
+      "you",
+      "anymore",
+      "black",
+      "hole",
+      "sun",
+      "won't",
+      "you",
+      "come",
+      "and",
+      "wash",
+      "away",
+      "the",
+      "rain",
+      "black",
+      "hole",
+      "sun",
+      "won't",
+      "you",
+      "come",
+      "won't",
+      "you",
+      "come",
+      "black",
+      "hole",
+      "sun",
+      "won't",
+      "you",
+      "come",
+      "and",
+      "wash",
+      "away",
+      "the",
+      "rain",
+      "black",
+      "hole",
+      "sun",
+      "won't",
+      "you",
+      "come",
+      "won't",
+      "you",
+      "come",
+      "black",
+      "hole",
+      "sun",
+      "black",
+      "hole",
+      "sun",
+      "won't",
+      "you",
+      "come",
+      "black",
+      "hole",
+      "sun",
+      "black",
+      "hole",
+      "sun",
+      "won't",
+      "you",
+      "come",
+      "black",
+      "hole",
+      "sun",
+      "black",
+      "hole",
+      "sun",
+      "won't",
+      "you",
+      "come",
+      "black",
+      "hole",
+      "sun",
+      "black",
+      "hole",
+      "sun",
+      "hang",
+      "my",
+      "head",
+      "drown",
+      "my",
+      "fear",
+      "till",
+      "you",
+      "all",
+      "just",
+      "disappear",
+      "black",
+      "hole",
+      "sun",
+      "won't",
+      "you",
+      "come",
+      "and",
+      "wash",
+      "away",
+      "the",
+      "rain",
+      "black",
+      "hole",
+      "sun",
+      "won't",
+      "you",
+      "come",
+      "won't",
+      "you",
+      "come",
+      "black",
+      "hole",
+      "sun",
+      "won't",
+      "you",
+      "come",
+      "and",
+      "wash",
+      "away",
+      "the",
+      "rain",
+      "black",
+      "hole",
+      "sun",
+      "won't",
+      "you",
+      "come",
+      "won't",
+      "you",
+      "come",
+      "black",
+      "hole",
+      "sun",
+      "black",
+      "hole",
+      "sun",
+      "won't",
+      "you",
+      "come",
+      "black",
+      "hole",
+      "sun",
+      "black",
+      "hole",
+      "sun",
+      "won't",
+      "you",
+      "come",
+      "black",
+      "hole",
+      "sun",
+      "black",
+      "hole",
+      "sun",
+      "won't",
+      "you",
+      "come",
+      "black",
+      "hole",
+      "sun",
+      "black",
+      "hole",
+      "sun",
+      "won't",
+      "you",
+      "come",
+      "black",
+      "hole",
+      "sun",
+      "black",
+      "hole",
+      "sun",
+      "won't",
+      "you",
+      "come",
+      "black",
+      "hole",
+      "sun",
+      "black",
+      "hole",
+      "sun",
+      "won't",
+      "you",
+      "come",
+      "won't",
+      "you",
+      "come"
+    ],
+    "alignedTranscriptTokens": [
+      "In",
+      "my",
+      "eyes,",
+      "indisposed",
+      "In",
+      "disguises",
+      "no",
+      "one",
+      "knows",
+      "As",
+      "the",
+      "face",
+      "lies,",
+      "the",
+      "snake",
+      "In",
+      "the",
+      "sun,",
+      "in",
+      "my",
+      "disgrace",
+      "Boiling",
+      "heat,",
+      "summer",
+      "stench",
+      "'Neath",
+      "the",
+      "black,",
+      "the",
+      "sky",
+      "looks",
+      "dead",
+      "Call",
+      "my",
+      "name",
+      "through",
+      "the",
+      "cream",
+      "And",
+      "I'll",
+      "hear",
+      "you",
+      "scream",
+      "again",
+      "Black",
+      "hole",
+      "sun,",
+      "won't",
+      "you",
+      "come?",
+      "Wash",
+      "away",
+      "the",
+      "rain",
+      "Black",
+      "hole",
+      "sun,",
+      "won't",
+      "you",
+      "come?",
+      "Won't",
+      "you",
+      "come,",
+      "won't",
+      "you",
+      "come?",
+      "Stuttering,",
+      "cold",
+      "and",
+      "dead",
+      "Steal",
+      "the",
+      "warm",
+      "wind,",
+      "tired",
+      "friend",
+      "Times",
+      "are",
+      "gone",
+      "for",
+      "honest",
+      "men",
+      "Sometimes",
+      "far",
+      "too",
+      "long",
+      "for",
+      "snakes",
+      "In",
+      "my",
+      "shoes,",
+      "walking",
+      "sleep",
+      "In",
+      "my",
+      "youth,",
+      "I",
+      "pray",
+      "to",
+      "keep",
+      "Heaven",
+      "sent",
+      "hell",
+      "away",
+      "No",
+      "one",
+      "sings",
+      "like",
+      "you",
+      "anymore",
+      "Black",
+      "hole",
+      "sun,",
+      "won't",
+      "you",
+      "come?",
+      "Wash",
+      "away",
+      "the",
+      "rain",
+      "Black",
+      "hole",
+      "sun,",
+      "won't",
+      "you",
+      "come?",
+      "Won't",
+      "you",
+      "come?",
+      "Black",
+      "hole",
+      "sun,",
+      "won't",
+      "you",
+      "come?",
+      "Wash",
+      "away",
+      "the",
+      "rain",
+      "Black",
+      "hole",
+      "sun,",
+      "won't",
+      "you",
+      "come?",
+      "Won't",
+      "you",
+      "come,",
+      "won't",
+      "you",
+      "come?",
+      "Won't",
+      "you",
+      "come,",
+      "won't",
+      "you",
+      "come?",
+      "Hang",
+      "my",
+      "head,",
+      "drown",
+      "my",
+      "fear",
+      "'Til",
+      "you",
+      "all",
+      "just",
+      "disappear",
+      "Black",
+      "hole",
+      "sun,",
+      "won't",
+      "you",
+      "come?",
+      "Wash",
+      "away",
+      "the",
+      "rain",
+      "Black",
+      "hole",
+      "sun,",
+      "won't",
+      "you",
+      "come?",
+      "Won't",
+      "you",
+      "come,",
+      "won't",
+      "you",
+      "come?",
+      "Black",
+      "hole",
+      "sun,",
+      "won't",
+      "you",
+      "come?",
+      "Wash",
+      "away",
+      "the",
+      "rain",
+      "Black",
+      "hole",
+      "sun,",
+      "won't",
+      "you",
+      "come?",
+      "Won't",
+      "you",
+      "come?",
+      "Black",
+      "hole",
+      "sun,",
+      "won't",
+      "you",
+      "come?",
+      "Black",
+      "hole",
+      "sun,",
+      "won't",
+      "you",
+      "come?",
+      "Black",
+      "hole",
+      "sun,",
+      "won't",
+      "you",
+      "come?",
+      "Won't",
+      "you",
+      "come?",
+      "Won't",
+      "you",
+      "come?",
+      "Won't",
+      "you",
+      "come?",
+      "Won't",
+      "you",
+      "come?"
+    ],
+    "mappingStrategy": "user_truth"
+  }
+}

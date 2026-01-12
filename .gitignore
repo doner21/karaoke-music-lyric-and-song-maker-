@@ -1,0 +1,10 @@
+node_modules/
+downloads/
+venv/
+dist/
+dist-electron/
+*.log
+*.zip
+.env
+.DS_Store
+thumbs.db

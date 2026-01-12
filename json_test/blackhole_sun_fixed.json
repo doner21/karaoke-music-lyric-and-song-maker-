@@ -1,0 +1,1855 @@
+{
+  "title": "Black Hole Sun",
+  "artist": "Soundgarden",
+  "method": "audioshake",
+  "lyrics": [
+    {
+      "sentence": {
+        "start": 15.84,
+        "end": 19.841,
+        "text": "In my eyes, indisposed"
+      },
+      "words": [
+        {
+          "start": 15.84,
+          "end": 16.14,
+          "text": "In",
+          "row": 0
+        },
+        {
+          "start": 16.3,
+          "end": 16.38,
+          "text": "my",
+          "row": 0
+        },
+        {
+          "start": 16.4,
+          "end": 17.4,
+          "text": "eyes,",
+          "row": 0
+        },
+        {
+          "start": 18.14,
+          "end": 19.841,
+          "text": "indisposed",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 20.681,
+        "end": 24.101,
+        "text": "In disguises no one knows"
+      },
+      "words": [
+        {
+          "start": 20.681,
+          "end": 20.941,
+          "text": "In",
+          "row": 0
+        },
+        {
+          "start": 20.981,
+          "end": 22.061,
+          "text": "disguises",
+          "row": 0
+        },
+        {
+          "start": 22.161,
+          "end": 22.581,
+          "text": "no",
+          "row": 0
+        },
+        {
+          "start": 22.641,
+          "end": 23.101,
+          "text": "one",
+          "row": 0
+        },
+        {
+          "start": 23.181,
+          "end": 24.101,
+          "text": "knows",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 24.701,
+        "end": 29.181,
+        "text": "As the face lies, the snake"
+      },
+      "words": [
+        {
+          "start": 24.701,
+          "end": 25.221,
+          "text": "As",
+          "row": 0
+        },
+        {
+          "start": 25.261,
+          "end": 25.441,
+          "text": "the",
+          "row": 0
+        },
+        {
+          "start": 25.561,
+          "end": 26.481,
+          "text": "face",
+          "row": 0
+        },
+        {
+          "start": 26.981,
+          "end": 27.901,
+          "text": "lies,",
+          "row": 0
+        },
+        {
+          "start": 27.961,
+          "end": 28.161,
+          "text": "the",
+          "row": 0
+        },
+        {
+          "start": 28.281,
+          "end": 29.181,
+          "text": "snake",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 29.581,
+        "end": 33.601,
+        "text": "In the sun, in my disgrace"
+      },
+      "words": [
+        {
+          "start": 29.581,
+          "end": 30.021,
+          "text": "In",
+          "row": 0
+        },
+        {
+          "start": 30.061,
+          "end": 30.221,
+          "text": "the",
+          "row": 0
+        },
+        {
+          "start": 30.361,
+          "end": 30.701,
+          "text": "sun,",
+          "row": 0
+        },
+        {
+          "start": 30.761,
+          "end": 31.181,
+          "text": "in",
+          "row": 0
+        },
+        {
+          "start": 31.261,
+          "end": 31.781,
+          "text": "my",
+          "row": 0
+        },
+        {
+          "start": 31.861,
+          "end": 33.601,
+          "text": "disgrace",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 34.101,
+        "end": 38.061,
+        "text": "Boiling heat, summer stench"
+      },
+      "words": [
+        {
+          "start": 34.101,
+          "end": 34.921,
+          "text": "Boiling",
+          "row": 0
+        },
+        {
+          "start": 34.981,
+          "end": 35.681,
+          "text": "heat,",
+          "row": 0
+        },
+        {
+          "start": 36.421,
+          "end": 37.121,
+          "text": "summer",
+          "row": 0
+        },
+        {
+          "start": 37.181,
+          "end": 38.061,
+          "text": "stench",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 39.001,
+        "end": 42.441,
+        "text": "'Neath the black, the sky looks dead"
+      },
+      "words": [
+        {
+          "start": 39.001,
+          "end": 39.281,
+          "text": "'Neath",
+          "row": 0
+        },
+        {
+          "start": 39.321,
+          "end": 39.521,
+          "text": "the",
+          "row": 0
+        },
+        {
+          "start": 39.581,
+          "end": 40.061,
+          "text": "black,",
+          "row": 0
+        },
+        {
+          "start": 40.121,
+          "end": 40.281,
+          "text": "the",
+          "row": 0
+        },
+        {
+          "start": 40.341,
+          "end": 40.921,
+          "text": "sky",
+          "row": 0
+        },
+        {
+          "start": 40.961,
+          "end": 41.381,
+          "text": "looks",
+          "row": 0
+        },
+        {
+          "start": 41.581,
+          "end": 42.441,
+          "text": "dead",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 42.961,
+        "end": 47.341,
+        "text": "Call my name through the cream"
+      },
+      "words": [
+        {
+          "start": 42.961,
+          "end": 43.321,
+          "text": "Call",
+          "row": 0
+        },
+        {
+          "start": 43.361,
+          "end": 43.781,
+          "text": "my",
+          "row": 0
+        },
+        {
+          "start": 43.901,
+          "end": 44.841,
+          "text": "name",
+          "row": 0
+        },
+        {
+          "start": 44.941,
+          "end": 46.101,
+          "text": "through",
+          "row": 0
+        },
+        {
+          "start": 46.121,
+          "end": 46.321,
+          "text": "the",
+          "row": 0
+        },
+        {
+          "start": 46.421,
+          "end": 47.341,
+          "text": "cream",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 47.401,
+        "end": 52.741,
+        "text": "And I'll hear you scream again"
+      },
+      "words": [
+        {
+          "start": 47.401,
+          "end": 47.861,
+          "text": "And",
+          "row": 0
+        },
+        {
+          "start": 47.901,
+          "end": 48.261,
+          "text": "I'll",
+          "row": 0
+        },
+        {
+          "start": 48.721,
+          "end": 49.041,
+          "text": "hear",
+          "row": 0
+        },
+        {
+          "start": 49.081,
+          "end": 49.441,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 49.541,
+          "end": 50.541,
+          "text": "scream",
+          "row": 0
+        },
+        {
+          "start": 50.581,
+          "end": 52.741,
+          "text": "again",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 54.441,
+        "end": 58.481,
+        "text": "Black hole sun, won't you come?"
+      },
+      "words": [
+        {
+          "start": 54.441,
+          "end": 54.781,
+          "text": "Black",
+          "row": 0
+        },
+        {
+          "start": 54.821,
+          "end": 55.461,
+          "text": "hole",
+          "row": 0
+        },
+        {
+          "start": 55.601,
+          "end": 56.261,
+          "text": "sun,",
+          "row": 0
+        },
+        {
+          "start": 56.781,
+          "end": 57.321,
+          "text": "won't",
+          "row": 0
+        },
+        {
+          "start": 57.361,
+          "end": 57.561,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 57.641,
+          "end": 58.481,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 60.182,
+        "end": 63.522,
+        "text": "Wash away the rain"
+      },
+      "words": [
+        {
+          "start": 60.182,
+          "end": 60.802,
+          "text": "Wash",
+          "row": 0
+        },
+        {
+          "start": 60.842,
+          "end": 61.882,
+          "text": "away",
+          "row": 0
+        },
+        {
+          "start": 61.942,
+          "end": 62.142,
+          "text": "the",
+          "row": 0
+        },
+        {
+          "start": 62.202,
+          "end": 63.522,
+          "text": "rain",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 63.562,
+        "end": 67.442,
+        "text": "Black hole sun, won't you come?"
+      },
+      "words": [
+        {
+          "start": 63.562,
+          "end": 63.882,
+          "text": "Black",
+          "row": 0
+        },
+        {
+          "start": 63.922,
+          "end": 64.562,
+          "text": "hole",
+          "row": 0
+        },
+        {
+          "start": 64.662,
+          "end": 65.402,
+          "text": "sun,",
+          "row": 0
+        },
+        {
+          "start": 65.842,
+          "end": 66.382,
+          "text": "won't",
+          "row": 0
+        },
+        {
+          "start": 66.422,
+          "end": 66.582,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 66.662,
+          "end": 67.442,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 68.082,
+        "end": 72.702,
+        "text": "Won't you come, won't you come?"
+      },
+      "words": [
+        {
+          "start": 68.082,
+          "end": 68.662,
+          "text": "Won't",
+          "row": 0
+        },
+        {
+          "start": 68.682,
+          "end": 68.862,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 68.922,
+          "end": 70.342,
+          "text": "come,",
+          "row": 0
+        },
+        {
+          "start": 70.402,
+          "end": 70.882,
+          "text": "won't",
+          "row": 0
+        },
+        {
+          "start": 70.922,
+          "end": 71.102,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 71.182,
+          "end": 72.702,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 75.022,
+        "end": 79.042,
+        "text": "Stuttering, cold and dead"
+      },
+      "words": [
+        {
+          "start": 75.022,
+          "end": 76.822,
+          "text": "Stuttering,",
+          "row": 0
+        },
+        {
+          "start": 77.402,
+          "end": 77.962,
+          "text": "cold",
+          "row": 0
+        },
+        {
+          "start": 78.002,
+          "end": 78.282,
+          "text": "and",
+          "row": 0
+        },
+        {
+          "start": 78.342,
+          "end": 79.042,
+          "text": "dead",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 79.982,
+        "end": 83.402,
+        "text": "Steal the warm wind, tired friend"
+      },
+      "words": [
+        {
+          "start": 79.982,
+          "end": 80.302,
+          "text": "Steal",
+          "row": 0
+        },
+        {
+          "start": 80.342,
+          "end": 80.542,
+          "text": "the",
+          "row": 0
+        },
+        {
+          "start": 80.602,
+          "end": 81.062,
+          "text": "warm",
+          "row": 0
+        },
+        {
+          "start": 81.102,
+          "end": 81.622,
+          "text": "wind,",
+          "row": 0
+        },
+        {
+          "start": 81.702,
+          "end": 82.382,
+          "text": "tired",
+          "row": 0
+        },
+        {
+          "start": 82.522,
+          "end": 83.402,
+          "text": "friend",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 84.042,
+        "end": 88.442,
+        "text": "Times are gone for honest men"
+      },
+      "words": [
+        {
+          "start": 84.042,
+          "end": 84.582,
+          "text": "Times",
+          "row": 0
+        },
+        {
+          "start": 84.662,
+          "end": 84.842,
+          "text": "are",
+          "row": 0
+        },
+        {
+          "start": 84.882,
+          "end": 85.882,
+          "text": "gone",
+          "row": 0
+        },
+        {
+          "start": 86.002,
+          "end": 86.162,
+          "text": "for",
+          "row": 0
+        },
+        {
+          "start": 86.322,
+          "end": 87.642,
+          "text": "honest",
+          "row": 0
+        },
+        {
+          "start": 87.682,
+          "end": 88.442,
+          "text": "men",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 88.542,
+        "end": 92.742,
+        "text": "Sometimes far too long for snakes"
+      },
+      "words": [
+        {
+          "start": 88.542,
+          "end": 89.322,
+          "text": "Sometimes",
+          "row": 0
+        },
+        {
+          "start": 89.722,
+          "end": 90.042,
+          "text": "far",
+          "row": 0
+        },
+        {
+          "start": 90.102,
+          "end": 90.482,
+          "text": "too",
+          "row": 0
+        },
+        {
+          "start": 90.582,
+          "end": 91.182,
+          "text": "long",
+          "row": 0
+        },
+        {
+          "start": 91.442,
+          "end": 91.582,
+          "text": "for",
+          "row": 0
+        },
+        {
+          "start": 91.622,
+          "end": 92.742,
+          "text": "snakes",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 93.462,
+        "end": 97.282,
+        "text": "In my shoes, walking sleep"
+      },
+      "words": [
+        {
+          "start": 93.462,
+          "end": 93.802,
+          "text": "In",
+          "row": 0
+        },
+        {
+          "start": 93.882,
+          "end": 94.142,
+          "text": "my",
+          "row": 0
+        },
+        {
+          "start": 94.262,
+          "end": 94.902,
+          "text": "shoes,",
+          "row": 0
+        },
+        {
+          "start": 95.782,
+          "end": 96.502,
+          "text": "walking",
+          "row": 0
+        },
+        {
+          "start": 96.562,
+          "end": 97.282,
+          "text": "sleep",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 98.082,
+        "end": 101.943,
+        "text": "In my youth, I pray to keep"
+      },
+      "words": [
+        {
+          "start": 98.082,
+          "end": 98.422,
+          "text": "In",
+          "row": 0
+        },
+        {
+          "start": 98.502,
+          "end": 98.822,
+          "text": "my",
+          "row": 0
+        },
+        {
+          "start": 98.902,
+          "end": 99.443,
+          "text": "youth,",
+          "row": 0
+        },
+        {
+          "start": 99.483,
+          "end": 99.703,
+          "text": "I",
+          "row": 0
+        },
+        {
+          "start": 99.763,
+          "end": 100.523,
+          "text": "pray",
+          "row": 0
+        },
+        {
+          "start": 100.583,
+          "end": 100.783,
+          "text": "to",
+          "row": 0
+        },
+        {
+          "start": 100.903,
+          "end": 101.943,
+          "text": "keep",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 102.323,
+        "end": 106.403,
+        "text": "Heaven sent hell away"
+      },
+      "words": [
+        {
+          "start": 102.323,
+          "end": 103.223,
+          "text": "Heaven",
+          "row": 0
+        },
+        {
+          "start": 103.403,
+          "end": 104.263,
+          "text": "sent",
+          "row": 0
+        },
+        {
+          "start": 104.303,
+          "end": 105.483,
+          "text": "hell",
+          "row": 0
+        },
+        {
+          "start": 105.543,
+          "end": 106.403,
+          "text": "away",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 106.623,
+        "end": 112.283,
+        "text": "No one sings like you anymore"
+      },
+      "words": [
+        {
+          "start": 106.623,
+          "end": 107.083,
+          "text": "No",
+          "row": 0
+        },
+        {
+          "start": 107.143,
+          "end": 107.523,
+          "text": "one",
+          "row": 0
+        },
+        {
+          "start": 108.003,
+          "end": 108.503,
+          "text": "sings",
+          "row": 0
+        },
+        {
+          "start": 108.563,
+          "end": 108.923,
+          "text": "like",
+          "row": 0
+        },
+        {
+          "start": 108.983,
+          "end": 109.503,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 109.583,
+          "end": 112.283,
+          "text": "anymore",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 113.663,
+        "end": 117.743,
+        "text": "Black hole sun, won't you come?"
+      },
+      "words": [
+        {
+          "start": 113.663,
+          "end": 114.023,
+          "text": "Black",
+          "row": 0
+        },
+        {
+          "start": 114.063,
+          "end": 114.723,
+          "text": "hole",
+          "row": 0
+        },
+        {
+          "start": 114.803,
+          "end": 115.483,
+          "text": "sun,",
+          "row": 0
+        },
+        {
+          "start": 116.003,
+          "end": 116.523,
+          "text": "won't",
+          "row": 0
+        },
+        {
+          "start": 116.563,
+          "end": 116.763,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 116.843,
+          "end": 117.743,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 119.403,
+        "end": 122.783,
+        "text": "Wash away the rain"
+      },
+      "words": [
+        {
+          "start": 119.403,
+          "end": 120.043,
+          "text": "Wash",
+          "row": 0
+        },
+        {
+          "start": 120.083,
+          "end": 121.103,
+          "text": "away",
+          "row": 0
+        },
+        {
+          "start": 121.203,
+          "end": 121.383,
+          "text": "the",
+          "row": 0
+        },
+        {
+          "start": 121.463,
+          "end": 122.783,
+          "text": "rain",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 122.803,
+        "end": 126.683,
+        "text": "Black hole sun, won't you come?"
+      },
+      "words": [
+        {
+          "start": 122.803,
+          "end": 123.143,
+          "text": "Black",
+          "row": 0
+        },
+        {
+          "start": 123.183,
+          "end": 123.843,
+          "text": "hole",
+          "row": 0
+        },
+        {
+          "start": 123.963,
+          "end": 124.683,
+          "text": "sun,",
+          "row": 0
+        },
+        {
+          "start": 125.123,
+          "end": 125.643,
+          "text": "won't",
+          "row": 0
+        },
+        {
+          "start": 125.683,
+          "end": 125.863,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 125.943,
+          "end": 126.683,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 127.383,
+        "end": 131.363,
+        "text": "Won't you come?"
+      },
+      "words": [
+        {
+          "start": 127.383,
+          "end": 127.943,
+          "text": "Won't",
+          "row": 0
+        },
+        {
+          "start": 127.963,
+          "end": 128.143,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 128.203,
+          "end": 131.363,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 131.883,
+        "end": 136.103,
+        "text": "Black hole sun, won't you come?"
+      },
+      "words": [
+        {
+          "start": 131.883,
+          "end": 132.183,
+          "text": "Black",
+          "row": 0
+        },
+        {
+          "start": 132.243,
+          "end": 132.863,
+          "text": "hole",
+          "row": 0
+        },
+        {
+          "start": 132.963,
+          "end": 133.603,
+          "text": "sun,",
+          "row": 0
+        },
+        {
+          "start": 134.143,
+          "end": 134.683,
+          "text": "won't",
+          "row": 0
+        },
+        {
+          "start": 134.743,
+          "end": 134.923,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 135.003,
+          "end": 136.103,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 137.543,
+        "end": 140.964,
+        "text": "Wash away the rain"
+      },
+      "words": [
+        {
+          "start": 137.543,
+          "end": 138.163,
+          "text": "Wash",
+          "row": 0
+        },
+        {
+          "start": 138.223,
+          "end": 139.244,
+          "text": "away",
+          "row": 0
+        },
+        {
+          "start": 139.284,
+          "end": 139.504,
+          "text": "the",
+          "row": 0
+        },
+        {
+          "start": 139.584,
+          "end": 140.964,
+          "text": "rain",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 141.004,
+        "end": 144.824,
+        "text": "Black hole sun, won't you come?"
+      },
+      "words": [
+        {
+          "start": 141.004,
+          "end": 141.284,
+          "text": "Black",
+          "row": 0
+        },
+        {
+          "start": 141.364,
+          "end": 141.964,
+          "text": "hole",
+          "row": 0
+        },
+        {
+          "start": 142.084,
+          "end": 142.804,
+          "text": "sun,",
+          "row": 0
+        },
+        {
+          "start": 143.244,
+          "end": 143.764,
+          "text": "won't",
+          "row": 0
+        },
+        {
+          "start": 143.804,
+          "end": 143.984,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 144.064,
+          "end": 144.824,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 145.484,
+        "end": 157.824,
+        "text": "Won't you come, won't you come?"
+      },
+      "words": [
+        {
+          "start": 145.484,
+          "end": 146.064,
+          "text": "Won't",
+          "row": 0
+        },
+        {
+          "start": 146.084,
+          "end": 146.264,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 146.344,
+          "end": 151.164,
+          "text": "come,",
+          "row": 0
+        },
+        {
+          "start": 152.264,
+          "end": 152.844,
+          "text": "won't",
+          "row": 0
+        },
+        {
+          "start": 152.864,
+          "end": 153.044,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 153.124,
+          "end": 157.824,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 158.944,
+        "end": 171.304,
+        "text": "Won't you come, won't you come?"
+      },
+      "words": [
+        {
+          "start": 158.944,
+          "end": 159.484,
+          "text": "Won't",
+          "row": 0
+        },
+        {
+          "start": 159.524,
+          "end": 159.724,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 159.824,
+          "end": 164.604,
+          "text": "come,",
+          "row": 0
+        },
+        {
+          "start": 165.724,
+          "end": 166.284,
+          "text": "won't",
+          "row": 0
+        },
+        {
+          "start": 166.324,
+          "end": 166.484,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 166.564,
+          "end": 171.304,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 206.625,
+        "end": 210.845,
+        "text": "Hang my head, drown my fear"
+      },
+      "words": [
+        {
+          "start": 206.625,
+          "end": 206.985,
+          "text": "Hang",
+          "row": 0
+        },
+        {
+          "start": 207.025,
+          "end": 207.445,
+          "text": "my",
+          "row": 0
+        },
+        {
+          "start": 207.485,
+          "end": 208.165,
+          "text": "head,",
+          "row": 0
+        },
+        {
+          "start": 209.165,
+          "end": 209.605,
+          "text": "drown",
+          "row": 0
+        },
+        {
+          "start": 209.665,
+          "end": 209.925,
+          "text": "my",
+          "row": 0
+        },
+        {
+          "start": 210.065,
+          "end": 210.845,
+          "text": "fear",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 211.505,
+        "end": 216.465,
+        "text": "'Til you all just disappear"
+      },
+      "words": [
+        {
+          "start": 211.505,
+          "end": 211.945,
+          "text": "'Til",
+          "row": 0
+        },
+        {
+          "start": 212.005,
+          "end": 212.265,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 212.325,
+          "end": 212.845,
+          "text": "all",
+          "row": 0
+        },
+        {
+          "start": 212.885,
+          "end": 213.325,
+          "text": "just",
+          "row": 0
+        },
+        {
+          "start": 213.445,
+          "end": 216.465,
+          "text": "disappear",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 217.885,
+        "end": 221.886,
+        "text": "Black hole sun, won't you come?"
+      },
+      "words": [
+        {
+          "start": 217.885,
+          "end": 218.206,
+          "text": "Black",
+          "row": 0
+        },
+        {
+          "start": 218.246,
+          "end": 218.846,
+          "text": "hole",
+          "row": 0
+        },
+        {
+          "start": 218.966,
+          "end": 219.606,
+          "text": "sun,",
+          "row": 0
+        },
+        {
+          "start": 220.146,
+          "end": 220.686,
+          "text": "won't",
+          "row": 0
+        },
+        {
+          "start": 220.726,
+          "end": 220.926,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 221.006,
+          "end": 221.886,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 223.586,
+        "end": 226.906,
+        "text": "Wash away the rain"
+      },
+      "words": [
+        {
+          "start": 223.586,
+          "end": 224.146,
+          "text": "Wash",
+          "row": 0
+        },
+        {
+          "start": 224.206,
+          "end": 225.286,
+          "text": "away",
+          "row": 0
+        },
+        {
+          "start": 225.326,
+          "end": 225.526,
+          "text": "the",
+          "row": 0
+        },
+        {
+          "start": 225.586,
+          "end": 226.906,
+          "text": "rain",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 226.966,
+        "end": 230.726,
+        "text": "Black hole sun, won't you come?"
+      },
+      "words": [
+        {
+          "start": 226.966,
+          "end": 227.266,
+          "text": "Black",
+          "row": 0
+        },
+        {
+          "start": 227.306,
+          "end": 227.926,
+          "text": "hole",
+          "row": 0
+        },
+        {
+          "start": 228.066,
+          "end": 228.786,
+          "text": "sun,",
+          "row": 0
+        },
+        {
+          "start": 229.206,
+          "end": 229.746,
+          "text": "won't",
+          "row": 0
+        },
+        {
+          "start": 229.786,
+          "end": 229.986,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 230.066,
+          "end": 230.726,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 231.446,
+        "end": 235.406,
+        "text": "Won't you come, won't you come?"
+      },
+      "words": [
+        {
+          "start": 231.446,
+          "end": 232.026,
+          "text": "Won't",
+          "row": 0
+        },
+        {
+          "start": 232.066,
+          "end": 232.246,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 232.306,
+          "end": 232.626,
+          "text": "come,",
+          "row": 0
+        },
+        {
+          "start": 232.666,
+          "end": 233.606,
+          "text": "won't",
+          "row": 0
+        },
+        {
+          "start": 233.626,
+          "end": 233.766,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 234.506,
+          "end": 235.406,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 235.926,
+        "end": 239.846,
+        "text": "Black hole sun, won't you come?"
+      },
+      "words": [
+        {
+          "start": 235.926,
+          "end": 236.246,
+          "text": "Black",
+          "row": 0
+        },
+        {
+          "start": 236.286,
+          "end": 236.906,
+          "text": "hole",
+          "row": 0
+        },
+        {
+          "start": 237.026,
+          "end": 237.646,
+          "text": "sun,",
+          "row": 0
+        },
+        {
+          "start": 238.166,
+          "end": 238.686,
+          "text": "won't",
+          "row": 0
+        },
+        {
+          "start": 238.726,
+          "end": 238.946,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 238.986,
+          "end": 239.846,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 241.566,
+        "end": 244.826,
+        "text": "Wash away the rain"
+      },
+      "words": [
+        {
+          "start": 241.566,
+          "end": 242.126,
+          "text": "Wash",
+          "row": 0
+        },
+        {
+          "start": 242.186,
+          "end": 243.226,
+          "text": "away",
+          "row": 0
+        },
+        {
+          "start": 243.246,
+          "end": 243.466,
+          "text": "the",
+          "row": 0
+        },
+        {
+          "start": 243.526,
+          "end": 244.826,
+          "text": "rain",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 244.886,
+        "end": 248.786,
+        "text": "Black hole sun, won't you come?"
+      },
+      "words": [
+        {
+          "start": 244.886,
+          "end": 245.206,
+          "text": "Black",
+          "row": 0
+        },
+        {
+          "start": 245.226,
+          "end": 245.846,
+          "text": "hole",
+          "row": 0
+        },
+        {
+          "start": 245.986,
+          "end": 246.686,
+          "text": "sun,",
+          "row": 0
+        },
+        {
+          "start": 247.146,
+          "end": 247.666,
+          "text": "won't",
+          "row": 0
+        },
+        {
+          "start": 247.706,
+          "end": 247.866,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 247.926,
+          "end": 248.786,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 249.386,
+        "end": 253.246,
+        "text": "Won't you come?"
+      },
+      "words": [
+        {
+          "start": 249.386,
+          "end": 249.926,
+          "text": "Won't",
+          "row": 0
+        },
+        {
+          "start": 249.966,
+          "end": 250.146,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 250.206,
+          "end": 253.246,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 253.286,
+        "end": 257.306,
+        "text": "Black hole sun, won't you come?"
+      },
+      "words": [
+        {
+          "start": 253.286,
+          "end": 253.806,
+          "text": "Black",
+          "row": 0
+        },
+        {
+          "start": 253.846,
+          "end": 254.106,
+          "text": "hole",
+          "row": 0
+        },
+        {
+          "start": 254.126,
+          "end": 254.926,
+          "text": "sun,",
+          "row": 0
+        },
+        {
+          "start": 256.066,
+          "end": 256.666,
+          "text": "won't",
+          "row": 0
+        },
+        {
+          "start": 256.686,
+          "end": 256.866,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 256.946,
+          "end": 257.306,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 257.326,
+        "end": 264.207,
+        "text": "Black hole sun, won't you come?"
+      },
+      "words": [
+        {
+          "start": 257.326,
+          "end": 259.067,
+          "text": "Black",
+          "row": 0
+        },
+        {
+          "start": 259.107,
+          "end": 260.607,
+          "text": "hole",
+          "row": 0
+        },
+        {
+          "start": 261.487,
+          "end": 262.727,
+          "text": "sun,",
+          "row": 0
+        },
+        {
+          "start": 262.767,
+          "end": 263.307,
+          "text": "won't",
+          "row": 0
+        },
+        {
+          "start": 263.347,
+          "end": 263.547,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 263.627,
+          "end": 264.207,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 264.227,
+        "end": 274.927,
+        "text": "Black hole sun, won't you come?"
+      },
+      "words": [
+        {
+          "start": 264.227,
+          "end": 264.507,
+          "text": "Black",
+          "row": 0
+        },
+        {
+          "start": 265.667,
+          "end": 268.427,
+          "text": "hole",
+          "row": 0
+        },
+        {
+          "start": 268.447,
+          "end": 269.467,
+          "text": "sun,",
+          "row": 0
+        },
+        {
+          "start": 269.507,
+          "end": 270.067,
+          "text": "won't",
+          "row": 0
+        },
+        {
+          "start": 270.107,
+          "end": 270.267,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 270.347,
+          "end": 274.927,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 276.007,
+        "end": 278.327,
+        "text": "Won't you come?"
+      },
+      "words": [
+        {
+          "start": 276.007,
+          "end": 276.547,
+          "text": "Won't",
+          "row": 0
+        },
+        {
+          "start": 276.587,
+          "end": 276.807,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 276.867,
+          "end": 278.327,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 282.687,
+        "end": 288.207,
+        "text": "Won't you come?"
+      },
+      "words": [
+        {
+          "start": 282.687,
+          "end": 283.267,
+          "text": "Won't",
+          "row": 0
+        },
+        {
+          "start": 283.287,
+          "end": 283.467,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 283.567,
+          "end": 288.207,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 289.267,
+        "end": 292.947,
+        "text": "Won't you come?"
+      },
+      "words": [
+        {
+          "start": 289.267,
+          "end": 289.787,
+          "text": "Won't",
+          "row": 0
+        },
+        {
+          "start": 289.827,
+          "end": 290.007,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 290.087,
+          "end": 292.947,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    },
+    {
+      "sentence": {
+        "start": 295.887,
+        "end": 300.468,
+        "text": "Won't you come?"
+      },
+      "words": [
+        {
+          "start": 295.887,
+          "end": 296.367,
+          "text": "Won't",
+          "row": 0
+        },
+        {
+          "start": 296.407,
+          "end": 296.627,
+          "text": "you",
+          "row": 0
+        },
+        {
+          "start": 296.707,
+          "end": 300.468,
+          "text": "come?",
+          "row": 0
+        }
+      ]
+    }
+  ]
+}

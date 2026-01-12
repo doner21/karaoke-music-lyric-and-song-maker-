@@ -1,0 +1,845 @@
+import React, { useState, useEffect, useRef } from 'react';
+import {
+    Search, Play, Pause, Square, SkipBack, SkipForward, Cpu, Wifi, Activity,
+    Disc, Layers, Zap, Info, Minimize2, Maximize2, X, Download, HardDrive,
+    FileAudio, RefreshCw, CheckCircle2, Lock, FileJson, Eye, EyeOff, AlertTriangle
+} from 'lucide-react';
+
+/* 
+  ECOLOGICAL_OS_v5::[ResilienceTest, MockEngine, HighHeat]
+  SEEDS: 9910 | HEAT: 0.85 | NOISE: 0.45 | COUPLING: 0.9
+*/
+
+const API_URL = 'http://localhost:3001';
+const DEBOUNCE_MS = 300;
+const fmtTime = (s) => {
+    if (!s) return '0:00';
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, '0')}`;
+}
+
+export default function IntegratedEcologicalOS() {
+    // --- STATE: INGEST (YT) ---
+    const [query, setQuery] = useState('');
+    const [results, setResults] = useState([]);
+    const [isSearching, setIsSearching] = useState(false);
+    const [apiKey, setApiKey] = useState(localStorage.getItem('yt_api_key') || '');
+    const [selectedSong, setSelectedSong] = useState(null);
+
+    // --- STATE: STUDIO (Player) ---
+    const [player, setPlayer] = useState(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
+
+    // --- STATE: FABRICATION (Jobs) ---
+    // Job 1: Archivist (Downloader)
+    const [archiveJob, setArchiveJob] = useState(null);
+    const [localAsset, setLocalAsset] = useState(null); // Result from Archivist
+
+    // Job 2: Splitter
+    const [splitJob, setSplitJob] = useState(null);
+    const [splitResult, setSplitResult] = useState(null);
+
+    // Job 3: Alignment (AudioShake)
+    const [alignJob, setAlignJob] = useState(null);
+    const [alignResult, setAlignResult] = useState(null);
+    const [lyricsText, setLyricsText] = useState('');
+    const [isStale, setIsStale] = useState(false);
+    const [showJsonPreview, setShowJsonPreview] = useState(false);
+
+    // Error Modal State
+    const [errorModal, setErrorModal] = useState(null); // { title, message }
+
+    // Song Artifacts (for stable downloads)
+    const [songArtifacts, setSongArtifacts] = useState([]);
+
+    // Config (v5 Resilience Mode)
+    const [enginePref, setEnginePref] = useState('auto'); // Default to Resilient Auto
+    const [modelId, setModelId] = useState('v3-sim'); // 'v3-sim' | 'htdemucs' | 'mdx-extra'
+    const [stems, setStems] = useState(2);
+
+    // --- EFFECTS ---
+    useEffect(() => {
+        if (!window.YT) {
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            document.body.appendChild(tag);
+        }
+    }, []);
+
+    // Search Debounce
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (query.length > 2) performSearch(query);
+        }, DEBOUNCE_MS);
+        return () => clearTimeout(timer);
+    }, [query, apiKey]);
+
+    // Poll Archivist (Spec v1.0)
+    useEffect(() => {
+        if (!archiveJob || archiveJob.state === 'done' || archiveJob.state === 'error') return;
+        const i = setInterval(async () => {
+            try {
+                const res = await fetch(`${API_URL}/api/v1/audio/status/${archiveJob.jobId}`);
+                const data = await res.json(); // AcquireJob
+                setArchiveJob(data);
+
+                if (data.state === 'done' && data.result) {
+                    setArchiveJob(data);
+                    // result is now AudioAssetRef (includes 'files' via internal extension)
+                    setLocalAsset(data.result);
+                }
+            } catch (e) { console.error(e); }
+        }, 500);
+        return () => clearInterval(i);
+    }, [archiveJob]);
+
+    // Poll Splitter
+    useEffect(() => {
+        if (!splitJob || !splitJob.jobId || splitJob.state === 'done' || splitJob.state === 'error') return;
+        const jobId = splitJob.jobId; // Capture jobId at effect start
+        const i = setInterval(async () => {
+            try {
+                const res = await fetch(`${API_URL}/split/status/${jobId}`);
+                const data = await res.json();
+                // Preserve jobId during update (API might not return it)
+                setSplitJob(prev => ({ ...prev, ...data, jobId }));
+                if (data.state === 'done') {
+                    setSplitResult(data.result);
+                }
+            } catch (e) { console.error(e); }
+        }, 500);
+        return () => clearInterval(i);
+    }, [splitJob?.jobId, splitJob?.state]); // Only re-run when jobId or state changes
+
+    // Poll Alignment (AudioShake)
+    useEffect(() => {
+        if (!alignJob || !alignJob.jobId || alignJob.state === 'done' || alignJob.state === 'error' || alignJob.state === 'canceled') return;
+        const jobId = alignJob.jobId; // Capture jobId at effect start
+        const i = setInterval(async () => {
+            try {
+                const res = await fetch(`${API_URL}/align/status/${jobId}`);
+                const data = await res.json();
+                // Preserve jobId during update (API might not return it consistently)
+                setAlignJob(prev => ({ ...prev, ...data, jobId }));
+                if (data.state === 'done') {
+                    // Fetch the actual result
+                    const resultRes = await fetch(`${API_URL}/align/result/${jobId}`);
+                    const resultData = await resultRes.json();
+                    setAlignResult(resultData);
+                    setIsStale(false);
+                }
+            } catch (e) { console.error(e); }
+        }, 1000);
+        return () => clearInterval(i);
+    }, [alignJob?.jobId, alignJob?.state]); // Only re-run when jobId or state changes
+
+
+    // --- ACTIONS ---
+    // --- HYDRATION ---
+    const hydrateSongState = async (song) => {
+        if (!song) return;
+
+        // Reset State first (but NOT lyrics - preserve user edits until we load existing)
+        setArchiveJob(null);
+        setLocalAsset(null);
+        setSplitJob(null);
+        setSplitResult(null);
+        setAlignJob(null);
+        setAlignResult(null);
+        setIsStale(false);
+        // Don't reset lyricsText here - we'll load from existing alignment below
+
+        // If not local, we start fresh 
+        if (!song.isLocal) {
+            setLyricsText(''); // Only clear for non-local songs
+            return;
+        }
+
+        console.log('[Hydration] Fetching state for:', song.id);
+
+        try {
+            // 1. Fetch Artifacts via stable endpoint
+            const artRes = await fetch(`${API_URL}/artifacts/check?videoId=${song.videoId}`);
+            const artifacts = await artRes.json();
+            setSongArtifacts(artifacts);
+
+            // Map Artifacts to local state
+            const dlArtifact = artifacts.find(a => a.kind === 'downloaded_media');
+            if (dlArtifact) {
+                setLocalAsset({ files: [{ path: dlArtifact.storage_ref, filename: dlArtifact.filename }] });
+            }
+
+            const vocalStem = artifacts.find(a => a.kind === 'vocal_stem');
+            const bandStem = artifacts.find(a => a.kind === 'band_stem');
+
+            if (vocalStem || bandStem) {
+                // Use artifact-based download URLs (stable, job-independent)
+                setSplitResult({
+                    vocalDownloadUrl: vocalStem ? `/artifacts/${vocalStem.id}/download` : null,
+                    bandDownloadUrl: bandStem ? `/artifacts/${bandStem.id}/download` : null
+                });
+            }
+
+            const timings = artifacts.find(a => a.kind === 'timings_json');
+            if (timings) {
+                // We need to fetch the content? Or job result has it.
+                // For now, let's look for the job first.
+            }
+
+            // 2. Fetch Jobs
+            const jobsRes = await fetch(`${API_URL}/api/library/songs/${song.id}/jobs`);
+            const jobs = await jobsRes.json();
+
+            // Map Jobs to State
+            const dlJob = jobs.find(j => j.kind === 'download');
+            if (dlJob) setArchiveJob({ ...dlJob, jobId: dlJob.id }); // Map id -> jobId
+
+            const spJob = jobs.find(j => j.kind === 'split');
+            if (spJob) {
+                setSplitJob({ ...spJob, jobId: spJob.id });
+                if (spJob.state === 'done' && spJob.result) {
+                    // Prefer job result if available as it has valid structure
+                }
+            }
+
+            const alJob = jobs.find(j => j.kind === 'align');
+            if (alJob) {
+                setAlignJob({ ...alJob, jobId: alJob.id });
+                if (alJob.state === 'done' && alJob.result) {
+                    setAlignResult(alJob.result);
+
+                    // LOAD EXISTING LYRICS from alignment result so user can edit them
+                    // Check if result has lyrics in the expected format
+                    if (alJob.result.lyrics && Array.isArray(alJob.result.lyrics)) {
+                        // Extract text from lyrics array structure
+                        const existingLyrics = alJob.result.lyrics.map(line =>
+                            line.words ? line.words.map(w => w.text || w.word || '').join('') : (line.text || '')
+                        ).join('\n');
+                        if (existingLyrics.trim()) {
+                            console.log('[Hydration] Loading existing lyrics:', existingLyrics.length, 'chars');
+                            setLyricsText(existingLyrics);
+                        }
+                    } else if (alJob.params?.lyricsText) {
+                        // Fallback: use the original lyrics from job params
+                        console.log('[Hydration] Loading lyrics from job params:', alJob.params.lyricsText.length, 'chars');
+                        setLyricsText(alJob.params.lyricsText);
+                    } else {
+                        setLyricsText(''); // No existing lyrics found
+                    }
+                } else {
+                    setLyricsText(''); // Job not done, clear lyrics
+                }
+            } else {
+                setLyricsText(''); // No alignment job, clear lyrics
+            }
+
+            // Staleness Check
+            if (vocalStem && timings) {
+                // If timings created BEFORE vocals, it's stale (e.g. we re-split but didn't re-align)
+                if (timings.created_at < vocalStem.created_at) {
+                    console.log('[hydrate] Timings are stale');
+                    setIsStale(true);
+                }
+            }
+
+        } catch (e) {
+            console.error('[Hydration] Failed:', e);
+            setLyricsText(''); // Clear lyrics on error
+        }
+    };
+
+    // --- ACTIONS ---
+    const performSearch = async (q) => {
+        setIsSearching(true);
+        try {
+            const headers = apiKey ? { 'x-youtube-api-key': apiKey } : {};
+            const res = await fetch(`${API_URL}/api/youtube/search?q=${encodeURIComponent(q)}`, { headers });
+            const data = await res.json();
+            setResults(data.items || []);
+        } catch (e) { console.error(e); }
+        setIsSearching(false);
+    };
+
+    const handleSongSelect = (song) => {
+        setSelectedSong(song);
+        hydrateSongState(song);
+    };
+
+    const startArchive = async () => {
+        if (!selectedSong) return;
+        try {
+            // Spec v1.0: /audio/acquire
+            const res = await fetch(`${API_URL}/api/v1/audio/acquire`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    selectedSong: selectedSong, // Spec: SelectedSongRef
+                    enginePreference: enginePref, // Extension: Pass engine pref
+                    options: { mediaType: 'audio' }
+                })
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                console.error('Acquire Failed:', data);
+                setErrorModal({ title: 'Acquisition Failed', message: data.error || 'Unknown Error' });
+                return;
+            }
+
+            // Start polling (which happens via useEffect on archiveJob)
+            setArchiveJob({ jobId: data.jobId, state: 'queued', progress: 0 });
+
+            // Clear downstream
+            // setLocalAsset(null); // Keep old if re-downloading? No, clear.
+            // setSplitJob(null);
+            // setSplitResult(null);
+        } catch (e) {
+            console.error(e);
+            setErrorModal({ title: 'Network Error', message: `Acquisition failed: ${e.message}` });
+        }
+    };
+
+    const startSplit = async () => {
+        // ... (Keep existing but ensure we send songId)
+        if (!localAsset) return;
+
+        // We need songId. selectedSong might be the YT object.
+        // But if we just downloaded it, do we have the ID?
+        // Hydration via polling updates archiveJob?
+        // archiveJob status endpoint returns done.
+        // We need to know the Persistent Song ID.
+        // The Download Endpoint created it.
+        // We can pass `selectedSong.videoId` and let backend lookup?
+        // SplitterQueue.submit logic I wrote handles finding song by inputPath.
+        // But better to pass songId if we have it.
+        // `hydrateSongState` sets `selectedSong`? No, it takes it.
+        // We should update `selectedSong` with the real ID from DB if we can.
+
+        // For now, let's rely on InputPath resolution or pass videoId.
+        const inputPath = localAsset.files?.[0]?.path;
+        if (!inputPath) { setErrorModal({ title: 'Error', message: 'Asset path missing' }); return; }
+
+        try {
+            const res = await fetch(`${API_URL}/split/start`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    source: { inputPath },
+                    songId: selectedSong.id || undefined, // Pass ID if hydated
+                    videoId: selectedSong.videoId, // Pass videoId as fallback
+                    modelId: modelId,
+                    stems: stems
+                })
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                console.error('Split Failed:', data);
+                setErrorModal({ title: 'Split Failed', message: `${data.error || 'Server Error'}\n\nTip: Try reloading the song from Search to refresh the ID.` });
+                return;
+            }
+
+            setSplitJob({ jobId: data.jobId, state: 'queued', progress: 0, logs: [] });
+        } catch (e) {
+            console.error(e);
+            setErrorModal({ title: 'Network Error', message: `Split failed: ${e.message}` });
+        }
+    };
+
+    // Alignment Action
+    const startAlignment = async () => {
+        if (!splitResult?.vocalDownloadUrl) return;
+        try {
+            const res = await fetch(`${API_URL}/align/submit`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    vocalStemId: splitJob?.jobId || splitResult.vocalDownloadUrl,
+                    lyricsText: lyricsText,
+                    provider: 'audioshake',
+                    videoId: selectedSong?.videoId,
+                    stemIds: { vocal: splitJob?.jobId, band: splitJob?.jobId }
+                })
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                console.error('Alignment Failed:', data);
+                setErrorModal({ title: 'Alignment Failed', message: data.error || 'Unknown Error' });
+                return;
+            }
+
+            setAlignJob({ jobId: data.jobId, state: 'queued', progress: 0 });
+            setAlignResult(null);
+        } catch (e) {
+            console.error(e);
+            setErrorModal({ title: 'Network Error', message: `Alignment failed: ${e.message}` });
+        }
+    };
+
+    // Re-Alignment Action (for existing songs with edited lyrics)
+    const startRealignment = async () => {
+        console.log('========================================');
+        console.log('[RE-ALIGN CLICKED]');
+        console.log('splitResult:', splitResult);
+        console.log('splitResult?.vocalDownloadUrl:', splitResult?.vocalDownloadUrl);
+        console.log('lyricsText length:', lyricsText?.length);
+        console.log('========================================');
+
+        if (!splitResult?.vocalDownloadUrl) {
+            console.error('[RE-ALIGN] BLOCKED: No vocalDownloadUrl');
+            return;
+        }
+        try {
+            console.log('[RE-ALIGN] Making fetch request to:', `${API_URL}/align/submit`);
+            console.log('[RE-ALIGN] Request body:', JSON.stringify({
+                vocalStemId: splitJob?.jobId || splitResult.vocalDownloadUrl,
+                lyricsText: lyricsText?.substring(0, 50) + '...',
+                force: true
+            }));
+
+            const res = await fetch(`${API_URL}/align/submit`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    vocalStemId: splitJob?.jobId || splitResult.vocalDownloadUrl,
+                    lyricsText: lyricsText,
+                    provider: 'audioshake',
+                    videoId: selectedSong?.videoId,
+                    stemIds: { vocal: splitJob?.jobId, band: splitJob?.jobId },
+                    force: true  // Bypass idempotency to allow re-alignment
+                })
+            });
+
+            console.log('[RE-ALIGN] Response status:', res.status);
+            const data = await res.json();
+            console.log('[RE-ALIGN] Response data:', data);
+
+            if (!res.ok) {
+                console.error('Re-Alignment Failed:', data);
+                setErrorModal({ title: 'Re-Alignment Failed', message: data.error?.message || data.error || 'Unknown Error' });
+                return;
+            }
+
+            setAlignJob({ jobId: data.jobId, state: 'queued', progress: 0 });
+            setAlignResult(null);
+            setIsStale(false);
+        } catch (e) {
+            console.error('[RE-ALIGN] CATCH ERROR:', e);
+            setErrorModal({ title: 'Network Error', message: `Re-alignment failed: ${e.message}` });
+        }
+    };
+
+    const stopAll = async () => {
+        if (archiveJob && archiveJob.state !== 'done') {
+            await fetch(`${API_URL}/download/cancel/${archiveJob.jobId}`, { method: 'POST' });
+        }
+        if (splitJob && splitJob.state !== 'done') {
+            await fetch(`${API_URL}/split/cancel`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ jobId: splitJob.jobId })
+            });
+        }
+        // Cancel alignment job
+        if (alignJob && alignJob.state !== 'done' && alignJob.state !== 'error') {
+            await fetch(`${API_URL}/align/cancel/${alignJob.jobId}`, { method: 'POST' });
+        }
+        setArchiveJob(null);
+        setSplitJob(null);
+        setAlignJob(null);
+        if (player) {
+            player.pauseVideo();
+            player.seekTo(0);
+        }
+    };
+
+    // Handle lyrics edit (mark stale)
+    const handleLyricsChange = (e) => {
+        setLyricsText(e.target.value);
+        if (alignResult) {
+            setIsStale(true);
+        }
+    };
+
+    // Download JSON
+    const downloadJson = () => {
+        if (!alignResult) return;
+        const blob = new Blob([JSON.stringify(alignResult, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+
+        // Build canonical filename: "Artist - Song (Lyrics).json"
+        let artist = 'Unknown Artist';
+        let song = 'Unknown Song';
+
+        if (selectedSong?.title) {
+            // Parse "Artist - Song" from title
+            const match = selectedSong.title.match(/^(.+?)\s*[-–]\s*(.+)$/);
+            if (match) {
+                artist = match[1].trim().replace(/[<>:"/\\|?*]/g, '');
+                song = match[2].trim().replace(/\s*[\(\[].*?[\)\]]$/g, '').replace(/[<>:"/\\|?*]/g, '');
+            } else {
+                song = selectedSong.title.replace(/[<>:"/\\|?*]/g, '');
+            }
+        }
+
+        a.download = `${artist} - ${song} (Lyrics).json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
+
+    // --- RENDER HELPERS ---
+    const initPlayer = (node) => {
+        if (!node || player) return;
+        if (!selectedSong || !window.YT) return;
+        new window.YT.Player(node, {
+            height: '100%', width: '100%',
+            videoId: selectedSong.videoId,
+            playerVars: { autoplay: 1, controls: 0, modestbranding: 1 },
+            events: {
+                onReady: (e) => {
+                    setPlayer(e.target);
+                    setDuration(e.target.getDuration());
+                    setIsPlaying(true);
+                },
+                onStateChange: (e) => setIsPlaying(e.data === 1)
+            }
+        });
+    };
+
+    // Auto-update player when song changes
+    useEffect(() => {
+        if (player && selectedSong) player.loadVideoById(selectedSong.videoId);
+    }, [selectedSong]);
+
+
+    // --- ERROR MODAL COMPONENT ---
+    const ErrorModal = () => {
+        if (!errorModal) return null;
+        return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+                <div className="bg-slate-900 border border-rose-500/50 rounded-lg shadow-2xl max-w-md w-full mx-4 overflow-hidden">
+                    <div className="flex items-center justify-between px-4 py-3 bg-rose-900/30 border-b border-rose-500/30">
+                        <div className="flex items-center gap-2 text-rose-400">
+                            <AlertTriangle size={16} />
+                            <span className="font-bold text-sm">{errorModal.title}</span>
+                        </div>
+                        <button onClick={() => setErrorModal(null)} className="text-slate-400 hover:text-white">
+                            <X size={18} />
+                        </button>
+                    </div>
+                    <div className="p-4">
+                        <p className="text-sm text-slate-300 whitespace-pre-wrap">{errorModal.message}</p>
+                    </div>
+                    <div className="px-4 py-3 bg-slate-800/50 flex justify-end">
+                        <button
+                            onClick={() => setErrorModal(null)}
+                            className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded"
+                        >
+                            DISMISS
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    return (
+        <>
+            <ErrorModal />
+            <div className="w-full h-screen bg-[#0a0f18] text-slate-300 font-sans grid grid-cols-[300px_1fr_320px] overflow-hidden divide-x divide-slate-800">
+
+                {/* [COL 1] INGEST: PROXY SEARCH */}
+                <div className="flex flex-col bg-[#05080c]">
+                    <div className="h-12 border-b border-slate-800 flex items-center px-4 bg-slate-900/50">
+                        <span className="text-[10px] font-bold tracking-widest text-orange-500 flex items-center gap-2">
+                            <Activity size={14} className="animate-pulse" /> RESILIENCE_NODE_v5 [MOCK]
+                        </span>
+                    </div>
+                    <div className="p-3 border-b border-slate-800 space-y-2">
+                        <div className="flex items-center gap-2 bg-[#0f1623] p-2 rounded border border-slate-700 focus-within:border-emerald-500/50 transition-colors">
+                            <Search size={14} className="text-slate-500" />
+                            <input
+                                className="bg-transparent text-xs w-full outline-none placeholder-slate-600"
+                                placeholder="SEARCH_INDEX..."
+                                value={query} onChange={e => setQuery(e.target.value)}
+                            />
+                        </div>
+                        {/* API Key */}
+                        <input
+                            type="password"
+                            className="w-full bg-transparent text-[9px] text-slate-600 outline-none text-right px-1"
+                            placeholder="[SECURE_KEY_SLOT]"
+                            value={apiKey} onChange={e => { setApiKey(e.target.value); localStorage.setItem('yt_api_key', e.target.value); }}
+                        />
+                    </div>
+                    <div className="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar">
+                        {results.map((r, i) => (
+                            <button key={i} onClick={() => handleSongSelect(r)} className={`w-full flex items-start gap-3 p-2 rounded border text-left transition-all ${selectedSong?.videoId === r.videoId ? 'bg-emerald-900/20 border-emerald-500/30' : 'border-transparent hover:bg-slate-900'}`}>
+                                <div className="relative w-16 h-10 shrink-0 bg-black rounded overflow-hidden">
+                                    <img src={r.thumbnailUrl} className="w-full h-full object-cover opacity-80" />
+                                    {r.isLocal && <div className="absolute top-0 right-0 bg-emerald-500 text-black text-[8px] font-bold px-1">DB</div>}
+                                </div>
+                                <div className="min-w-0">
+                                    <div className={`text-[11px] font-bold truncate ${selectedSong?.videoId === r.videoId ? 'text-emerald-400' : 'text-slate-300'}`}>{r.title}</div>
+                                    <div className="text-[9px] text-slate-500 truncate flex items-center gap-1">
+                                        {r.channelTitle}
+                                        {r.isLocal && <CheckCircle2 size={8} className="text-emerald-500" />}
+                                    </div>
+                                </div>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* [COL 2] STUDIO: PLAYER + LYRICS */}
+                <div className="flex flex-col relative bg-[#0a0f18] divide-y divide-slate-800">
+                    {/* Player Surface */}
+                    <div className="h-[40%] bg-black relative">
+                        {selectedSong ? (
+                            <div id="integrated-player" ref={initPlayer} className="w-full h-full opacity-50 mix-blend-screen" />
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center text-slate-700 text-xs font-mono">WAITING_FOR_SELECTION</div>
+                        )}
+                        {/* Transport Overlay */}
+                        <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-[#0a0f18] to-transparent flex items-center justify-between pointer-events-none">
+                            <div className="flex items-center gap-4 pointer-events-auto">
+                                <button onClick={() => player?.playVideo()}><Play className="text-emerald-500 hover:text-emerald-400" size={20} /></button>
+                                <button onClick={() => player?.pauseVideo()}><Pause className="text-emerald-500 hover:text-emerald-400" size={20} /></button>
+                                <button onClick={stopAll}><Square className="text-rose-500 hover:text-rose-400" size={20} /></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Lyrics Surface */}
+                    <div className="flex-1 relative">
+                        <textarea
+                            className="w-full h-full bg-transparent p-6 text-sm font-mono text-slate-400 resize-none outline-none"
+                            placeholder="// PASTE_LYRICS_HERE..."
+                            spellCheck={false}
+                            value={lyricsText}
+                            onChange={handleLyricsChange}
+                        />
+                        {isStale && (
+                            <div className="absolute top-2 right-2 px-2 py-1 bg-amber-900/80 border border-amber-500/50 rounded text-[9px] text-amber-300 flex items-center gap-1">
+                                <AlertTriangle size={10} /> STALE - Re-align required
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* [COL 3] FABRICATION: JOBS */}
+                <div className="flex flex-col bg-[#05080c]">
+                    <div className="h-12 border-b border-slate-800 flex items-center px-4 bg-slate-900/50 justify-between">
+                        <span className="text-[10px] font-bold tracking-widest text-emerald-500 flex items-center gap-2">
+                            <Cpu size={14} /> FAB_PROCESSOR
+                        </span>
+                        <Activity size={12} className={archiveJob || splitJob ? "animate-pulse text-emerald-500" : "text-slate-700"} />
+                    </div>
+
+                    <div className="p-4 space-y-8 overflow-y-auto">
+                        {/* SECTION A: ACQUISITION */}
+                        <div className={`space-y-3 transition-opacity ${!selectedSong ? 'opacity-50 pointer-events-none' : ''}`}>
+                            <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 uppercase">
+                                <span>1. ACQUISITION</span>
+                                {archiveJob && <span className="text-emerald-400">{archiveJob.state}</span>}
+                            </div>
+
+                            {/* Engine Selector */}
+                            <select value={enginePref} onChange={e => setEnginePref(e.target.value)} className="w-full bg-[#162032] text-xs text-slate-400 p-2 rounded border border-slate-700 outline-none mb-2">
+                                <option value="auto">Auto (Resilient - Recommended)</option>
+                                <option value="yt-dlp">YouTube (yt-dlp)</option>
+                                <option value="ytdl-core">YouTube (Legacy)</option>
+                                <option value="mock">Resilience Test (Mock)</option>
+                            </select>
+
+                            {!localAsset ? (
+                                <button onClick={startArchive} disabled={!selectedSong || archiveJob} className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded flex items-center justify-center gap-2 border border-slate-700">
+                                    {archiveJob ? <RefreshCw className="animate-spin" size={14} /> : <Zap size={14} />}
+                                    {archiveJob ? 'STRESS_TESTING...' : (enginePref === 'mock' ? 'MOCK_INGEST_SEQ' : 'START INGESTION')}
+                                </button>
+                            ) : (
+                                <div className="p-3 bg-emerald-900/20 border border-emerald-500/30 rounded flex items-center gap-3">
+                                    <CheckCircle2 size={16} className="text-emerald-500" />
+                                    <div className="text-[10px] text-emerald-300">
+                                        <div className="font-bold">ASSET_SECURED</div>
+                                        <div className="opacity-70 truncate max-w-[150px]">{localAsset?.files?.[0]?.filename}</div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {archiveJob && !localAsset && (
+                                <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                                    <div className="h-full bg-emerald-500 transition-all duration-300" style={{ width: `${(archiveJob.progress || 0) * 100}%` }} />
+                                </div>
+                            )}
+                        </div>
+
+                        {/* SECTION B: SPLITTER */}
+                        <div className={`space-y-3 transition-opacity ${!localAsset ? 'opacity-30 pointer-events-none' : ''}`}>
+                            <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 uppercase">
+                                <span>2. SPLITTING</span>
+                                {splitJob && <span className="text-cyan-400">{splitJob.state}</span>}
+                            </div>
+
+                            <div className="flex gap-2">
+                                <button onClick={() => setStems(2)} className={`flex-1 py-1 text-[10px] border rounded ${stems === 2 ? 'bg-cyan-900/30 text-cyan-400 border-cyan-500/50' : 'border-slate-800 text-slate-600'}`}>2-STEM</button>
+                                <button onClick={() => setStems(4)} className={`flex-1 py-1 text-[10px] border rounded ${stems === 4 ? 'bg-cyan-900/30 text-cyan-400 border-cyan-500/50' : 'border-slate-800 text-slate-600'}`}>4-STEM</button>
+                            </div>
+
+                            {/* Model Selector */}
+                            <select value={modelId} onChange={e => setModelId(e.target.value)} className="w-full bg-[#162032] text-xs text-slate-400 p-2 rounded border border-slate-700 outline-none mt-2 mb-2">
+                                <option value="v3-sim">Spec-Compatible Simulation</option>
+                                <option value="htdemucs">Hybrid Transformer (Real)</option>
+                                <option value="mdx-extra">MDX-Net Extra (Real)</option>
+                            </select>
+
+                            {!splitResult ? (
+                                <button onClick={startSplit} disabled={!localAsset || splitJob} className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded flex items-center justify-center gap-2 border border-slate-700">
+                                    {splitJob ? <RefreshCw className="animate-spin" size={14} /> : <Zap size={14} />}
+                                    {splitJob ? 'PROCESSING...' : 'START SPLIT JOB'}
+                                </button>
+                            ) : (
+                                <div className="p-3 bg-cyan-900/20 border border-cyan-500/30 rounded flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <CheckCircle2 size={16} className="text-cyan-500" />
+                                        <div className="text-[10px] text-cyan-300">
+                                            <div className="font-bold">STEMS_READY</div>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => { setSplitResult(null); setSplitJob(null); startSplit(); }}
+                                        className="px-2 py-1 bg-cyan-800/50 hover:bg-cyan-700/50 text-cyan-300 text-[9px] font-bold rounded border border-cyan-500/30 flex items-center gap-1"
+                                    >
+                                        <RefreshCw size={10} /> RE-SPLIT
+                                    </button>
+                                </div>
+                            )}
+
+                            {splitJob && !splitResult && (
+                                <div className="space-y-2">
+                                    <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                                        <div className="h-full bg-cyan-500 transition-all duration-300" style={{ width: `${(splitJob.progress || 0) * 100}%` }} />
+                                    </div>
+                                    <div className="text-[9px] font-mono text-cyan-500/70 h-10 overflow-hidden">
+                                        {splitJob.logs?.slice(-2).map((l, i) => <div key={i}>{l}</div>)}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* SECTION C: ALIGNMENT (AudioShake) */}
+                        <div className={`space-y-3 transition-opacity ${!splitResult?.vocalDownloadUrl ? 'opacity-30 pointer-events-none' : ''}`}>
+                            <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 uppercase">
+                                <span>3. ALIGNMENT</span>
+                                <div className="flex items-center gap-2">
+                                    {alignJob && <span className="text-violet-400">{alignJob.state}</span>}
+                                    {isStale && <span className="text-amber-400">STALE</span>}
+                                </div>
+                            </div>
+
+                            {!alignResult ? (
+                                <button
+                                    onClick={startAlignment}
+                                    disabled={!splitResult?.vocalDownloadUrl || (alignJob && alignJob.state !== 'done' && alignJob.state !== 'error')}
+                                    className="w-full py-3 bg-violet-900/30 hover:bg-violet-800/40 text-violet-300 text-xs font-bold rounded flex items-center justify-center gap-2 border border-violet-500/30 disabled:opacity-50"
+                                >
+                                    {alignJob && alignJob.state !== 'done' && alignJob.state !== 'error' ? (
+                                        <><RefreshCw className="animate-spin" size={14} /> ALIGNING...</>
+                                    ) : (
+                                        <><Zap size={14} /> ALIGN WITH AUDIOSHAKE</>
+                                    )}
+                                </button>
+                            ) : (
+                                <div className="p-3 bg-violet-900/20 border border-violet-500/30 rounded flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <CheckCircle2 size={16} className="text-violet-500" />
+                                        <div className="text-[10px] text-violet-300">
+                                            <div className="font-bold">TIMINGS_READY</div>
+                                            <div className="opacity-70">{alignResult?.tokens?.length || 0} tokens aligned</div>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={startRealignment}
+                                        disabled={alignJob && alignJob.state !== 'done' && alignJob.state !== 'error'}
+                                        className="px-2 py-1 bg-violet-800/50 hover:bg-violet-700/50 text-violet-300 text-[9px] font-bold rounded border border-violet-500/30 flex items-center gap-1 disabled:opacity-50"
+                                    >
+                                        <RefreshCw size={10} /> RE-ALIGN
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Progress Bar */}
+                            {alignJob && alignJob.state !== 'done' && alignJob.state !== 'error' && (
+                                <div className="space-y-2">
+                                    <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                                        <div className="h-full bg-violet-500 transition-all duration-300" style={{ width: `${(alignJob.progress || 0) * 100}%` }} />
+                                    </div>
+                                    <div className="text-[9px] font-mono text-violet-500/70">
+                                        {alignJob.logs?.slice(-1).map((l, i) => <div key={i}>{l}</div>)}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* JSON Preview + Download */}
+                            {alignResult && (
+                                <div className="space-y-2">
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => setShowJsonPreview(!showJsonPreview)}
+                                            className="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 text-[10px] rounded flex items-center justify-center gap-1 border border-slate-700"
+                                        >
+                                            {showJsonPreview ? <EyeOff size={12} /> : <Eye size={12} />}
+                                            {showJsonPreview ? 'HIDE' : 'PREVIEW'}
+                                        </button>
+                                        <button
+                                            onClick={downloadJson}
+                                            className="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 text-[10px] rounded flex items-center justify-center gap-1 border border-slate-700"
+                                        >
+                                            <FileJson size={12} /> DOWNLOAD
+                                        </button>
+                                    </div>
+                                    {showJsonPreview && (
+                                        <pre className="text-[8px] font-mono text-violet-300/70 bg-black/30 p-2 rounded max-h-32 overflow-auto border border-slate-800">
+                                            {JSON.stringify(alignResult, null, 2)}
+                                        </pre>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* SECTION D: EXPORT */}
+                        <div className={`space-y-3 transition-opacity ${!splitResult ? 'opacity-30 pointer-events-none' : ''}`}>
+                            <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 uppercase">
+                                <span>4. EXPORT ARTIFACTS</span>
+                            </div>
+                            <div className="grid grid-cols-3 gap-2">
+                                <a href={`${API_URL}${splitResult?.vocalDownloadUrl}`} download className="p-3 bg-slate-800 border border-slate-700 rounded flex flex-col items-center gap-1 hover:border-emerald-500/50 hover:bg-slate-800/80 group">
+                                    <Download size={14} className="text-slate-500 group-hover:text-emerald-400" />
+                                    <span className="text-[9px] font-bold text-slate-400">VOCALS</span>
+                                </a>
+                                <a href={`${API_URL}${splitResult?.bandDownloadUrl}`} download className="p-3 bg-slate-800 border border-slate-700 rounded flex flex-col items-center gap-1 hover:border-emerald-500/50 hover:bg-slate-800/80 group">
+                                    <Download size={14} className="text-slate-500 group-hover:text-emerald-400" />
+                                    <span className="text-[9px] font-bold text-slate-400">BAND</span>
+                                </a>
+                                <button
+                                    onClick={downloadJson}
+                                    disabled={!alignResult}
+                                    className="p-3 bg-slate-800 border border-slate-700 rounded flex flex-col items-center gap-1 hover:border-violet-500/50 hover:bg-slate-800/80 group disabled:opacity-30"
+                                >
+                                    <FileJson size={14} className="text-slate-500 group-hover:text-violet-400" />
+                                    <span className="text-[9px] font-bold text-slate-400">JSON</span>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </>
+    );
+}

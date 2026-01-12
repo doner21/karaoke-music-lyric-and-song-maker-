@@ -1,0 +1,371 @@
+[AlignmentService] Initialized with AudioShake adapter
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  override existing env vars with { override: true }
+
+Splitter Hat OS v1.1 running on port 3001
+Signatures: 90117::EdgeLatencyHunter | 44201::ThroughputEngineer
+[SplitterService] Active Adapter: demucs (AI - HTDemucs/MDX)
+[API CALL] 'justin '
+[API CALL] 'justin b'
+[API CALL] 'justin bieber '
+[API CALL] 'justin bieb'
+[API CALL] 'pera'
+[API CALL] 'per'
+[API CALL] 'pea'
+[API CALL] 'pearl '
+[API CALL] 'pearl ja'
+[API CALL] 'pearl jam '
+[API CALL] 'pearl jam e'
+[API CALL] 'pearl jam eve'
+[API CALL] 'pearl jam even'
+[EngineManager] Download Strategy: yt-dlp
+[EngineManager] Attempting download with: yt-dlp
+[YtDlp] Command: python -m yt_dlp -x --audio-format mp3 --ffmpeg-location "C:\Users\donald clark\AppData\Roaming\Youka Desktop\youka\data\binaries\ffmpeg" --output "C:\Users\donald clark\.gemini\antigravity\scratch\karaoke-box\downloads\9bc90598-0238-485d-9cc7-a7fc027a3ca6\audio.%(ext)s" "https://www.youtube.com/watch?v=tkbgtVFlyCQ"
+[YtDlp Stderr] WARNING: [youtube] No supported JavaScript runtime could be found. Only deno is enabled by default; to use another runtime add  --js-runtimes RUNTIME[:PATH]  to your command/config. YouTube extraction without a JS runtime has been deprecated, and some formats may be missing. See  https://github.com/yt-dlp/yt-dlp/wiki/EJS  for details on installing one
+
+[YtDlp Stderr] WARNING: [youtube] tkbgtVFlyCQ: Some web_safari client https formats have been skipped as they are missing a url. YouTube is forcing SABR streaming for this client. See  https://github.com/yt-dlp/yt-dlp/issues/12482  for more details
+
+[YtDlp Stderr] WARNING: [youtube] tkbgtVFlyCQ: Some web client https formats have been skipped as they are missing a url. YouTube is forcing SABR streaming for this client. See  https://github.com/yt-dlp/yt-dlp/issues/12482  for more details
+
+[AssetRegistry] Registered asset for tkbgtVFlyCQ: asset_yt_tkbgtVFlyCQ_1767565677755
+[SplitterQueue] Starting Job 91b462b4-0e2d-4e5f-95b8-d4de5c410e48 (htdemucs)
+[Demucs] Cmd: "C:\Users\donald clark\.gemini\antigravity\scratch\karaoke-box\venv\Scripts\python.exe" -m demucs -n htdemucs "C:\Users\donald clark\.gemini\antigravity\scratch\karaoke-box\downloads\9bc90598-0238-485d-9cc7-a7fc027a3ca6\audio.mp3" -o "C:\Users\donald clark\.gemini\antigravity\scratch\karaoke-box\downloads\91b462b4-0e2d-4e5f-95b8-d4de5c410e48\separated" --mp3 --two-stems=vocals
+[Demucs Stderr]   0%|                                                                     | 0.0/298.34999999999997 [00:00<?, ?seconds/s]
+[Demucs Stderr]   2%|#1                                                          | 5.85/298.34999999999997 [00:05<04:20,  1.12seconds/s]
+[Demucs Stderr]   4%|##3                                                         | 11.7/298.34999999999997 [00:08<03:08,  1.52seconds/s]
+[Demucs Stderr]   6%|##7                                           | 17.549999999999997/298.34999999999997 [00:10<02:40,  1.75seconds/s]
+[Demucs Stderr]   8%|####7                                                       | 23.4/298.34999999999997 [00:13<02:25,  1.89seconds/s]
+[Demucs Stderr]  10%|#####7                                                     | 29.25/298.34999999999997 [00:16<02:15,  1.98seconds/s]
+[Demucs Stderr]  12%|#####4                                        | 35.099999999999994/298.34999999999997 [00:18<02:09,  2.04seconds/s]
+[Demucs Stderr]  14%|######3                                       | 40.949999999999996/298.34999999999997 [00:21<02:04,  2.07seconds/s]
+[Demucs Stderr]  16%|#########4                                                  | 46.8/298.34999999999997 [00:24<01:59,  2.10seconds/s]
+[Demucs Stderr]  18%|##########4                                                | 52.65/298.34999999999997 [00:27<01:56,  2.10seconds/s]
+[Demucs Stderr]  20%|###########7                                                | 58.5/298.34999999999997 [00:29<01:53,  2.12seconds/s]
+[Demucs Stderr]  22%|############7                                              | 64.35/298.34999999999997 [00:32<01:50,  2.12seconds/s]
+[Demucs Stderr]  24%|###########                                    | 70.19999999999999/298.34999999999997 [00:35<01:47,  2.13seconds/s]
+[Demucs Stderr]  25%|###############                                            | 76.05/298.34999999999997 [00:38<01:44,  2.12seconds/s]
+[Demucs Stderr]  27%|############9                                  | 81.89999999999999/298.34999999999997 [00:40<01:41,  2.13seconds/s]
+[Demucs Stderr]  29%|#################3                                         | 87.75/298.34999999999997 [00:43<01:38,  2.14seconds/s]
+[Demucs Stderr]  31%|##################8                                         | 93.6/298.34999999999997 [00:46<01:35,  2.14seconds/s]
+[Demucs Stderr]  33%|###############6                               | 99.44999999999999/298.34999999999997 [00:49<01:33,  2.13seconds/s]
+[Demucs Stderr]  35%|####################8                                      | 105.3/298.34999999999997 [00:52<01:33,  2.06seconds/s]
+[Demucs Stderr]  37%|#################1                            | 111.14999999999999/298.34999999999997 [00:54<01:30,  2.07seconds/s]
+[Demucs Stderr]  39%|#######################1                                   | 117.0/298.34999999999997 [00:57<01:26,  2.09seconds/s]
+[Demucs Stderr]  41%|#######################8                                  | 122.85/298.34999999999997 [01:00<01:23,  2.10seconds/s]
+[Demucs Stderr]  43%|#########################4                                 | 128.7/298.34999999999997 [01:03<01:20,  2.10seconds/s]
+[Demucs Stderr]  45%|####################7                         | 134.54999999999998/298.34999999999997 [01:05<01:17,  2.10seconds/s]
+[Demucs Stderr]  47%|#####################6                        | 140.39999999999998/298.34999999999997 [01:08<01:14,  2.11seconds/s]
+[Demucs Stderr]  49%|############################4                             | 146.25/298.34999999999997 [01:11<01:12,  2.11seconds/s]
+[Demucs Stderr]  51%|##############################                             | 152.1/298.34999999999997 [01:14<01:09,  2.11seconds/s]
+[Demucs Stderr]  53%|##############################7                           | 157.95/298.34999999999997 [01:17<01:06,  2.12seconds/s]
+[Demucs Stderr]  55%|#########################2                    | 163.79999999999998/298.34999999999997 [01:19<01:03,  2.13seconds/s]
+[Demucs Stderr]  57%|##########################1                   | 169.64999999999998/298.34999999999997 [01:22<01:00,  2.13seconds/s]
+[Demucs Stderr]  59%|##################################7                        | 175.5/298.34999999999997 [01:25<00:57,  2.14seconds/s]
+[Demucs Stderr]  61%|###################################2                      | 181.35/298.34999999999997 [01:27<00:54,  2.14seconds/s]
+[Demucs Stderr]  63%|#####################################                      | 187.2/298.34999999999997 [01:30<00:51,  2.14seconds/s]
+[Demucs Stderr]  65%|#############################7                | 193.04999999999998/298.34999999999997 [01:33<00:49,  2.14seconds/s]
+[Demucs Stderr]  67%|##############################6               | 198.89999999999998/298.34999999999997 [01:36<00:46,  2.14seconds/s]
+[Demucs Stderr]  69%|#######################################8                  | 204.75/298.34999999999997 [01:38<00:43,  2.13seconds/s]
+[Demucs Stderr]  71%|#########################################6                 | 210.6/298.34999999999997 [01:41<00:41,  2.14seconds/s]
+[Demucs Stderr]  73%|##########################################                | 216.45/298.34999999999997 [01:44<00:38,  2.14seconds/s]
+[Demucs Stderr]  75%|##################################2           | 222.29999999999998/298.34999999999997 [01:46<00:35,  2.16seconds/s]
+[Demucs Stderr]  76%|###################################1          | 228.14999999999998/298.34999999999997 [01:49<00:32,  2.13seconds/s]
+[Demucs Stderr]  78%|##############################################2            | 234.0/298.34999999999997 [01:52<00:30,  2.13seconds/s]
+[Demucs Stderr]  80%|##############################################6           | 239.85/298.34999999999997 [01:55<00:27,  2.10seconds/s]
+[Demucs Stderr]  82%|################################################5          | 245.7/298.34999999999997 [01:58<00:24,  2.12seconds/s]
+[Demucs Stderr]  84%|######################################7       | 251.54999999999998/298.34999999999997 [02:00<00:21,  2.13seconds/s]
+[Demucs Stderr]  86%|##################################################9        | 257.4/298.34999999999997 [02:03<00:19,  2.12seconds/s]
+[Demucs Stderr]  88%|###################################################1      | 263.25/298.34999999999997 [02:06<00:16,  2.10seconds/s]
+[Demucs Stderr]  90%|#########################################4    | 269.09999999999997/298.34999999999997 [02:09<00:13,  2.11seconds/s]
+[Demucs Stderr]  92%|#####################################################4    | 274.95/298.34999999999997 [02:11<00:10,  2.13seconds/s]
+[Demucs Stderr]  94%|###########################################2  | 280.79999999999995/298.34999999999997 [02:14<00:08,  2.14seconds/s]
+[Demucs Stderr]  96%|#######################################################7  | 286.65/298.34999999999997 [02:17<00:05,  2.15seconds/s]
+[Demucs Stderr]  98%|#########################################################8 | 292.5/298.34999999999997 [02:20<00:02,  2.13seconds/s]
+[Demucs Stderr] 100%|##############################################| 298.34999999999997/298.34999999999997 [02:23<00:00,  2.05seconds/s]
+[Demucs Stderr] 100%|##############################################| 298.34999999999997/298.34999999999997 [02:23<00:00,  2.08seconds/s]
+
+[Alignment] Submit request: { vocalStemId: '91b462b4-0e2d-4e5f-95b8-d4de5c410e48', lyricsText: '' }
+[Alignment] Split job lookup: 91b462b4-0e2d-4e5f-95b8-d4de5c410e48 done {
+  vocals: 'C:\\Users\\donald clark\\.gemini\\antigravity\\scratch\\karaoke-box\\downloads\\91b462b4-0e2d-4e5f-95b8-d4de5c410e48\\separated\\htdemucs\\audio\\vocals.mp3',
+  band: 'C:\\Users\\donald clark\\.gemini\\antigravity\\scratch\\karaoke-box\\downloads\\91b462b4-0e2d-4e5f-95b8-d4de5c410e48\\separated\\htdemucs\\audio\\no_vocals.mp3'
+}
+[Alignment] Resolved vocal path: C:\Users\donald clark\.gemini\antigravity\scratch\karaoke-box\downloads\91b462b4-0e2d-4e5f-95b8-d4de5c410e48\separated\htdemucs\audio\vocals.mp3
+[AudioShakeAdapter] Starting alignment for: C:\Users\donald clark\.gemini\antigravity\scratch\karaoke-box\downloads\91b462b4-0e2d-4e5f-95b8-d4de5c410e48\separated\htdemucs\audio\vocals.mp3
+[AudioShakeAdapter] API Key prefix: eyJhbGciOi...
+[AudioShakeAdapter] Asset uploaded: cmk0b3tv2080r01q0eva549kw
+[AudioShakeAdapter] Creating job with payload: {
+  "assetId": "cmk0b3tv2080r01q0eva549kw",
+  "callbackUrl": "https://webhook.site/dummy-callback",
+  "metadata": {
+    "format": "json",
+    "name": "transcription"
+  }
+}
+[AudioShakeAdapter] Job created: {
+  "id": "cmk0b43f907ye01oodmxmaeq2",
+  "status": "created",
+  "startedAt": "2026-01-04T22:32:03.669Z",
+  "clientId": "clten6pzh0idgoe90vh408kp3",
+  "licenseId": "clten6xe909no90oe30ou4th1",
+  "metadata": {
+    "format": "json",
+    "name": "transcription",
+    "schemaVersion": 1
+  },
+  "requestId": "cmk0b43f907ye01oodmxmaeq2",
+  "callbackUrl": "https://webhook.site/dummy-callback",
+  "job": {
+    "id": "cmk0b43f907ye01oodmxmaeq2",
+    "status": "created",
+    "startedAt": "2026-01-04T22:32:03.669Z",
+    "clientId": "clten6pzh0idgoe90vh408kp3",
+    "licenseId": "clten6xe909no90oe30ou4th1",
+    "metadata": {
+      "format": "json",
+      "name": "transcription",
+      "schemaVersion": 1
+    },
+    "requestId": "cmk0b43f907ye01oodmxmaeq2",
+    "callbackUrl": "https://webhook.site/dummy-callback"
+  }
+}
+[API CALL] 'pearl jam '
+[API CALL] 'blc'
+[API CALL] 'blck'
+[API CALL] 'bla'
+[API CALL] 'blac'
+[API CALL] 'black'
+[API CALL] 'blackhol'
+[API CALL] 'blackhole s'
+[API CALL] 'blackhole sun '
+[EngineManager] Download Strategy: yt-dlp
+[EngineManager] Attempting download with: yt-dlp
+[YtDlp] Command: python -m yt_dlp -x --audio-format mp3 --ffmpeg-location "C:\Users\donald clark\AppData\Roaming\Youka Desktop\youka\data\binaries\ffmpeg" --output "C:\Users\donald clark\.gemini\antigravity\scratch\karaoke-box\downloads\4f1456aa-e701-45e2-a080-eba427e97c4b\audio.%(ext)s" "https://www.youtube.com/watch?v=Y6Kz6aXsBSs"
+[YtDlp Stderr] WARNING: [youtube] No supported JavaScript runtime could be found. Only deno is enabled by default; to use another runtime add  --js-runtimes RUNTIME[:PATH]  to your command/config. YouTube extraction without a JS runtime has been deprecated, and some formats may be missing. See  https://github.com/yt-dlp/yt-dlp/wiki/EJS  for details on installing one
+
+[YtDlp Stderr] WARNING: [youtube] Y6Kz6aXsBSs: Some web_safari client https formats have been skipped as they are missing a url. YouTube is forcing SABR streaming for this client. See  https://github.com/yt-dlp/yt-dlp/issues/12482  for more details
+
+[YtDlp Stderr] WARNING: [youtube] Y6Kz6aXsBSs: Some web client https formats have been skipped as they are missing a url. YouTube is forcing SABR streaming for this client. See  https://github.com/yt-dlp/yt-dlp/issues/12482  for more details
+
+[AssetRegistry] Registered asset for Y6Kz6aXsBSs: asset_yt_Y6Kz6aXsBSs_1767566256964
+[SplitterQueue] Starting Job e3e7ae8d-abef-4039-a9e7-3ad9aeb88343 (htdemucs)
+[Demucs] Cmd: "C:\Users\donald clark\.gemini\antigravity\scratch\karaoke-box\venv\Scripts\python.exe" -m demucs -n htdemucs "C:\Users\donald clark\.gemini\antigravity\scratch\karaoke-box\downloads\4f1456aa-e701-45e2-a080-eba427e97c4b\audio.mp3" -o "C:\Users\donald clark\.gemini\antigravity\scratch\karaoke-box\downloads\e3e7ae8d-abef-4039-a9e7-3ad9aeb88343\separated" --mp3 --two-stems=vocals
+[Demucs Stderr]   0%|                                                                                 | 0.0/321.75 [00:00<?, ?seconds/s]
+[Demucs Stderr]   2%|#3                                                                      | 5.85/321.75 [00:04<04:03,  1.30seconds/s]
+[Demucs Stderr]   4%|##6                                                                     | 11.7/321.75 [00:07<03:09,  1.64seconds/s]
+[Demucs Stderr]   5%|###1                                                      | 17.549999999999997/321.75 [00:10<02:47,  1.82seconds/s]
+[Demucs Stderr]   7%|#####2                                                                  | 23.4/321.75 [00:13<02:36,  1.91seconds/s]
+[Demucs Stderr]   9%|######4                                                                | 29.25/321.75 [00:15<02:29,  1.96seconds/s]
+[Demucs Stderr]  11%|######3                                                   | 35.099999999999994/321.75 [00:18<02:28,  1.93seconds/s]
+[Demucs Stderr]  13%|#######3                                                  | 40.949999999999996/321.75 [00:22<02:26,  1.92seconds/s]
+[Demucs Stderr]  15%|##########4                                                             | 46.8/321.75 [00:24<02:19,  1.97seconds/s]
+[Demucs Stderr]  16%|###########6                                                           | 52.65/321.75 [00:27<02:14,  2.01seconds/s]
+[Demucs Stderr]  18%|#############                                                           | 58.5/321.75 [00:30<02:09,  2.03seconds/s]
+[Demucs Stderr]  20%|##############2                                                        | 64.35/321.75 [00:33<02:06,  2.04seconds/s]
+[Demucs Stderr]  22%|############8                                              | 70.19999999999999/321.75 [00:36<02:02,  2.06seconds/s]
+[Demucs Stderr]  24%|################7                                                      | 76.05/321.75 [00:38<01:58,  2.07seconds/s]
+[Demucs Stderr]  25%|###############                                            | 81.89999999999999/321.75 [00:41<01:55,  2.07seconds/s]
+[Demucs Stderr]  27%|###################3                                                   | 87.75/321.75 [00:44<01:52,  2.08seconds/s]
+[Demucs Stderr]  29%|####################9                                                   | 93.6/321.75 [00:47<01:51,  2.06seconds/s]
+[Demucs Stderr]  31%|##################2                                        | 99.44999999999999/321.75 [00:50<01:47,  2.07seconds/s]
+[Demucs Stderr]  33%|#######################2                                               | 105.3/321.75 [00:53<01:44,  2.07seconds/s]
+[Demucs Stderr]  35%|####################                                      | 111.14999999999999/321.75 [00:55<01:41,  2.07seconds/s]
+[Demucs Stderr]  36%|#########################8                                             | 117.0/321.75 [00:58<01:38,  2.08seconds/s]
+[Demucs Stderr]  38%|##########################7                                           | 122.85/321.75 [01:01<01:36,  2.07seconds/s]
+[Demucs Stderr]  40%|############################4                                          | 128.7/321.75 [01:04<01:33,  2.07seconds/s]
+[Demucs Stderr]  42%|########################2                                 | 134.54999999999998/321.75 [01:07<01:29,  2.08seconds/s]
+[Demucs Stderr]  44%|#########################3                                | 140.39999999999998/321.75 [01:09<01:27,  2.08seconds/s]
+[Demucs Stderr]  45%|###############################8                                      | 146.25/321.75 [01:13<01:28,  1.99seconds/s]
+[Demucs Stderr]  47%|#################################5                                     | 152.1/321.75 [01:16<01:24,  2.00seconds/s]
+[Demucs Stderr]  49%|##################################3                                   | 157.95/321.75 [01:19<01:22,  1.97seconds/s]
+[Demucs Stderr]  51%|#############################5                            | 163.79999999999998/321.75 [01:21<01:18,  2.00seconds/s]
+[Demucs Stderr]  53%|##############################5                           | 169.64999999999998/321.75 [01:24<01:14,  2.05seconds/s]
+[Demucs Stderr]  55%|######################################7                                | 175.5/321.75 [01:27<01:11,  2.04seconds/s]
+[Demucs Stderr]  56%|#######################################4                              | 181.35/321.75 [01:30<01:08,  2.06seconds/s]
+[Demucs Stderr]  58%|#########################################3                             | 187.2/321.75 [01:33<01:04,  2.08seconds/s]
+[Demucs Stderr]  60%|##################################8                       | 193.04999999999998/321.75 [01:35<01:01,  2.09seconds/s]
+[Demucs Stderr]  62%|###################################8                      | 198.89999999999998/321.75 [01:38<00:58,  2.12seconds/s]
+[Demucs Stderr]  64%|############################################5                         | 204.75/321.75 [01:41<00:55,  2.13seconds/s]
+[Demucs Stderr]  65%|##############################################4                        | 210.6/321.75 [01:44<00:53,  2.09seconds/s]
+[Demucs Stderr]  67%|###############################################                       | 216.45/321.75 [01:46<00:50,  2.09seconds/s]
+[Demucs Stderr]  69%|########################################                  | 222.29999999999998/321.75 [01:49<00:47,  2.08seconds/s]
+[Demucs Stderr]  71%|#########################################1                | 228.14999999999998/321.75 [01:52<00:45,  2.07seconds/s]
+[Demucs Stderr]  73%|###################################################6                   | 234.0/321.75 [01:55<00:42,  2.08seconds/s]
+[Demucs Stderr]  75%|####################################################1                 | 239.85/321.75 [01:58<00:39,  2.08seconds/s]
+[Demucs Stderr]  76%|######################################################2                | 245.7/321.75 [02:00<00:36,  2.09seconds/s]
+[Demucs Stderr]  78%|#############################################3            | 251.54999999999998/321.75 [02:03<00:33,  2.11seconds/s]
+[Demucs Stderr]  80%|########################################################8              | 257.4/321.75 [02:06<00:30,  2.11seconds/s]
+[Demucs Stderr]  82%|#########################################################2            | 263.25/321.75 [02:09<00:27,  2.11seconds/s]
+[Demucs Stderr]  84%|################################################5         | 269.09999999999997/321.75 [02:12<00:24,  2.11seconds/s]
+[Demucs Stderr]  85%|###########################################################8          | 274.95/321.75 [02:14<00:22,  2.09seconds/s]
+[Demucs Stderr]  87%|##################################################6       | 280.79999999999995/321.75 [02:18<00:20,  2.02seconds/s]
+[Demucs Stderr]  89%|##############################################################3       | 286.65/321.75 [02:20<00:17,  2.02seconds/s]
+[Demucs Stderr]  91%|################################################################5      | 292.5/321.75 [02:23<00:14,  2.04seconds/s]
+[Demucs Stderr]  93%|#####################################################7    | 298.34999999999997/321.75 [02:26<00:11,  2.07seconds/s]
+[Demucs Stderr]  95%|###################################################################1   | 304.2/321.75 [02:29<00:08,  2.07seconds/s]
+[Demucs Stderr]  96%|#######################################################8  | 310.04999999999995/321.75 [02:32<00:05,  2.07seconds/s]
+[Demucs Stderr]  98%|#####################################################################7 | 315.9/321.75 [02:34<00:02,  2.07seconds/s]
+[Demucs Stderr] 100%|######################################################################| 321.75/321.75 [02:37<00:00,  2.06seconds/s]
+[Demucs Stderr] 100%|######################################################################| 321.75/321.75 [02:37<00:00,  2.04seconds/s]
+
+[Alignment] Submit request: {
+  vocalStemId: 'e3e7ae8d-abef-4039-a9e7-3ad9aeb88343',
+  lyricsText: 'In my eyes\nIndisposed\nIn disguises no one knows\nHi'
+}
+[Alignment] Split job lookup: e3e7ae8d-abef-4039-a9e7-3ad9aeb88343 done {
+  vocals: 'C:\\Users\\donald clark\\.gemini\\antigravity\\scratch\\karaoke-box\\downloads\\e3e7ae8d-abef-4039-a9e7-3ad9aeb88343\\separated\\htdemucs\\audio\\vocals.mp3',
+  band: 'C:\\Users\\donald clark\\.gemini\\antigravity\\scratch\\karaoke-box\\downloads\\e3e7ae8d-abef-4039-a9e7-3ad9aeb88343\\separated\\htdemucs\\audio\\no_vocals.mp3'
+}
+[Alignment] Resolved vocal path: C:\Users\donald clark\.gemini\antigravity\scratch\karaoke-box\downloads\e3e7ae8d-abef-4039-a9e7-3ad9aeb88343\separated\htdemucs\audio\vocals.mp3
+[AudioShakeAdapter] Starting alignment for: C:\Users\donald clark\.gemini\antigravity\scratch\karaoke-box\downloads\e3e7ae8d-abef-4039-a9e7-3ad9aeb88343\separated\htdemucs\audio\vocals.mp3
+[AudioShakeAdapter] API Key prefix: eyJhbGciOi...
+[AudioShakeAdapter] Asset uploaded: cmk0bfd3k081h01pqhbo5drt1
+[AudioShakeAdapter] Creating job with payload: {
+  "assetId": "cmk0bfd3k081h01pqhbo5drt1",
+  "callbackUrl": "https://webhook.site/dummy-callback",
+  "metadata": {
+    "format": "json",
+    "name": "alignment"
+  },
+  "text": "In my eyes\nIndisposed\nIn disguises no one knows\nHides the face\nLies the snake\nAnd the sun in my disgrace\nBoiling heat\nSummer stench\nNeath the black, the sky looks dead\nCall my name\nThrough the cream\nAnd I'll hear you scream again\nBlack hole sun\nWon't you come\nAnd wash away the rain?\nBlack hole sun\nWon't you come\nWon't you come\nWon't you come\nStuttering\nCold and damp\nSteal the warm wind, tired friend\nTimes are gone\nFor honest men\nSometimes, far too long for snakes\nIn my shoes\nWalking sleep\nIn my youth, I pray to keep\nHeaven send\nHell away\nNo one sings like you anymore\nBlack hole sun\nWon't you come\nAnd wash away the rain?\nBlack hole sun\nWon't you come\nWon't you come\nBlack hole sun\nWon't you come\nAnd wash away the rain?\nBlack hole sun\nWon't you come\nWon't you come (Black hole sun, black hole sun)\nWon't you come (Black hole sun, black hole sun)\nWon't you come (Black hole sun, black hole sun)\nWon't you come? (Black hole sun, black hole sun)\nHang my head\nDrown my fear\nTill you all just disappear\nBlack hole sun\nWon't you come\nAnd wash away the rain?\nBlack hole sun\nWon't you come\nWon't you come\nBlack hole sun\nWon't you come\nAnd wash away the rain?\nBlack hole sun\nWon't you come\nWon't you come (Black hole sun, black hole sun)\nWon't you come (Black hole sun, black hole sun)\nWon't you come (Black hole sun, black hole sun)\nWon't you come (Black hole sun, black hole sun)\nWon't you come (Black hole sun, black hole sun)\nWon't you come (Black hole sun, black hole sun)\nWon't you come\nWon't you come"
+}
+[AudioShakeAdapter] Job created: {
+  "id": "cmk0bfnz907yg01ooash53yum",
+  "status": "created",
+  "startedAt": "2026-01-04T22:41:03.525Z",
+  "clientId": "clten6pzh0idgoe90vh408kp3",
+  "licenseId": "clten6xe909no90oe30ou4th1",
+  "metadata": {
+    "format": "json",
+    "name": "alignment",
+    "schemaVersion": 1
+  },
+  "requestId": "cmk0bfnz907yg01ooash53yum",
+  "callbackUrl": "https://webhook.site/dummy-callback",
+  "job": {
+    "id": "cmk0bfnz907yg01ooash53yum",
+    "status": "created",
+    "startedAt": "2026-01-04T22:41:03.525Z",
+    "clientId": "clten6pzh0idgoe90vh408kp3",
+    "licenseId": "clten6xe909no90oe30ou4th1",
+    "metadata": {
+      "format": "json",
+      "name": "alignment",
+      "schemaVersion": 1
+    },
+    "requestId": "cmk0bfnz907yg01ooash53yum",
+    "callbackUrl": "https://webhook.site/dummy-callback"
+  }
+}
+[Canonicalizer] Low similarity (68.0%), using merged source
+[API CALL] 'jus'
+[API CALL] 'porti'
+[API CALL] 'portis'
+[API CALL] 'portish'
+[API CALL] 'portishead the r'
+[API CALL] 'portishead the rip '
+[EngineManager] Download Strategy: yt-dlp
+[EngineManager] Attempting download with: yt-dlp
+[YtDlp] Command: python -m yt_dlp -x --audio-format mp3 --ffmpeg-location "C:\Users\donald clark\AppData\Roaming\Youka Desktop\youka\data\binaries\ffmpeg" --output "C:\Users\donald clark\.gemini\antigravity\scratch\karaoke-box\downloads\2a847880-d412-48b2-bcbf-e8e562f1ce9c\audio.%(ext)s" "https://www.youtube.com/watch?v=kBOaLjtR4mw"
+[YtDlp Stderr] WARNING: [youtube] No supported JavaScript runtime could be found. Only deno is enabled by default; to use another runtime add  --js-runtimes RUNTIME[:PATH]  to your command/config. YouTube extraction without a JS runtime has been deprecated, and some formats may be missing. See  https://github.com/yt-dlp/yt-dlp/wiki/EJS  for details on installing one
+
+[YtDlp Stderr] WARNING: [youtube] kBOaLjtR4mw: Some web_safari client https formats have been skipped as they are missing a url. YouTube is forcing SABR streaming for this client. See  https://github.com/yt-dlp/yt-dlp/issues/12482  for more details
+
+[YtDlp Stderr] WARNING: [youtube] kBOaLjtR4mw: Some web client https formats have been skipped as they are missing a url. YouTube is forcing SABR streaming for this client. See  https://github.com/yt-dlp/yt-dlp/issues/12482  for more details
+
+[AssetRegistry] Registered asset for kBOaLjtR4mw: asset_yt_kBOaLjtR4mw_1767570184719
+[SplitterQueue] Starting Job 6c171c0f-8b9d-4631-b04a-66ed133bba1f (htdemucs)
+[Demucs] Cmd: "C:\Users\donald clark\.gemini\antigravity\scratch\karaoke-box\venv\Scripts\python.exe" -m demucs -n htdemucs "C:\Users\donald clark\.gemini\antigravity\scratch\karaoke-box\downloads\2a847880-d412-48b2-bcbf-e8e562f1ce9c\audio.mp3" -o "C:\Users\donald clark\.gemini\antigravity\scratch\karaoke-box\downloads\6c171c0f-8b9d-4631-b04a-66ed133bba1f\separated" --mp3 --two-stems=vocals
+[Demucs Stderr]   0%|                                                                                  | 0.0/245.7 [00:00<?, ?seconds/s]
+[Demucs Stderr]   2%|#7                                                                       | 5.85/245.7 [00:05<03:29,  1.15seconds/s]
+[Demucs Stderr]   5%|###4                                                                     | 11.7/245.7 [00:07<02:25,  1.61seconds/s]
+[Demucs Stderr]   7%|####2                                                      | 17.549999999999997/245.7 [00:10<02:04,  1.84seconds/s]
+[Demucs Stderr]  10%|######9                                                                  | 23.4/245.7 [00:12<01:51,  2.00seconds/s]
+[Demucs Stderr]  12%|########5                                                               | 29.25/245.7 [00:15<01:42,  2.12seconds/s]
+[Demucs Stderr]  14%|########4                                                  | 35.099999999999994/245.7 [00:17<01:36,  2.19seconds/s]
+[Demucs Stderr]  17%|#########8                                                 | 40.949999999999996/245.7 [00:20<01:31,  2.23seconds/s]
+[Demucs Stderr]  19%|#############9                                                           | 46.8/245.7 [00:23<01:30,  2.19seconds/s]
+[Demucs Stderr]  21%|###############4                                                        | 52.65/245.7 [00:26<01:33,  2.06seconds/s]
+[Demucs Stderr]  24%|#################3                                                       | 58.5/245.7 [00:29<01:36,  1.95seconds/s]
+[Demucs Stderr]  26%|##################8                                                     | 64.35/245.7 [00:32<01:33,  1.95seconds/s]
+[Demucs Stderr]  29%|#################1                                          | 70.19999999999999/245.7 [00:35<01:28,  1.99seconds/s]
+[Demucs Stderr]  31%|######################2                                                 | 76.05/245.7 [00:38<01:25,  1.97seconds/s]
+[Demucs Stderr]  33%|####################                                        | 81.89999999999999/245.7 [00:41<01:24,  1.94seconds/s]
+[Demucs Stderr]  36%|#########################7                                              | 87.75/245.7 [00:44<01:19,  1.99seconds/s]
+[Demucs Stderr]  38%|###########################8                                             | 93.6/245.7 [00:47<01:15,  2.03seconds/s]
+[Demucs Stderr]  40%|########################2                                   | 99.44999999999999/245.7 [00:49<01:09,  2.10seconds/s]
+[Demucs Stderr]  43%|##############################8                                         | 105.3/245.7 [00:52<01:06,  2.12seconds/s]
+[Demucs Stderr]  45%|##########################6                                | 111.14999999999999/245.7 [00:55<01:03,  2.10seconds/s]
+[Demucs Stderr]  48%|##################################2                                     | 117.0/245.7 [00:58<01:01,  2.09seconds/s]
+[Demucs Stderr]  50%|###################################5                                   | 122.85/245.7 [01:00<00:57,  2.14seconds/s]
+[Demucs Stderr]  52%|#####################################7                                  | 128.7/245.7 [01:03<00:54,  2.15seconds/s]
+[Demucs Stderr]  55%|################################3                          | 134.54999999999998/245.7 [01:06<00:51,  2.15seconds/s]
+[Demucs Stderr]  57%|#################################7                         | 140.39999999999998/245.7 [01:08<00:48,  2.16seconds/s]
+[Demucs Stderr]  60%|##########################################2                            | 146.25/245.7 [01:11<00:45,  2.18seconds/s]
+[Demucs Stderr]  62%|############################################5                           | 152.1/245.7 [01:13<00:42,  2.22seconds/s]
+[Demucs Stderr]  64%|#############################################6                         | 157.95/245.7 [01:16<00:39,  2.21seconds/s]
+[Demucs Stderr]  67%|#######################################3                   | 163.79999999999998/245.7 [01:19<00:36,  2.24seconds/s]
+[Demucs Stderr]  69%|########################################7                  | 169.64999999999998/245.7 [01:21<00:33,  2.25seconds/s]
+[Demucs Stderr]  71%|###################################################4                    | 175.5/245.7 [01:24<00:30,  2.27seconds/s]
+[Demucs Stderr]  74%|####################################################4                  | 181.35/245.7 [01:26<00:28,  2.29seconds/s]
+[Demucs Stderr]  76%|######################################################8                 | 187.2/245.7 [01:29<00:25,  2.31seconds/s]
+[Demucs Stderr]  79%|##############################################3            | 193.04999999999998/245.7 [01:31<00:22,  2.33seconds/s]
+[Demucs Stderr]  81%|###############################################7           | 198.89999999999998/245.7 [01:34<00:20,  2.33seconds/s]
+[Demucs Stderr]  83%|###########################################################1           | 204.75/245.7 [01:36<00:17,  2.34seconds/s]
+[Demucs Stderr]  86%|#############################################################7          | 210.6/245.7 [01:39<00:15,  2.25seconds/s]
+[Demucs Stderr]  88%|##############################################################5        | 216.45/245.7 [01:42<00:13,  2.16seconds/s]
+[Demucs Stderr]  90%|#####################################################3     | 222.29999999999998/245.7 [01:45<00:10,  2.13seconds/s]
+[Demucs Stderr]  93%|######################################################7    | 228.14999999999998/245.7 [01:47<00:08,  2.16seconds/s]
+[Demucs Stderr]  95%|####################################################################5   | 234.0/245.7 [01:50<00:05,  2.20seconds/s]
+[Demucs Stderr]  98%|#####################################################################3 | 239.85/245.7 [01:53<00:02,  2.20seconds/s]
+[Demucs Stderr] 100%|########################################################################| 245.7/245.7 [01:55<00:00,  2.22seconds/s]
+[Demucs Stderr] 100%|########################################################################| 245.7/245.7 [01:55<00:00,  2.12seconds/s]
+
+[Alignment] Submit request: {
+  vocalStemId: '6c171c0f-8b9d-4631-b04a-66ed133bba1f',
+  lyricsText: 'As she walks in the room\nCentered and tall\nHesitat'
+}
+[Alignment] Split job lookup: 6c171c0f-8b9d-4631-b04a-66ed133bba1f done {
+  vocals: 'C:\\Users\\donald clark\\.gemini\\antigravity\\scratch\\karaoke-box\\downloads\\6c171c0f-8b9d-4631-b04a-66ed133bba1f\\separated\\htdemucs\\audio\\vocals.mp3',
+  band: 'C:\\Users\\donald clark\\.gemini\\antigravity\\scratch\\karaoke-box\\downloads\\6c171c0f-8b9d-4631-b04a-66ed133bba1f\\separated\\htdemucs\\audio\\no_vocals.mp3'
+}
+[Alignment] Resolved vocal path: C:\Users\donald clark\.gemini\antigravity\scratch\karaoke-box\downloads\6c171c0f-8b9d-4631-b04a-66ed133bba1f\separated\htdemucs\audio\vocals.mp3
+[AudioShakeAdapter] Starting alignment for: C:\Users\donald clark\.gemini\antigravity\scratch\karaoke-box\downloads\6c171c0f-8b9d-4631-b04a-66ed133bba1f\separated\htdemucs\audio\vocals.mp3
+[AudioShakeAdapter] API Key prefix: eyJhbGciOi...
+[AudioShakeAdapter] Asset uploaded: cmk0drpvf082901pqhugzg4k2
+[AudioShakeAdapter] Creating job with payload: {
+  "assetId": "cmk0drpvf082901pqhugzg4k2",
+  "callbackUrl": "https://webhook.site/dummy-callback",
+  "metadata": {
+    "format": "json",
+    "name": "alignment"
+  },
+  "text": "As she walks in the room\nCentered and tall\nHesitating once more\nAnd as I take on myself\nAnd the bitterness I felt\nI realize that love flows\n\nWild, white horses\nThey will take me away\nAnd the tenderness I feel\nWill send the dark underneath\nWill I follow?\n\nThrough the glory of life\nI will scatter on the floor\nDisappointed and sore\nAnd in my thoughts I have bled\nFor the riddles I've been fed\nAnother lie moves over\n\nWild, white horses\nThey will take me away\nAnd the tenderness I feel\nWill send the dark underneath\nWill I follow?\n\nWild, white horses\nThey will take me away\nAnd the tenderness I feel\nWill send the dark underneath\nWill I follow?"
+}
+[AudioShakeAdapter] Job created: {
+  "id": "cmk0drxv907zg01oogrwsbzn7",
+  "status": "created",
+  "startedAt": "2026-01-04T23:46:35.445Z",
+  "clientId": "clten6pzh0idgoe90vh408kp3",
+  "licenseId": "clten6xe909no90oe30ou4th1",
+  "metadata": {
+    "format": "json",
+    "name": "alignment",
+    "schemaVersion": 1
+  },
+  "requestId": "cmk0drxv907zg01oogrwsbzn7",
+  "callbackUrl": "https://webhook.site/dummy-callback",
+  "job": {
+    "id": "cmk0drxv907zg01oogrwsbzn7",
+    "status": "created",
+    "startedAt": "2026-01-04T23:46:35.445Z",
+    "clientId": "clten6pzh0idgoe90vh408kp3",
+    "licenseId": "clten6xe909no90oe30ou4th1",
+    "metadata": {
+      "format": "json",
+      "name": "alignment",
+      "schemaVersion": 1
+    },
+    "requestId": "cmk0drxv907zg01oogrwsbzn7",
+    "callbackUrl": "https://webhook.site/dummy-callback"
+  }
+}
