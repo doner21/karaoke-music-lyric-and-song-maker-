@@ -8,7 +8,7 @@
         "dev": "vite",
         "build": "vite build",
         "preview": "vite preview",
-        "electron:dev": "concurrently \"vite\" \"node server-proxy.js\" \"wait-on tcp:5173 && electron .\"",
+        "electron:dev": "concurrently \"vite\" \"node server-proxy.js\" \"wait-on tcp:5173 && cross-env NODE_ENV=development electron .\"",
         "electron:build": "vite build && electron-builder",
         "electron:pack": "vite build && electron-builder --dir"
     },
