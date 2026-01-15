@@ -235,8 +235,25 @@ export class JobManager {
         return { jobId, state: JOB_STATES.QUEUED, existing: false };
     }
 
-    updateProgress(jobId, progress) {
-        this.stmts.updateProgress.run(progress, Date.now(), jobId);
+    updateProgress(jobId, progress, message) {
+        if (message) {
+            // Fetch existing logs first (Expensive but necessary for simple SQLite append)
+            // Or ideally use a separate logs table. For now, we do a read-modify-write.
+            const job = this.stmts.getById.get(jobId);
+            let logs = [];
+            if (job && job.logs_json) {
+                try { logs = JSON.parse(job.logs_json); } catch (e) { }
+            }
+            logs.push({ timestamp: Date.now(), level: 'INFO', message });
+
+            // Limit logs to last 100 to prevent bloat
+            if (logs.length > 100) logs = logs.slice(-100);
+
+            this.db.prepare('UPDATE jobs SET progress = ?, updated_at = ?, logs_json = ? WHERE id = ?')
+                .run(progress, Date.now(), JSON.stringify(logs), jobId);
+        } else {
+            this.stmts.updateProgress.run(progress, Date.now(), jobId);
+        }
     }
 
     getJob(jobId) {

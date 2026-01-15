@@ -58,6 +58,7 @@ export default function IntegratedEcologicalOS() {
     // Config (v5 Resilience Mode)
     const [enginePref, setEnginePref] = useState('auto'); // Default to Resilient Auto
     const [modelId, setModelId] = useState('v3-sim'); // 'v3-sim' | 'htdemucs' | 'mdx-extra'
+    const [splitterDevice, setSplitterDevice] = useState('cpu'); // 'cpu' | 'gpu'
     const [stems, setStems] = useState(2);
 
     // --- EFFECTS ---
@@ -334,7 +335,9 @@ export default function IntegratedEcologicalOS() {
                     songId: selectedSong.id || undefined, // Pass ID if hydated
                     videoId: selectedSong.videoId, // Pass videoId as fallback
                     modelId: modelId,
-                    stems: stems
+                    stems: stems,
+                    device: splitterDevice, // Pass selected device
+                    force: true // Always force a new job when manually requested
                 })
             });
             const data = await res.json();
@@ -695,12 +698,34 @@ export default function IntegratedEcologicalOS() {
                                 <button onClick={() => setStems(4)} className={`flex-1 py-1 text-[10px] border rounded ${stems === 4 ? 'bg-cyan-900/30 text-cyan-400 border-cyan-500/50' : 'border-slate-800 text-slate-600'}`}>4-STEM</button>
                             </div>
 
-                            {/* Model Selector */}
-                            <select value={modelId} onChange={e => setModelId(e.target.value)} className="w-full bg-[#162032] text-xs text-slate-400 p-2 rounded border border-slate-700 outline-none mt-2 mb-2">
-                                <option value="v3-sim">Spec-Compatible Simulation</option>
-                                <option value="htdemucs">Hybrid Transformer (Real)</option>
-                                <option value="mdx-extra">MDX-Net Extra (Real)</option>
-                            </select>
+                            {/* Splitter Configuration Grid */}
+                            <div className="grid grid-cols-2 gap-2 mt-2 mb-2">
+                                {/* Model Selector */}
+                                <div>
+                                    <label className="block text-[9px] text-slate-500 mb-1 uppercase font-bold">Model</label>
+                                    <select value={modelId} onChange={e => setModelId(e.target.value)} className="w-full bg-[#162032] text-xs text-slate-400 p-2 rounded border border-slate-700 outline-none">
+                                        <option value="v3-sim">Spec-Sim</option>
+                                        <option value="htdemucs">Hybrid (Real)</option>
+                                        <option value="mdx-extra">MDX (Real)</option>
+                                    </select>
+                                </div>
+                                {/* Device Selector */}
+                                <div>
+                                    <label className="block text-[9px] text-slate-500 mb-1 uppercase font-bold">Device</label>
+                                    <select value={splitterDevice} onChange={e => setSplitterDevice(e.target.value)} className="w-full bg-[#162032] text-xs text-slate-400 p-2 rounded border border-slate-700 outline-none">
+                                        <option value="cpu">CPU (Baseline)</option>
+                                        <option value="gpu">GPU (Experim.)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {/* GPU Warning */}
+                            {splitterDevice === 'gpu' && (
+                                <div className="mb-2 px-2 py-1 bg-amber-900/30 border border-amber-600/30 rounded text-[9px] text-amber-500 flex items-center gap-2">
+                                    <AlertTriangle size={10} />
+                                    <span>Warning: GPU may affect lyric alignment timing.</span>
+                                </div>
+                            )}
 
                             {!splitResult ? (
                                 <button onClick={startSplit} disabled={!localAsset || splitJob} className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded flex items-center justify-center gap-2 border border-slate-700">

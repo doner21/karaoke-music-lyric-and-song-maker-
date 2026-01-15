@@ -39,6 +39,9 @@ export class SplitterQueue {
         const songId = job.song_id;
         const song = SongRepo.getById(songId);
 
+        // DEBUG LOG
+        JobMgr.updateProgress(job.id, 0, `[Debug] Queue Params: ${JSON.stringify(params)}`);
+
         console.log(`[Splitter] Processing job ${job.id} for Song ${songId}`);
 
         let inputPath = params.inputPath;
@@ -90,11 +93,12 @@ export class SplitterQueue {
             jobId: job.id,
             inputPath: inputPath, // Use potentially recovered path
             modelId: params.modelId,
-            stems: params.stems
+            stems: params.stems,
+            device: params.device || 'cpu' // Default to cpu
         };
 
         const onProgress = (p, msg) => {
-            JobMgr.updateProgress(job.id, p);
+            JobMgr.updateProgress(job.id, p, msg);
             if (msg) console.log(`[Splitter:${job.id}] ${msg}`);
         };
 

@@ -72,6 +72,7 @@ export function initDB() {
             result_json TEXT, -- Output result
             idempotency_key TEXT UNIQUE,
             inputs_hash TEXT,
+            logs_json TEXT,   -- Execution logs
             created_at INTEGER,
             updated_at INTEGER,
             completed_at INTEGER,

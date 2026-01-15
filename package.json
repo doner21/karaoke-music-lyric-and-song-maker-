@@ -9,6 +9,7 @@
         "build": "vite build",
         "preview": "vite preview",
         "electron:dev": "concurrently \"vite\" \"node server-proxy.js\" \"wait-on tcp:5173 && cross-env NODE_ENV=development electron .\"",
+        "clean-start": "powershell -ExecutionPolicy Bypass -File ./scripts/cleanup.ps1 && npm run electron:dev",
         "electron:build": "vite build && electron-builder",
         "electron:pack": "vite build && electron-builder --dir"
     },

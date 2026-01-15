@@ -35,7 +35,8 @@ export class DemucsAdapter {
      * @param {function} onProgress - (percent, logMsg) => void
      */
     async separate(jobId, inputPath, options, onProgress) {
-        let { modelId = 'htdemucs', stems = 2 } = options;
+        onProgress(0, `[Debug] Adapter Options: ${JSON.stringify(options)}`);
+        let { modelId = 'htdemucs', stems = 2, device = 'cpu' } = options;
 
         // Normalize model names: Frontend uses hyphens, Demucs uses underscores
         const modelMap = {
@@ -83,7 +84,12 @@ export class DemucsAdapter {
         }
 
         // Command Construction
-        let cmd = `"${VENV_PYTHON}" -m demucs -n ${modelId} "${actualInputPath}" -o "${outputRoot}" --mp3`;
+        const deviceFlag = device === 'gpu' ? 'cuda' : 'cpu';
+        const deviceMsg = `Active Device: ${deviceFlag.toUpperCase()}`;
+        console.log(`[Demucs] ${deviceMsg}`);
+        onProgress(0.01, deviceMsg);
+
+        let cmd = `"${VENV_PYTHON}" -m demucs -n ${modelId} -d ${deviceFlag} "${actualInputPath}" -o "${outputRoot}" --mp3`;
         if (stems === 2) {
             cmd += ` --two-stems=vocals`;
         }
@@ -99,6 +105,7 @@ export class DemucsAdapter {
             const args = [
                 '-m', 'demucs',
                 '-n', modelId,
+                '-d', deviceFlag,
                 actualInputPath,
                 '-o', outputRoot,
                 '--mp3'

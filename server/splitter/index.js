@@ -26,7 +26,8 @@ export const initSplitterService = async () => {
         Queue.setProcessor(async (job, onProgress) => {
             return await demucs.separate(job.jobId, job.inputPath, {
                 modelId: job.modelId,
-                stems: job.stems
+                stems: job.stems,
+                device: job.device
             }, onProgress);
         });
         return;
@@ -147,7 +148,9 @@ router.post('/start', async (req, res) => {
             inputPath: source.inputPath,
             modelId: modelId || 'htdemucs',
             stems: parseInt(stems) || 2,
-            songId: finalSongId // Use resolved ID
+            songId: finalSongId, // Use resolved ID
+            device: req.body.device || 'cpu', // Default to CPU (Safe Baseline)
+            force: req.body.force || false // Allow forcing re-run
         });
 
         res.json({ jobId });
