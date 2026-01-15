@@ -120,8 +120,9 @@ router.get('/status/:jobId', (req, res) => {
 router.post('/start', async (req, res) => {
     const { source, modelId, stems, songId } = req.body;
 
-    if (!source || !source.inputPath) {
-        return res.status(400).json({ error: 'Missing inputPath' });
+    // Validation: Require inputPath OR videoId for recovery
+    if ((!source || !source.inputPath) && !req.body.videoId && !songId) {
+        return res.status(400).json({ error: 'Missing inputPath and no videoId/songId provided for recovery.' });
     }
 
     try {

@@ -38,7 +38,8 @@ export class LocalArchiveAdapter {
         return new Promise((resolve, reject) => {
             const { mediaType } = request;
             const ext = mediaType === 'audio' ? 'mp3' : 'mp4';
-            const filename = `archive_${request.video.videoId}.${ext}`;
+            const videoId = request.video?.videoId || request.videoId || 'unknown_video';
+            const filename = `archive_${videoId}.${ext}`;
             const filePath = storage.getFilePath(jobId, filename);
 
             try {
@@ -47,7 +48,7 @@ export class LocalArchiveAdapter {
 
                 // DATA GENERATION (Simulated Ingestion)
                 // Write enough data to be detected as a file.
-                const content = `AUTHORIZED_ARCHIVE_CONTENT::${request.video.videoId}::${new Date().toISOString()}`.repeat(500);
+                const content = `AUTHORIZED_ARCHIVE_CONTENT::${videoId}::${new Date().toISOString()}`.repeat(500);
                 fs.writeFileSync(filePath, content);
 
                 // Simulation Loop

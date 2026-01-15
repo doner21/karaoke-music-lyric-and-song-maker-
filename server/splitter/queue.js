@@ -1,5 +1,9 @@
 import { JobMgr } from '../orchestrator/index.js';
 import { SongRepo } from '../db/repo.js';
+
+import fs from 'fs-extra';
+import { Queue as DownloaderQueue } from '../downloader/job-queue.js';
+import { Storage } from '../downloader/storage.js';
 import path from 'path';
 
 export class SplitterQueue {
@@ -37,9 +41,54 @@ export class SplitterQueue {
 
         console.log(`[Splitter] Processing job ${job.id} for Song ${songId}`);
 
+        let inputPath = params.inputPath;
+
+        // --- HARDENING: Source Recovery ---
+        const exists = inputPath ? fs.existsSync(inputPath) : false;
+
+        if (!exists) {
+            console.warn(`[Splitter] Input file missing at ${inputPath}. Attempting recovery via Re-Download...`);
+
+            if (song && song.video_id) {
+                try {
+                    const downloadParams = {
+                        url: `https://www.youtube.com/watch?v=${song.video_id}`,
+                        videoId: song.video_id,
+                        enginePreference: 'yt-dlp' // FORCE real download engine
+                    };
+
+                    console.log(`[Splitter] Re-downloading ${song.video_id} for Job ${job.id}...`);
+
+                    // Initialize Storage for this Job ID
+                    await Storage.initJob(job.id);
+                    JobMgr.updateProgress(job.id, 0.05);
+
+                    const files = await DownloaderQueue.engines.download(job.id, downloadParams, Storage, (p) => {
+                        JobMgr.updateProgress(job.id, p * 0.2);
+                    });
+
+                    if (files && files.length > 0) {
+                        inputPath = files[0].path;
+                        console.log(`[Splitter] Recovery successful. New input path: ${inputPath}`);
+                    } else {
+                        console.error("[Splitter] Re-download produced NO files.");
+                        throw new Error("Re-download produced no files.");
+                    }
+
+                } catch (e) {
+                    console.error('[Splitter] Recovery failed:', e);
+                    throw new Error(`Input missing and recovery failed: ${e.message}`);
+                }
+            } else {
+                console.error(`[Splitter] No video_id found for song ${songId}`);
+                throw new Error(`Input file missing at ${inputPath} and no Video ID available for recovery.`);
+            }
+        }
+        // ----------------------------------
+
         const jobContext = {
             jobId: job.id,
-            inputPath: params.inputPath, // Input path from downloader result usually
+            inputPath: inputPath, // Use potentially recovered path
             modelId: params.modelId,
             stems: params.stems
         };
@@ -61,13 +110,6 @@ export class SplitterQueue {
 
                 // Determine role for canonical naming (I3)
                 // "Artist - Song (Role).mp3"
-                // But splitter might have just dumped files.
-                // We should probably rename them if we want to enforce I3 here?
-                // Or just trust the adapter did it? 
-                // The task description says "Artifacts... must use the canonicalDisplayName... (Role).mp3"
-                // Ideally Adapter does it, or we do it here by moving the file.
-                // For V1.1 hardening, let's just register them for now to avoid breaking file locks if adapter is holding them.
-
                 SongRepo.addArtifact({
                     song_id: songId,
                     kind: `vocal_stem` === `vocal_stem` && stem === 'vocals' ? 'vocal_stem' : (stem === 'band' ? 'band_stem' : `stem_${stem}`),
@@ -105,4 +147,3 @@ export class SplitterQueue {
 }
 
 export const Queue = new SplitterQueue();
-

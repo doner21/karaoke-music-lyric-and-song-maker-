@@ -318,8 +318,13 @@ export default function IntegratedEcologicalOS() {
         // We should update `selectedSong` with the real ID from DB if we can.
 
         // For now, let's rely on InputPath resolution or pass videoId.
-        const inputPath = localAsset.files?.[0]?.path;
-        if (!inputPath) { setErrorModal({ title: 'Error', message: 'Asset path missing' }); return; }
+        // For now, let's rely on InputPath resolution or pass videoId.
+        const inputPath = localAsset?.files?.[0]?.path;
+        // RELAXED CHECK: If we have videoId, we can recover on backend.
+        if (!inputPath && !selectedSong?.videoId) {
+            setErrorModal({ title: 'Error', message: 'Asset path missing and no Video ID available for recovery.' });
+            return;
+        }
 
         try {
             const res = await fetch(`${API_URL}/split/start`, {

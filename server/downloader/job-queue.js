@@ -11,11 +11,11 @@ import { PlayDlAdapter } from './adapters/play-dl.js';
 class JobQueue {
     constructor() {
         this.engines = new EngineManager();
-        // Register engines (keep consistent with index.js logic)
-        this.engines.register('local-archive', new LocalArchiveAdapter());
+        // Register engines (Order determines priority for 'auto')
         this.engines.register('yt-dlp', new YtDlpAdapter());
         this.engines.register('ytdl-core', new YtdlCoreAdapter(console));
         this.engines.register('play-dl', new PlayDlAdapter());
+        this.engines.register('local-archive', new LocalArchiveAdapter()); // Fallback/Mock
         this.engines.register('mock', new MockReliableAdapter());
 
         // Register processor

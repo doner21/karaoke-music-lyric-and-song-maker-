@@ -62,6 +62,12 @@ export class DemucsAdapter {
         let actualInputPath = inputPath;
 
         if (inputExt !== '.wav' && inputExt !== '.mp3' && inputExt !== '.flac') {
+            // Verify file exists and has content
+            const stat = await fs.stat(inputPath).catch(() => null);
+            if (!stat || stat.size === 0) {
+                throw new Error(`Input file invalid or empty: ${inputPath}`);
+            }
+
             const wavPath = path.join(outputRoot, 'input_converted.wav');
             onProgress(0.02, 'Converting audio format to WAV...');
             console.log(`[Demucs] Pre-converting ${inputPath} -> ${wavPath}`);
