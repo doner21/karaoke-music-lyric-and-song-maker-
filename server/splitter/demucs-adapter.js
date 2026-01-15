@@ -59,28 +59,26 @@ export class DemucsAdapter {
         };
 
         // PRE-CONVERT: torchaudio can't load webm/opus. Convert to wav first.
-        const inputExt = path.extname(inputPath).toLowerCase();
-        let actualInputPath = inputPath;
+        // UNIFY INPUT: Always convert to 44.1kHz WAV to ensure identical decoding on CPU/GPU
+        // This eliminates torchaudio/ffmpeg backend differences and sample rate mismatches.
+        const wavPath = path.join(outputRoot, 'input_canonical.wav');
+        let actualInputPath = wavPath;
 
-        if (inputExt !== '.wav' && inputExt !== '.mp3' && inputExt !== '.flac') {
-            // Verify file exists and has content
-            const stat = await fs.stat(inputPath).catch(() => null);
-            if (!stat || stat.size === 0) {
-                throw new Error(`Input file invalid or empty: ${inputPath}`);
-            }
+        // Verify file exists and has content
+        const stat = await fs.stat(inputPath).catch(() => null);
+        if (!stat || stat.size === 0) {
+            throw new Error(`Input file invalid or empty: ${inputPath}`);
+        }
 
-            const wavPath = path.join(outputRoot, 'input_converted.wav');
-            onProgress(0.02, 'Converting audio format to WAV...');
-            console.log(`[Demucs] Pre-converting ${inputPath} -> ${wavPath}`);
+        onProgress(0.02, 'Canonicalizing audio format (44.1kHz WAV)...');
+        console.log(`[Demucs] Pre-converting ${inputPath} -> ${wavPath}`);
 
-            try {
-                await execAsync(`"${FFMPEG_PATH}" -y -i "${inputPath}" -ar 44100 -ac 2 "${wavPath}"`);
-                actualInputPath = wavPath;
-                console.log('[Demucs] Conversion successful');
-            } catch (e) {
-                console.error('[Demucs] Conversion failed:', e);
-                throw new Error(`Audio conversion failed: ${e.message}`);
-            }
+        try {
+            await execAsync(`"${FFMPEG_PATH}" -y -i "${inputPath}" -ar 44100 -ac 2 "${wavPath}"`);
+            console.log('[Demucs] Conversion successful');
+        } catch (e) {
+            console.error('[Demucs] Conversion failed:', e);
+            throw new Error(`Audio conversion failed: ${e.message}`);
         }
 
         // Command Construction
@@ -89,7 +87,8 @@ export class DemucsAdapter {
         console.log(`[Demucs] ${deviceMsg}`);
         onProgress(0.01, deviceMsg);
 
-        let cmd = `"${VENV_PYTHON}" -m demucs -n ${modelId} -d ${deviceFlag} "${actualInputPath}" -o "${outputRoot}" --mp3`;
+        // Explicitly set shifts=1, overlap=0.25 to guarantee parity
+        let cmd = `"${VENV_PYTHON}" -m demucs -n ${modelId} -d ${deviceFlag} --shifts 1 --overlap 0.25 "${actualInputPath}" -o "${outputRoot}" --mp3`;
         if (stems === 2) {
             cmd += ` --two-stems=vocals`;
         }
@@ -106,6 +105,8 @@ export class DemucsAdapter {
                 '-m', 'demucs',
                 '-n', modelId,
                 '-d', deviceFlag,
+                '--shifts', '1',
+                '--overlap', '0.25',
                 actualInputPath,
                 '-o', outputRoot,
                 '--mp3'
