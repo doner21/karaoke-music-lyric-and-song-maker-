@@ -67,6 +67,15 @@ export default function IntegratedEcologicalOS() {
     // --- STATE: PRESENTATION ---
     const [viewMode, setViewMode] = useState('editor'); // 'editor' | 'preview'
 
+    // --- STATE: DISPLAY PREFS (Lifted from KaraokeLyricsDisplay) ---
+    const [linesPerPage, setLinesPerPage] = useState(() => parseInt(localStorage.getItem('karaoke_linesPerPage') || '2'));
+    const [highlightColor, setHighlightColor] = useState(() => localStorage.getItem('karaoke_highlightColor') || '#7CB87C');
+    const [fontSize, setFontSize] = useState(() => parseInt(localStorage.getItem('karaoke_fontSize') || '32'));
+
+    useEffect(() => { localStorage.setItem('karaoke_linesPerPage', linesPerPage); }, [linesPerPage]);
+    useEffect(() => { localStorage.setItem('karaoke_highlightColor', highlightColor); }, [highlightColor]);
+    useEffect(() => { localStorage.setItem('karaoke_fontSize', fontSize); }, [fontSize]);
+
     // --- EFFECTS ---
     useEffect(() => {
         if (!window.YT) {
@@ -631,7 +640,7 @@ export default function IntegratedEcologicalOS() {
                     {/* Lyrics Surface */}
                     <div className="flex-1 relative bg-[#0B1015] overflow-hidden">
                         {/* Toolbar */}
-                        <div className="absolute top-2 right-2 z-20 flex items-center gap-2">
+                        <div className="absolute top-2 right-8 z-20 flex items-center gap-2">
                             <button
                                 onClick={() => setViewMode(m => m === 'editor' ? 'preview' : 'editor')}
                                 className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold border transition-all ${viewMode === 'preview'
@@ -650,6 +659,10 @@ export default function IntegratedEcologicalOS() {
                                 audioRef={player}
                                 isPlaying={isPlaying}
                                 className="w-full h-full bg-black/40"
+                                linesPerPage={linesPerPage}
+                                highlightColor={highlightColor}
+                                fontSize={fontSize}
+                                trackDuration={duration}
                             />
                         ) : (
                             <textarea
@@ -899,6 +912,72 @@ export default function IntegratedEcologicalOS() {
                                     <FileJson size={14} className="text-slate-500 group-hover:text-violet-400" />
                                     <span className="text-[9px] font-bold text-slate-400">JSON</span>
                                 </button>
+                            </div>
+                        </div>
+
+                        {/* SECTION E: DISPLAY CONFIG */}
+                        <div className={`space-y-3 pt-4 border-t border-slate-800 ${viewMode !== 'preview' ? 'opacity-50' : ''}`}>
+                            <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 uppercase">
+                                <span>5. DISPLAY CONFIG</span>
+                                <Layers size={12} />
+                            </div>
+
+                            {/* Lines Per Page */}
+                            <div className="space-y-1">
+                                <label className="text-[9px] font-bold text-slate-600">LINES PER PAGE</label>
+                                <div className="flex bg-slate-800 rounded p-1 gap-1">
+                                    {[2, 3, 4].map(n => (
+                                        <button
+                                            key={n}
+                                            onClick={() => setLinesPerPage(n)}
+                                            className={`flex-1 py-1 text-[10px] rounded ${linesPerPage === n ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                                        >
+                                            {n}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Highlight Color */}
+                            <div className="space-y-1">
+                                <label className="text-[9px] font-bold text-slate-600">HIGHLIGHT COLOR</label>
+                                <div className="flex gap-2">
+                                    {[
+                                        { name: 'Green', val: '#7CB87C', class: 'bg-[#7CB87C]' },
+                                        { name: 'Purple', val: '#9B7CB8', class: 'bg-[#9B7CB8]' },
+                                        { name: 'Yellow', val: '#C9B857', class: 'bg-[#C9B857]' },
+                                        { name: 'Rose', val: '#f43f5e', class: 'bg-[#f43f5e]' },
+                                        { name: 'Blue', val: '#3b82f6', class: 'bg-[#3b82f6]' }
+                                    ].map(c => (
+                                        <button
+                                            key={c.name}
+                                            onClick={() => setHighlightColor(c.val)}
+                                            className={`w-6 h-6 rounded-full border-2 transition-all ${c.class} ${highlightColor === c.val ? 'border-white scale-110' : 'border-transparent opacity-50 hover:opacity-100'}`}
+                                            title={c.name}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Font Size */}
+                            <div className="space-y-1">
+                                <label className="text-[9px] font-bold text-slate-600">FONT SIZE</label>
+                                <div className="flex bg-slate-800 rounded p-1 gap-1">
+                                    {[
+                                        { l: 'S', v: 24 },
+                                        { l: 'M', v: 32 },
+                                        { l: 'L', v: 40 },
+                                        { l: 'XL', v: 48 }
+                                    ].map(fs => (
+                                        <button
+                                            key={fs.l}
+                                            onClick={() => setFontSize(fs.v)}
+                                            className={`flex-1 py-1 text-[10px] rounded ${fontSize === fs.v ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                                        >
+                                            {fs.l}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         </div>
 

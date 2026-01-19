@@ -1,12 +1,16 @@
+// Gap threshold for detecting instrumental/outro intervals (in seconds)
+const GAP_THRESHOLD_SECONDS = 8.0;
+
 /**
  * Normalizes the canonical lyrics JSON into a structure optimized for rendering.
- * 
+ *
  * @param {Object} canonicalJson - The raw JSON from the alignment engine
+ * @param {number} trackDuration - Total duration of the track in seconds (optional, enables outro detection)
  * @returns {Object} Normalized lyrics structure
  */
-export function normalizeLyrics(canonicalJson) {
+export function normalizeLyrics(canonicalJson, trackDuration = null) {
     if (!canonicalJson || !canonicalJson.lyrics) {
-        return { lines: [], gaps: [], totalDuration: 0 };
+        return { lines: [], gaps: [], totalDuration: trackDuration || 0 };
     }
 
     const lines = [];
@@ -27,9 +31,9 @@ export function normalizeLyrics(canonicalJson) {
         const lineWords = line.words || [];
 
         lineWords.forEach((word) => {
-            // Detect gaps > 8s between previous word end and this word start
+            // Detect gaps >= threshold between previous word end and this word start
             const timeSinceLastWord = word.start - lastWordEndTime;
-            if (lastWordEndTime > 0 && timeSinceLastWord >= 8.0) {
+            if (lastWordEndTime > 0 && timeSinceLastWord >= GAP_THRESHOLD_SECONDS) {
                 gaps.push({
                     type: 'instrumental',
                     startTime: lastWordEndTime,
@@ -60,15 +64,22 @@ export function normalizeLyrics(canonicalJson) {
         }
     });
 
-    // Detect outro gap
-    // We'd ideally need total song duration to know if there's a long outro
-    // For now, we can check if there's a significant gap after the last word if duration is provided
-    // But without total duration passed in, we can't definitively mark outro.
-    // We'll leave specific outro detection for when we have total duration context.
+    // Detect outro gap - requires track duration to determine if there's a long gap after final lyrics
+    if (trackDuration && trackDuration > lastWordEndTime) {
+        const outroGapDuration = trackDuration - lastWordEndTime;
+        if (outroGapDuration >= GAP_THRESHOLD_SECONDS) {
+            gaps.push({
+                type: 'outro',
+                startTime: lastWordEndTime,
+                endTime: trackDuration,
+                duration: outroGapDuration
+            });
+        }
+    }
 
     return {
         lines,
         gaps,
-        totalDuration: lastWordEndTime // Approximate if not provided
+        totalDuration: trackDuration || lastWordEndTime // Use track duration if available
     };
 }

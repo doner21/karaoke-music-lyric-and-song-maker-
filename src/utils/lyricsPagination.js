@@ -39,63 +39,58 @@ export function calculatePages(normalizedLyrics, linesPerPage = 2) {
     return pages;
 }
 
+// Buffer time before next lyrics where countdown hides and lyrics become visible
+const PREP_BUFFER_SECONDS = 3.0;
+
 /**
  * Determines the current page based on playback time.
- * Logic: A page is active until the NEXT page's first word starts? 
- * Or stricter: Page turns when its last word ends? 
- * Plan says: "Page turns ONLY after final word on current page completes"
- * 
+ * Supports gap-aware page pre-loading: during the 3s prep buffer before lyrics resume,
+ * returns the page containing the upcoming lyrics.
+ *
  * @param {Array} pages - Calculated pages
  * @param {number} currentTime - Current playback time
+ * @param {Array} gaps - Array of gap objects from normalizedLyrics (optional)
  * @returns {Object} { currentPage, nextPage }
  */
-export function getCurrentPage(pages, currentTime) {
+export function getCurrentPage(pages, currentTime, gaps = []) {
     if (!pages || pages.length === 0) return { currentPage: null, nextPage: null };
 
-    // Find the page where the time is currently active or recently finished
-    // We want to hold the page until the next page is supposed to start?
-    // Let's follow the rule: Page holds until its endTime passed?
-    // Actually, standard karaoke usually holds the page until it's time for the next page's first line.
-    // BUT the plan explicitly says "Page turns ONLY after final word on current page completes".
-    // This implies we switch to the next page immediately after the current one finishes or slightly after.
+    // Check if we're in a gap's 3s prep buffer - if so, pre-load the next page
+    if (gaps && gaps.length > 0) {
+        for (const gap of gaps) {
+            const countdownDuration = Math.max(0, gap.duration - PREP_BUFFER_SECONDS);
+            const countdownEndTime = gap.startTime + countdownDuration;
 
-    // Let's find the first page where currentTime < endTime.
-    // Actually, if we are in the gap between Page A (end 10s) and Page B (start 20s),
-    // we might want to show Page A until some threshold, then clear or show Page B.
-    // Plan says: "Pre-load next page... Page turns ONLY after final word on current page completes".
+            // Check if we're in the 3s prep buffer (after countdown ends, before gap ends)
+            if (currentTime >= countdownEndTime && currentTime < gap.endTime) {
+                // Find the page that contains lyrics starting at or after gap.endTime
+                const nextPageIndex = pages.findIndex(p => p.startTime >= gap.endTime - 0.1);
+                if (nextPageIndex !== -1) {
+                    return {
+                        currentPage: pages[nextPageIndex],
+                        nextPage: pages[nextPageIndex + 1] || null
+                    };
+                }
+                // If no page starts exactly at gap end, find page that contains the gap end time
+                const containingPageIndex = pages.findIndex(p =>
+                    gap.endTime >= p.startTime && gap.endTime <= p.endTime
+                );
+                if (containingPageIndex !== -1) {
+                    return {
+                        currentPage: pages[containingPageIndex],
+                        nextPage: pages[containingPageIndex + 1] || null
+                    };
+                }
+            }
+        }
+    }
 
-    // So if Time > Page A.endTime, we should probably switch to Page B (or transition).
-
-    // Find index where currentTime <= endTime
-    // This might need refinement for strict gaps.
-
+    // Standard page selection: find the first page where currentTime < endTime
     let activeIndex = pages.findIndex(page => currentTime < page.endTime);
 
-    // If all pages have finished (activeIndex === -1), show the last page?
-    // Or if we are in a long outro, maybe clear?
+    // If all pages have finished, return the last page
     if (activeIndex === -1) {
-        // If we are past the last page, return the last page (lyrics stay on screen potentially)
-        // or return null to clear. Let's return the last page for now.
-        // But wait, if we are in a gap between Page 1 index 0 (end 10s) and Page 2 index 1 (start 20s)
-        // and time is 15s. 
-        // findIndex(t < page.endTime) will return index 1 (Page 2) because 15 < 20? No.
-        // Page 2 ends at 25s. So 15 < 25. Correct. It returns Page 2.
-
-        // But wait, if Page 1 ends at 10s. Page 2 starts at 20s.
-        // Time 15s.
-        // Page 1: 15 < 10 (False)
-        // Page 2: 15 < 25 (True) -> Returns Page 2.
-        // So at 15s (during gap), we show Page 2 (future).
-        // This matches "Pre-load next page".
-
-        // What if we are actively singing Page 1?
-        // Time 5s.
-        // Page 1: 5 < 10 (True) -> Returns Page 1.
-
-        // This logic holds up: Show the page that is strictly current/future.
-        // Once a page is fully 'past' (time > endTime), we move to the next candidates.
-
-        activeIndex = activeIndex === -1 ? pages.length - 1 : activeIndex;
+        activeIndex = pages.length - 1;
     }
 
     return {

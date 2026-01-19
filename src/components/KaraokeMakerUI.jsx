@@ -375,90 +375,160 @@ export default function KaraokeMakerUI() {
         </div>
     );
 
-    const renderStudioTab = () => (
-        <div className="max-w-4xl mx-auto w-full h-full p-8 flex flex-col animate-in fade-in">
-            <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                    <h2 className="text-2xl font-bold text-zinc-200">{selectedSong ? selectedSong.title : 'Studio'}</h2>
-                    {isSyncing && (
-                        <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/10 text-rose-500 text-xs font-bold border border-rose-500/20">
-                            <RefreshCw className="w-3 h-3 animate-spin" /> Live Sync
-                        </span>
-                    )}
-                </div>
+    const renderStudioTab = () => {
+        const exportOptions = [
+            { id: 'json', label: 'Timings JSON', icon: FileJson },
+            { id: 'video', label: 'MP4 Video', icon: Save },
+            { id: 'vocal', label: 'Vocal Stem', icon: Mic },
+            { id: 'band', label: 'Band Stem', icon: Music },
+        ];
 
-                <div className="relative">
-                    <button
-                        onClick={() => setShowConfig(!showConfig)}
-                        disabled={!selectedSong}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all
-                ${showConfig ? 'bg-rose-600 text-white shadow-lg shadow-rose-900/20' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'}
-                ${!selectedSong ? 'opacity-50 cursor-not-allowed' : ''}
-              `}
-                    >
-                        {isProcessing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
-                        <span>Pipeline</span>
-                    </button>
-
-                    {showConfig && (
-                        <div className="absolute top-full right-0 mt-3 w-80 bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl p-6 z-50 animate-in fade-in zoom-in-95">
-                            <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-4">Configuration</h3>
-                            <div className="space-y-4">
-                                <div className="space-y-1">
-                                    <label className="text-xs font-medium text-zinc-500">Splitter</label>
-                                    <select
-                                        value={splitterModel} onChange={e => setSplitterModel(e.target.value)}
-                                        className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-2 text-sm text-zinc-300 focus:border-rose-500 outline-none"
-                                    >
-                                        {SPLITTER_MODELS.map(m => <option key={m}>{m}</option>)}
-                                    </select>
-                                </div>
-                                <div className="space-y-1">
-                                    <label className="text-xs font-medium text-zinc-500">Aligner</label>
-                                    <select
-                                        value={transcriptionModel} onChange={e => setTranscriptionModel(e.target.value)}
-                                        className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-2 text-sm text-zinc-300 focus:border-rose-500 outline-none"
-                                    >
-                                        {TRANSCRIPTION_MODELS.map(m => <option key={m}>{m}</option>)}
-                                    </select>
-                                </div>
-                                <button
-                                    onClick={handleProcess}
-                                    disabled={isProcessing}
-                                    className="w-full py-3 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 mt-2"
-                                >
-                                    {isProcessing ? 'Processing...' : processStage === 4 ? 'Re-Run Pipeline' : 'Start Process'}
-                                </button>
-                            </div>
+        return (
+            <div className="flex w-full h-full animate-in fade-in">
+                {/* CENTER: MAIN EDITOR (Fill remaining space) */}
+                <div className="flex-1 flex flex-col p-8 min-w-0 overflow-y-auto">
+                    <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-3">
+                            <h2 className="text-2xl font-bold text-zinc-200">{selectedSong ? selectedSong.title : 'Studio'}</h2>
+                            {isSyncing && (
+                                <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/10 text-rose-500 text-xs font-bold border border-rose-500/20">
+                                    <RefreshCw className="w-3 h-3 animate-spin" /> Live Sync
+                                </span>
+                            )}
                         </div>
-                    )}
-                </div>
-            </div>
-
-            <div className="flex-1 bg-zinc-900/50 border border-zinc-800 rounded-2xl p-1 relative overflow-hidden group focus-within:ring-1 focus-within:ring-rose-500/50 transition-all">
-                {processStage === 0 && !selectedSong && (
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                        <span className="text-zinc-700 font-medium">Select a song to enable studio</span>
                     </div>
-                )}
-                <textarea
-                    className="w-full h-full bg-transparent border-none p-8 text-xl text-zinc-300 outline-none resize-none placeholder:text-zinc-700 leading-relaxed font-mono"
-                    placeholder={selectedSong ? "Paste lyrics here to begin..." : ""}
-                    value={lyrics}
-                    onChange={e => setLyrics(e.target.value)}
-                    disabled={!selectedSong}
-                />
-                <div className="absolute bottom-4 right-4 flex gap-2">
-                    {processStage > 0 && (
-                        <div className="px-3 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 flex items-center gap-2 text-xs font-mono text-zinc-400">
-                            {isProcessing ? <RefreshCw className="w-3 h-3 animate-spin text-rose-500" /> : <CheckCircle2 className="w-3 h-3 text-emerald-500" />}
-                            {processStage === 1 ? 'Splitting...' : processStage === 2 ? 'Transcribing...' : processStage === 3 ? 'Aligning...' : 'Synced'}
+
+                    <div className="flex-1 bg-zinc-900/50 border border-zinc-800 rounded-2xl p-1 relative overflow-hidden group focus-within:ring-1 focus-within:ring-rose-500/50 transition-all min-h-[500px]">
+                        {processStage === 0 && !selectedSong && (
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                                <span className="text-zinc-700 font-medium">Select a song to enable studio</span>
+                            </div>
+                        )}
+                        <textarea
+                            className="w-full h-full bg-transparent border-none p-8 text-xl text-zinc-300 outline-none resize-none placeholder:text-zinc-700 leading-relaxed font-mono"
+                            placeholder={selectedSong ? "Paste lyrics here to begin..." : ""}
+                            value={lyrics}
+                            onChange={e => setLyrics(e.target.value)}
+                            disabled={!selectedSong}
+                        />
+                        <div className="absolute bottom-4 right-4 flex gap-2">
+                            {processStage > 0 && (
+                                <div className="px-3 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 flex items-center gap-2 text-xs font-mono text-zinc-400">
+                                    {isProcessing ? <RefreshCw className="w-3 h-3 animate-spin text-rose-500" /> : <CheckCircle2 className="w-3 h-3 text-emerald-500" />}
+                                    {processStage === 1 ? 'Splitting...' : processStage === 2 ? 'Transcribing...' : processStage === 3 ? 'Aligning...' : 'Synced'}
+                                </div>
+                            )}
                         </div>
-                    )}
+                    </div>
+                </div>
+
+                {/* RIGHT SIDEBAR: CONTROLS & EXPORTS */}
+                <div className="w-80 border-l border-zinc-800 bg-zinc-950/50 p-6 flex flex-col gap-8 overflow-y-auto z-10">
+
+                    {/* SECTION 1: EXPORT ARTIFACTS (Top Right) */}
+                    <div>
+                        <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-4 flex items-center gap-2">
+                            <Download className="w-3 h-3" /> Export Artifacts
+                        </h3>
+                        <div className="space-y-2">
+                            {exportOptions.map(item => (
+                                <button
+                                    key={item.id}
+                                    onClick={() => handleDownload(item.id)}
+                                    disabled={processStage < 4 || isProcessing}
+                                    className="w-full flex items-center justify-between p-3 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-rose-500/30 hover:bg-zinc-800 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-lg bg-zinc-950 flex items-center justify-center text-zinc-500 group-hover:text-rose-500 transition-colors">
+                                            <item.icon className="w-4 h-4" />
+                                        </div>
+                                        <span className="text-sm font-medium text-zinc-300 group-hover:text-white">{item.label}</span>
+                                    </div>
+                                    <Settings className="w-3 h-3 text-zinc-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="h-px bg-zinc-800/50" />
+
+                    {/* SECTION 2: PIPELINE CONFIGURATION (Underneath Export) */}
+                    <div className="opacity-100 transition-opacity">
+                        <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-4 flex items-center gap-2">
+                            <Wand2 className="w-3 h-3" /> Pipeline Config
+                        </h3>
+                        <div className="space-y-5">
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-medium text-zinc-400">Splitter Model</label>
+                                <select
+                                    value={splitterModel} onChange={e => setSplitterModel(e.target.value)}
+                                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-2.5 text-sm text-zinc-300 focus:border-rose-500 outline-none transition-colors"
+                                    disabled={isProcessing}
+                                >
+                                    {SPLITTER_MODELS.map(m => <option key={m}>{m}</option>)}
+                                </select>
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-medium text-zinc-400">Alignment Model</label>
+                                <select
+                                    value={transcriptionModel} onChange={e => setTranscriptionModel(e.target.value)}
+                                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-2.5 text-sm text-zinc-300 focus:border-rose-500 outline-none transition-colors"
+                                    disabled={isProcessing}
+                                >
+                                    {TRANSCRIPTION_MODELS.map(m => <option key={m}>{m}</option>)}
+                                </select>
+                            </div>
+
+                            <button
+                                onClick={handleProcess}
+                                disabled={isProcessing || !selectedSong}
+                                className={`
+                                    w-full py-3.5 font-bold rounded-xl transition-all flex items-center justify-center gap-2 mt-2 shadow-lg
+                                    ${isProcessing
+                                        ? 'bg-zinc-800 text-zinc-400 cursor-wait'
+                                        : !selectedSong
+                                            ? 'bg-zinc-800 text-zinc-500 opacity-50 cursor-not-allowed'
+                                            : 'bg-gradient-to-r from-rose-600 to-orange-600 hover:from-rose-500 hover:to-orange-500 text-white shadow-rose-900/20'
+                                    }
+                                `}
+                            >
+                                {isProcessing ? (
+                                    <>
+                                        <RefreshCw className="w-4 h-4 animate-spin" />
+                                        <span>Processing...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Wand2 className="w-4 h-4" />
+                                        <span>{processStage === 4 ? 'Re-Run Pipeline' : 'Run Pipeline'}</span>
+                                    </>
+                                )}
+                            </button>
+
+                            {/* Status Indicator in Sidebar */}
+                            {processStage > 0 && (
+                                <div className="p-3 rounded-lg bg-zinc-900/50 border border-zinc-800 text-xs text-zinc-400 flex flex-col gap-2">
+                                    <div className="flex justify-between items-center">
+                                        <span>Status</span>
+                                        <span className={processStage === 4 ? "text-emerald-500" : "text-rose-500"}>
+                                            {processStage === 1 ? 'Splitting...' : processStage === 2 ? 'Transcribing...' : processStage === 3 ? 'Aligning...' : 'Complete'}
+                                        </span>
+                                    </div>
+                                    <div className="w-full h-1 bg-zinc-800 rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-rose-500 transition-all duration-1000 ease-out"
+                                            style={{ width: `${(processStage / 4) * 100}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    );
+        );
+    };
 
     const renderPreviewTab = () => {
         const adj = computeAdjustedSentences(indexedLyrics, deltas, deletedWords, editedWords);
@@ -563,7 +633,7 @@ export default function KaraokeMakerUI() {
         <div className="flex flex-col h-screen w-full bg-zinc-950 text-zinc-200 font-sans overflow-hidden selection:bg-rose-500/30 selection:text-white relative">
 
             {/* 1. TOP TAB BAR */}
-            <header className="h-20 bg-zinc-950/80 backdrop-blur-md border-b border-zinc-900 flex items-center justify-between px-8 shrink-0 z-20">
+            <header className="h-20 bg-zinc-950/80 backdrop-blur-md border-b border-zinc-900 flex items-center justify-between px-8 shrink-0 z-[100]">
                 <div className="flex items-center gap-3 font-bold text-xl tracking-tight">
                     <div className="w-9 h-9 bg-gradient-to-tr from-rose-600 to-orange-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-rose-900/20">
                         <Music className="w-5 h-5 fill-current" />
