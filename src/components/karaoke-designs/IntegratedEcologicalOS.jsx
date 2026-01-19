@@ -232,7 +232,7 @@ export default function IntegratedEcologicalOS() {
                     if (alJob.result.lyrics && Array.isArray(alJob.result.lyrics)) {
                         // Extract text from lyrics array structure
                         const existingLyrics = alJob.result.lyrics.map(line =>
-                            line.words ? line.words.map(w => w.text || w.word || '').join('') : (line.text || '')
+                            line.words ? line.words.map(w => w.text || w.word || '').join(' ') : (line.text || '')
                         ).join('\n');
                         if (existingLyrics.trim()) {
                             console.log('[Hydration] Loading existing lyrics:', existingLyrics.length, 'chars');
