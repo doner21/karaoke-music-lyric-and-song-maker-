@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
     Search, Play, Pause, Square, SkipBack, SkipForward, Cpu, Wifi, Activity,
     Disc, Layers, Zap, Info, Minimize2, Maximize2, X, Download, HardDrive,
-    FileAudio, RefreshCw, CheckCircle2, Lock, FileJson, Eye, EyeOff, AlertTriangle
+    FileAudio, RefreshCw, CheckCircle2, Lock, FileJson, Eye, EyeOff, AlertTriangle,
+    Mic2 // Added for Karaoke Icon
 } from 'lucide-react';
+import KaraokeLyricsDisplay from '../lyrics/KaraokeLyricsDisplay';
 
 /* 
   ECOLOGICAL_OS_v5::[ResilienceTest, MockEngine, HighHeat]
@@ -59,7 +61,11 @@ export default function IntegratedEcologicalOS() {
     const [enginePref, setEnginePref] = useState('auto'); // Default to Resilient Auto
     const [modelId, setModelId] = useState('v3-sim'); // 'v3-sim' | 'htdemucs' | 'mdx-extra'
     const [splitterDevice, setSplitterDevice] = useState('cpu'); // 'cpu' | 'gpu'
+
     const [stems, setStems] = useState(2);
+
+    // --- STATE: PRESENTATION ---
+    const [viewMode, setViewMode] = useState('editor'); // 'editor' | 'preview'
 
     // --- EFFECTS ---
     useEffect(() => {
@@ -623,17 +629,47 @@ export default function IntegratedEcologicalOS() {
                     </div>
 
                     {/* Lyrics Surface */}
-                    <div className="flex-1 relative">
-                        <textarea
-                            className="w-full h-full bg-transparent p-6 text-sm font-mono text-slate-400 resize-none outline-none"
-                            placeholder="// PASTE_LYRICS_HERE..."
-                            spellCheck={false}
-                            value={lyricsText}
-                            onChange={handleLyricsChange}
-                        />
-                        {isStale && (
-                            <div className="absolute top-2 right-2 px-2 py-1 bg-amber-900/80 border border-amber-500/50 rounded text-[9px] text-amber-300 flex items-center gap-1">
+                    <div className="flex-1 relative bg-[#0B1015] overflow-hidden">
+                        {/* Toolbar */}
+                        <div className="absolute top-2 right-2 z-20 flex items-center gap-2">
+                            <button
+                                onClick={() => setViewMode(m => m === 'editor' ? 'preview' : 'editor')}
+                                className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold border transition-all ${viewMode === 'preview'
+                                    ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50'
+                                    : 'bg-slate-800/50 text-slate-400 border-slate-700 hover:bg-slate-700'
+                                    }`}
+                            >
+                                {viewMode === 'preview' ? <Eye size={12} /> : <Mic2 size={12} />}
+                                {viewMode === 'preview' ? 'PREVIEW MODE' : 'EDITOR MODE'}
+                            </button>
+                        </div>
+
+                        {viewMode === 'preview' && alignResult ? (
+                            <KaraokeLyricsDisplay
+                                timingJson={alignResult}
+                                audioRef={player}
+                                isPlaying={isPlaying}
+                                className="w-full h-full bg-black/40"
+                            />
+                        ) : (
+                            <textarea
+                                className="w-full h-full bg-transparent p-6 text-sm font-mono text-slate-400 resize-none outline-none custom-scrollbar"
+                                placeholder="// PASTE_LYRICS_HERE..."
+                                spellCheck={false}
+                                value={lyricsText}
+                                onChange={handleLyricsChange}
+                            />
+                        )}
+
+                        {isStale && viewMode === 'editor' && (
+                            <div className="absolute top-2 right-36 px-2 py-1 bg-amber-900/80 border border-amber-500/50 rounded text-[9px] text-amber-300 flex items-center gap-1">
                                 <AlertTriangle size={10} /> STALE - Re-align required
+                            </div>
+                        )}
+
+                        {viewMode === 'preview' && !alignResult && (
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <div className="text-slate-600 text-xs font-mono">NO_ALIGNMENT_DATA</div>
                             </div>
                         )}
                     </div>

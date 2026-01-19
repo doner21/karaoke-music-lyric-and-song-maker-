@@ -24,7 +24,8 @@ export class Canonicalizer {
 
         let filteredCount = 0;
         const lyrics = lines.map((line, lineIdx) => {
-            const sentenceText = line.text.replace(/\n+$/, '').trim();
+            // Light cleaning but preserve basic structure
+            const sentenceText = line.text;
             if (!sentenceText) return null;
 
             // Get tokens for this line
