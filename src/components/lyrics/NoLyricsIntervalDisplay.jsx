@@ -34,8 +34,10 @@ const NoLyricsIntervalDisplay = ({
 
     // Format remaining time as M:SS
     const formatTime = (seconds) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
+        // Round up to avoid showing 0:00 when there's still time left
+        const totalSeconds = Math.ceil(seconds);
+        const mins = Math.floor(totalSeconds / 60);
+        const secs = totalSeconds % 60;
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
@@ -82,7 +84,7 @@ const NoLyricsIntervalDisplay = ({
         width: `${progress * 100}%`,
         backgroundColor: highlightColor,
         borderRadius: '3px',
-        transition: 'width 0.1s linear',
+        // No transition for instant, accurate updates
         boxShadow: `0 0 10px ${highlightColor}60`
     };
 

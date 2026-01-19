@@ -33,7 +33,8 @@ export function normalizeLyrics(canonicalJson, trackDuration = null) {
         lineWords.forEach((word) => {
             // Detect gaps >= threshold between previous word end and this word start
             const timeSinceLastWord = word.start - lastWordEndTime;
-            if (lastWordEndTime > 0 && timeSinceLastWord >= GAP_THRESHOLD_SECONDS) {
+            // Allow detection of intro gap (lastWordEndTime is 0)
+            if (timeSinceLastWord >= GAP_THRESHOLD_SECONDS) {
                 gaps.push({
                     type: 'instrumental',
                     startTime: lastWordEndTime,
