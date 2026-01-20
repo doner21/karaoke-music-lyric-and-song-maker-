@@ -3,9 +3,10 @@ import {
     Search, Play, Pause, Square, SkipBack, SkipForward, Cpu, Wifi, Activity,
     Disc, Layers, Zap, Info, Minimize2, Maximize2, X, Download, HardDrive,
     FileAudio, RefreshCw, CheckCircle2, Lock, FileJson, Eye, EyeOff, AlertTriangle,
-    Mic2 // Added for Karaoke Icon
+    Mic2, Music // Added for Karaoke Icon and Stem controls
 } from 'lucide-react';
 import KaraokeLyricsDisplay from '../lyrics/KaraokeLyricsDisplay';
+import { AudioStemManager } from '../../utils/AudioStemManager';
 
 /* 
   ECOLOGICAL_OS_v5::[ResilienceTest, MockEngine, HighHeat]
@@ -76,6 +77,89 @@ export default function IntegratedEcologicalOS() {
     useEffect(() => { localStorage.setItem('karaoke_highlightColor', highlightColor); }, [highlightColor]);
     useEffect(() => { localStorage.setItem('karaoke_fontSize', fontSize); }, [fontSize]);
 
+    // --- STATE: STEM AUDIO (AudioStemManager) ---
+    const [vocalVolume, setVocalVolume] = useState(1);
+    const [bandVolume, setBandVolume] = useState(1);
+    const [stemsLoaded, setStemsLoaded] = useState(false);
+    const [stemError, setStemError] = useState(null);
+    const [useStems, setUseStems] = useState(false); // Toggle between YT audio vs stem audio
+    const [hoverProgress, setHoverProgress] = useState(null); // Seek bar hover position (0-1), null when not hovering
+    const audioManagerRef = useRef(null);
+    const useStemsRef = useRef(false); // Ref to avoid stale closure in callbacks
+    const seekBarRef = useRef(null); // Ref for seek bar element to get accurate bounding rect
+
+    // Keep ref in sync with state
+    useEffect(() => {
+        useStemsRef.current = useStems;
+    }, [useStems]);
+
+    // Initialize AudioStemManager on mount
+    useEffect(() => {
+        audioManagerRef.current = new AudioStemManager({
+            onError: (err) => {
+                console.error('[IntegratedEcologicalOS] Stem audio error:', err);
+                setStemError(err.message);
+            },
+            onStateChange: (state) => {
+                // Use ref to avoid stale closure
+                if (useStemsRef.current) {
+                    setIsPlaying(state === 'playing');
+                }
+            },
+            onTimeUpdate: (time) => {
+                // Use ref to avoid stale closure
+                if (useStemsRef.current) {
+                    setCurrentTime(time);
+                }
+            }
+        });
+
+        return () => {
+            audioManagerRef.current?.dispose();
+        };
+    }, []);
+
+    // Sync volume changes to AudioStemManager
+    useEffect(() => {
+        audioManagerRef.current?.setVolume('vocal', vocalVolume);
+    }, [vocalVolume]);
+
+    useEffect(() => {
+        audioManagerRef.current?.setVolume('band', bandVolume);
+    }, [bandVolume]);
+
+    // Auto-load stems when splitResult is available
+    useEffect(() => {
+        if (splitResult?.vocalDownloadUrl && splitResult?.bandDownloadUrl) {
+            const loadStems = async () => {
+                try {
+                    const vocalUrl = `${API_URL}${splitResult.vocalDownloadUrl}`;
+                    const bandUrl = `${API_URL}${splitResult.bandDownloadUrl}`;
+                    console.log('[Stems] Loading:', { vocalUrl, bandUrl });
+
+                    const result = await audioManagerRef.current?.loadStems(bandUrl, vocalUrl);
+                    if (result?.success) {
+                        setStemsLoaded(true);
+                        setStemError(null);
+                        setDuration(audioManagerRef.current.getDuration());
+                        // Sync initial volume values to newly created gain nodes
+                        audioManagerRef.current?.setVolume('vocal', vocalVolume);
+                        audioManagerRef.current?.setVolume('band', bandVolume);
+                        console.log('[Stems] Loaded successfully, duration:', audioManagerRef.current.getDuration());
+                    } else {
+                        setStemError(result?.error || 'Failed to load stems');
+                    }
+                } catch (err) {
+                    console.error('[Stems] Load error:', err);
+                    setStemError(err.message);
+                }
+            };
+            loadStems();
+        } else {
+            setStemsLoaded(false);
+        }
+    }, [splitResult?.vocalDownloadUrl, splitResult?.bandDownloadUrl]);
+
     // --- EFFECTS ---
     useEffect(() => {
         if (!window.YT) {
@@ -84,6 +168,24 @@ export default function IntegratedEcologicalOS() {
             document.body.appendChild(tag);
         }
     }, []);
+
+    // Sync YouTube video to stem time periodically in Stem Mode (prevents drift)
+    useEffect(() => {
+        if (!useStems || !player || !isPlaying) return;
+
+        const SYNC_TOLERANCE = 0.5; // Allow 0.5s drift before correcting
+        const syncInterval = setInterval(() => {
+            const ytTime = player.getCurrentTime?.() || 0;
+            const stemTime = currentTime;
+
+            if (Math.abs(ytTime - stemTime) > SYNC_TOLERANCE) {
+                console.log(`[StemSync] Correcting drift: YT=${ytTime.toFixed(2)}s, Stem=${stemTime.toFixed(2)}s`);
+                player.seekTo(stemTime, true);
+            }
+        }, 2000); // Check every 2 seconds
+
+        return () => clearInterval(syncInterval);
+    }, [useStems, player, isPlaying, currentTime]);
 
     // Search Debounce
     useEffect(() => {
@@ -471,10 +573,19 @@ export default function IntegratedEcologicalOS() {
         setArchiveJob(null);
         setSplitJob(null);
         setAlignJob(null);
+
+        // Stop stem audio
+        audioManagerRef.current?.stop();
+
+        // Stop YouTube player
         if (player) {
             player.pauseVideo();
             player.seekTo(0);
         }
+
+        // Reset playback state
+        setIsPlaying(false);
+        setCurrentTime(0);
     };
 
     // Handle lyrics edit (mark stale)
@@ -628,12 +739,172 @@ export default function IntegratedEcologicalOS() {
                             <div className="w-full h-full flex items-center justify-center text-slate-700 text-xs font-mono">WAITING_FOR_SELECTION</div>
                         )}
                         {/* Transport Overlay */}
-                        <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-[#0a0f18] to-transparent flex items-center justify-between pointer-events-none">
-                            <div className="flex items-center gap-4 pointer-events-auto">
-                                <button onClick={() => player?.playVideo()}><Play className="text-emerald-500 hover:text-emerald-400" size={20} /></button>
-                                <button onClick={() => player?.pauseVideo()}><Pause className="text-emerald-500 hover:text-emerald-400" size={20} /></button>
-                                <button onClick={stopAll}><Square className="text-rose-500 hover:text-rose-400" size={20} /></button>
+                        <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-[#0a0f18] to-transparent pointer-events-none">
+                            {/* Main Transport Row */}
+                            <div className="flex items-center justify-between gap-4 pointer-events-auto">
+                                {/* Play/Pause/Stop Controls */}
+                                <div className="flex items-center gap-3">
+                                    <button
+                                        onClick={() => {
+                                            if (useStems && stemsLoaded) {
+                                                // Stem Mode: play stems + play YouTube (muted visual)
+                                                audioManagerRef.current?.play(currentTime);
+                                                player?.playVideo();
+                                            } else {
+                                                player?.playVideo();
+                                            }
+                                        }}
+                                    >
+                                        <Play className="text-emerald-500 hover:text-emerald-400" size={20} />
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            if (useStems) {
+                                                // Stem Mode: pause both stems and video
+                                                audioManagerRef.current?.pause();
+                                                player?.pauseVideo();
+                                            } else {
+                                                player?.pauseVideo();
+                                            }
+                                        }}
+                                    >
+                                        <Pause className="text-emerald-500 hover:text-emerald-400" size={20} />
+                                    </button>
+                                    <button onClick={stopAll}>
+                                        <Square className="text-rose-500 hover:text-rose-400" size={20} />
+                                    </button>
+                                </div>
+
+                                {/* Seek Bar */}
+                                <div className="flex-1 flex items-center gap-2">
+                                    <span className="text-[10px] font-mono text-slate-500 w-10 text-right">
+                                        {fmtTime(currentTime)}
+                                    </span>
+                                    <div
+                                        ref={seekBarRef}
+                                        className="flex-1 relative h-1 bg-slate-800 rounded-full group cursor-pointer"
+                                        onMouseMove={(e) => {
+                                            // Calculate hover position directly from mouse coordinates
+                                            const rect = e.currentTarget.getBoundingClientRect();
+                                            const x = e.clientX - rect.left;
+                                            const progress = Math.max(0, Math.min(1, x / rect.width));
+                                            setHoverProgress(progress);
+                                        }}
+                                        onMouseLeave={() => setHoverProgress(null)}
+                                    >
+                                        {/* Playback position indicator (green) */}
+                                        <div
+                                            className="absolute h-full bg-emerald-500 rounded-full pointer-events-none"
+                                            style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }}
+                                        />
+                                        {/* Hover preview indicator (cyan, only when hovering) */}
+                                        {hoverProgress !== null && (
+                                            <div
+                                                className="absolute h-full bg-cyan-400/50 rounded-full pointer-events-none"
+                                                style={{ width: `${hoverProgress * 100}%` }}
+                                            />
+                                        )}
+                                        {/* Hover position thumb (visible on hover) */}
+                                        {hoverProgress !== null && (
+                                            <div
+                                                className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-cyan-400 rounded-full border-2 border-white shadow-lg pointer-events-none"
+                                                style={{ left: `calc(${hoverProgress * 100}% - 6px)` }}
+                                            />
+                                        )}
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max={duration || 1}
+                                            step="0.1"
+                                            value={currentTime}
+                                            onChange={(e) => {
+                                                const time = parseFloat(e.target.value);
+                                                setCurrentTime(time);
+                                                // ALWAYS seek both systems to maintain sync
+                                                player?.seekTo(time, true);
+                                                if (useStems && stemsLoaded) {
+                                                    audioManagerRef.current?.seekTo(time);
+                                                }
+                                            }}
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                        />
+                                    </div>
+                                    <span className="text-[10px] font-mono text-slate-500 w-10">
+                                        {fmtTime(duration)}
+                                    </span>
+                                </div>
+
+                                {/* Stem Toggle + Volume Controls */}
+                                <div className="flex items-center gap-3">
+                                    {/* Stem/YT Toggle */}
+                                    <button
+                                        onClick={() => {
+                                            const newUseStems = !useStems;
+                                            setUseStems(newUseStems);
+
+                                            if (newUseStems) {
+                                                // Switching TO stems: mute YT audio but KEEP video playing
+                                                player?.setVolume?.(0);
+                                                // If currently playing, start stems at current position
+                                                if (isPlaying && stemsLoaded) {
+                                                    audioManagerRef.current?.play(currentTime);
+                                                }
+                                                setViewMode('preview'); // Auto-enable preview for lyrics
+                                            } else {
+                                                // Switching TO YouTube: stop stems, unmute YT
+                                                audioManagerRef.current?.stop();
+                                                player?.setVolume?.(100);
+                                                setViewMode('editor'); // Back to editor mode
+                                            }
+                                        }}
+                                        disabled={!stemsLoaded}
+                                        className={`px-2 py-1 text-[9px] font-bold rounded border transition-all ${useStems
+                                            ? 'bg-cyan-900/50 text-cyan-400 border-cyan-500/50'
+                                            : 'bg-slate-800/50 text-slate-500 border-slate-700'
+                                            } ${!stemsLoaded ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-700'}`}
+                                        title={stemsLoaded ? 'Toggle between YouTube and Stem audio' : 'Split stems first'}
+                                    >
+                                        {useStems ? 'STEMS' : 'YT'}
+                                    </button>
+
+                                    {/* Vocal Volume */}
+                                    <div className="flex items-center gap-1.5 group" title="Vocal Volume">
+                                        <Mic2 size={12} className={`${useStems ? 'text-rose-400' : 'text-slate-600'}`} />
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max="1"
+                                            step="0.01"
+                                            value={vocalVolume}
+                                            onChange={(e) => setVocalVolume(parseFloat(e.target.value))}
+                                            disabled={!useStems}
+                                            className={`w-14 h-1 rounded-full cursor-pointer accent-rose-500 ${!useStems ? 'opacity-30' : ''}`}
+                                        />
+                                    </div>
+
+                                    {/* Band Volume */}
+                                    <div className="flex items-center gap-1.5 group" title="Band Volume">
+                                        <Music size={12} className={`${useStems ? 'text-cyan-400' : 'text-slate-600'}`} />
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max="1"
+                                            step="0.01"
+                                            value={bandVolume}
+                                            onChange={(e) => setBandVolume(parseFloat(e.target.value))}
+                                            disabled={!useStems}
+                                            className={`w-14 h-1 rounded-full cursor-pointer accent-cyan-500 ${!useStems ? 'opacity-30' : ''}`}
+                                        />
+                                    </div>
+                                </div>
                             </div>
+
+                            {/* Stem Status Message */}
+                            {stemError && (
+                                <div className="mt-2 px-2 py-1 bg-rose-900/50 border border-rose-500/30 rounded text-[9px] text-rose-400">
+                                    Stem Error: {stemError}
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -656,7 +927,8 @@ export default function IntegratedEcologicalOS() {
                         {viewMode === 'preview' && alignResult ? (
                             <KaraokeLyricsDisplay
                                 timingJson={alignResult}
-                                audioRef={player}
+                                audioRef={useStems ? null : player}
+                                currentTime={currentTime}
                                 isPlaying={isPlaying}
                                 className="w-full h-full bg-black/40"
                                 linesPerPage={linesPerPage}

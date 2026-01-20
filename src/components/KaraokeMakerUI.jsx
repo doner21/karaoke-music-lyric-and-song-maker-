@@ -15,6 +15,8 @@ import {
 } from '../utils/karaokeHelpers';
 import KaraokeRenderer from './KaraokeRenderer';
 import { exportToMp4 } from '../utils/fastExport';
+import { AudioStemManager } from '../utils/AudioStemManager';
+import AudioErrorBoundary from './AudioErrorBoundary';
 
 // --- MOCK DATA ---
 
@@ -88,17 +90,40 @@ export default function KaraokeMakerUI() {
     const [volVocal, setVolVocal] = useState(1);
     const [volBand, setVolBand] = useState(1);
     const [playerExpanded, setPlayerExpanded] = useState(true);
+    const [audioError, setAudioError] = useState(null);
+    const [stemsLoaded, setStemsLoaded] = useState(false);
 
-    const [audioBuffers, setAudioBuffers] = useState({ vocal: null, band: null });
-    const audioCtxRef = useRef(null);
-    const vocalSourceRef = useRef(null);
-    const bandSourceRef = useRef(null);
-    const vocalGainRef = useRef(null);
-    const bandGainRef = useRef(null);
-    const startTimeRef = useRef(0);
+    // AudioStemManager - crash-safe audio engine
+    const audioManagerRef = useRef(null);
 
-    const timerRef = useRef(null);
-    const syncTimeoutRef = useRef(null);
+    // Initialize AudioStemManager on mount
+    useEffect(() => {
+        audioManagerRef.current = new AudioStemManager({
+            onError: (err) => {
+                console.error('[KaraokeMakerUI] Audio error:', err);
+                setAudioError(err.message);
+            },
+            onStateChange: (state) => {
+                setIsPlaying(state === 'playing');
+            },
+            onTimeUpdate: (time) => {
+                setCurrentTime(time);
+            }
+        });
+
+        return () => {
+            audioManagerRef.current?.dispose();
+        };
+    }, []);
+
+    // Sync volume changes to AudioStemManager
+    useEffect(() => {
+        audioManagerRef.current?.setVolume('vocal', volVocal);
+    }, [volVocal]);
+
+    useEffect(() => {
+        audioManagerRef.current?.setVolume('band', volBand);
+    }, [volBand]);
 
     // --- LOGIC ---
 
@@ -148,82 +173,48 @@ export default function KaraokeMakerUI() {
                 }))
             };
             setIndexedLyrics(indexLyrics(rawStructure));
-            // Mock buffers for demo
-            setAudioBuffers({
-                vocal: audioCtxRef.current?.createBuffer(2, 44100 * 30, 44100),
-                band: audioCtxRef.current?.createBuffer(2, 44100 * 30, 44100)
-            });
+            // TODO: In production, stems would be loaded via:
+            // audioManagerRef.current.loadStems(bandUrl, vocalUrl)
+            // For demo/mock purposes, we set duration directly
+            setDuration(30);
+            setStemsLoaded(true);
             setIsProcessing(false);
         }, 3000);
     };
 
-    // Audio Engine
-    const initAudio = () => {
-        if (!audioCtxRef.current) {
-            audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
-            vocalGainRef.current = audioCtxRef.current.createGain();
-            bandGainRef.current = audioCtxRef.current.createGain();
-            vocalGainRef.current.connect(audioCtxRef.current.destination);
-            bandGainRef.current.connect(audioCtxRef.current.destination);
-        }
-    };
+    // Transport Handlers (using AudioStemManager)
+    const handlePlayPause = () => {
+        if (!audioManagerRef.current) return;
 
-    const stopAudio = () => {
-        if (vocalSourceRef.current) { vocalSourceRef.current.stop(); vocalSourceRef.current = null; }
-        if (bandSourceRef.current) { bandSourceRef.current.stop(); bandSourceRef.current = null; }
-    };
-
-    const playAudio = (time) => {
-        initAudio();
-        stopAudio();
-        const ctx = audioCtxRef.current;
-        if (ctx.state === 'suspended') ctx.resume();
-
-        if (audioBuffers.vocal) {
-            vocalSourceRef.current = ctx.createBufferSource();
-            vocalSourceRef.current.buffer = audioBuffers.vocal;
-            vocalSourceRef.current.connect(vocalGainRef.current);
-            vocalSourceRef.current.start(0, time);
-        }
-        if (audioBuffers.band) {
-            bandSourceRef.current = ctx.createBufferSource();
-            bandSourceRef.current.buffer = audioBuffers.band;
-            bandSourceRef.current.connect(bandGainRef.current);
-            bandSourceRef.current.start(0, time);
-        }
-        startTimeRef.current = ctx.currentTime - time;
-    };
-
-    useEffect(() => {
         if (isPlaying) {
-            playAudio(currentTime);
-            timerRef.current = setInterval(() => {
-                const now = audioCtxRef.current.currentTime - startTimeRef.current;
-                setCurrentTime(now >= duration ? duration : now);
-            }, 50);
+            audioManagerRef.current.pause();
         } else {
-            stopAudio();
-            clearInterval(timerRef.current);
+            // Clear any previous error on play attempt
+            setAudioError(null);
+            audioManagerRef.current.play(currentTime);
         }
-        return () => {
-            stopAudio();
-            clearInterval(timerRef.current);
-        };
-    }, [isPlaying]);
-
-    useEffect(() => {
-        if (vocalGainRef.current) vocalGainRef.current.gain.value = volVocal;
-        if (bandGainRef.current) bandGainRef.current.gain.value = volBand;
-    }, [volVocal, volBand]);
-
-    useEffect(() => {
-        if (currentTime >= duration) setIsPlaying(false);
-    }, [currentTime, duration]);
+    };
 
     const handleStop = () => {
-        setIsPlaying(false);
+        if (audioManagerRef.current) {
+            audioManagerRef.current.stop();
+        }
         setCurrentTime(0);
     };
+
+    const handleSeek = (timeSeconds) => {
+        if (audioManagerRef.current) {
+            audioManagerRef.current.seekTo(timeSeconds);
+        }
+        setCurrentTime(timeSeconds);
+    };
+
+    // Auto-stop at end of track
+    useEffect(() => {
+        if (duration > 0 && currentTime >= duration) {
+            handleStop();
+        }
+    }, [currentTime, duration]);
 
     // Downloads / Export
     const handleDownload = async (type) => {
@@ -698,7 +689,7 @@ export default function KaraokeMakerUI() {
 
                                     <div className="flex items-center gap-3">
                                         <button onClick={handleStop} className="p-2 text-zinc-500 hover:text-rose-500"><Square className="w-4 h-4 fill-current" /></button>
-                                        <button onClick={() => setIsPlaying(!isPlaying)} className="w-10 h-10 bg-white text-zinc-900 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform">
+                                        <button onClick={handlePlayPause} className="w-10 h-10 bg-white text-zinc-900 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform">
                                             {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
                                         </button>
                                     </div>
@@ -713,7 +704,8 @@ export default function KaraokeMakerUI() {
                                         <div className="absolute top-0 left-0 h-full bg-rose-500 rounded-full" style={{ width: `${(currentTime / duration) * 100}%` }}></div>
                                         <input
                                             type="range" min="0" max={duration} step="0.1"
-                                            value={currentTime} onChange={e => setCurrentTime(parseFloat(e.target.value))}
+                                            value={currentTime}
+                                            onChange={e => handleSeek(parseFloat(e.target.value))}
                                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                         />
                                     </div>

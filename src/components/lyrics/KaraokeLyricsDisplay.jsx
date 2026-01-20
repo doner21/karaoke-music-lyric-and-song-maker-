@@ -20,14 +20,16 @@ const KaraokeLyricsDisplay = ({
     linesPerPage = 2,
     highlightColor = '#7CB87C',
     fontSize = 32,
-    trackDuration = null // Total track duration for outro detection
+    trackDuration = null, // Total track duration for outro detection
+    currentTime = null // External time override for stem mode
 }) => {
     // Note: State lifted to parent (IntegratedEcologicalOS)
 
     // --- Core Processing ---
 
-    // 1. Playback Time
-    const { playbackTime } = usePlaybackTime(audioRef, isPlaying);
+    // 1. Playback Time (from hook or external override)
+    const { playbackTime: hookPlaybackTime } = usePlaybackTime(audioRef, isPlaying);
+    const playbackTime = currentTime !== null ? currentTime : hookPlaybackTime;
 
     // 2. Data Normalization (with track duration for outro detection)
     const normalizedLyrics = useMemo(() => {
@@ -92,7 +94,8 @@ KaraokeLyricsDisplay.propTypes = {
     linesPerPage: PropTypes.number,
     highlightColor: PropTypes.string,
     fontSize: PropTypes.number,
-    trackDuration: PropTypes.number // Total track duration for outro detection
+    trackDuration: PropTypes.number, // Total track duration for outro detection
+    currentTime: PropTypes.number // External time override for stem mode
 };
 
 export default KaraokeLyricsDisplay;

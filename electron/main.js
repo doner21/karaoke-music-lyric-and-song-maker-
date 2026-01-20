@@ -22,8 +22,8 @@ function createWindow() {
     if (isDev) {
         // In dev mode, load the Vite server
         win.loadURL('http://localhost:5173');
-        // Open DevTools optionally
-        // win.webContents.openDevTools();
+        // Open DevTools for debugging
+        win.webContents.openDevTools();
     } else {
         // In production, load the built index.html
         // Note: We need to go up one level from 'electron' folder to find 'dist' if we place this in electron/main.js
