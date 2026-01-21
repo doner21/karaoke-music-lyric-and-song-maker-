@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import KaraokeLyricsDisplay from '../lyrics/KaraokeLyricsDisplay';
 import { AudioStemManager } from '../../utils/AudioStemManager';
+import ElectronYouTubePlayer from '../ElectronYouTubePlayer';
 
 /* 
   ECOLOGICAL_OS_v5::[ResilienceTest, MockEngine, HighHeat]
@@ -128,9 +129,23 @@ export default function IntegratedEcologicalOS() {
         audioManagerRef.current?.setVolume('band', bandVolume);
     }, [bandVolume]);
 
-    // Auto-load stems when splitResult is available
+    // Detect if running in Electron (used to disable auto-loading which crashes)
+    const isElectron = typeof window !== 'undefined' &&
+        (window.process?.versions?.electron || navigator.userAgent.includes('Electron'));
+
+    // DISABLED AUTO-LOADING: Decoding large audio files crashes Electron's renderer
+    // Stems are now loaded explicitly when user clicks "Use Stems" button
+    // See loadStemsManually() function below
     useEffect(() => {
         if (splitResult?.vocalDownloadUrl && splitResult?.bandDownloadUrl) {
+            // In Electron: Do NOT auto-load stems - it crashes the renderer
+            // User must click "Use Stems" button which calls loadStemsManually()
+            if (isElectron) {
+                console.log('[Stems] Auto-loading disabled in Electron to prevent crash. Click "Use Stems" to load.');
+                return;
+            }
+
+            // In browser: Safe to auto-load
             const loadStems = async () => {
                 try {
                     const vocalUrl = `${API_URL}${splitResult.vocalDownloadUrl}`;
@@ -158,16 +173,13 @@ export default function IntegratedEcologicalOS() {
         } else {
             setStemsLoaded(false);
         }
-    }, [splitResult?.vocalDownloadUrl, splitResult?.bandDownloadUrl]);
+    }, [splitResult?.vocalDownloadUrl, splitResult?.bandDownloadUrl, isElectron]);
+
+    // Player ref for ElectronYouTubePlayer
+    const playerRef = useRef(null);
 
     // --- EFFECTS ---
-    useEffect(() => {
-        if (!window.YT) {
-            const tag = document.createElement('script');
-            tag.src = "https://www.youtube.com/iframe_api";
-            document.body.appendChild(tag);
-        }
-    }, []);
+    // Note: YouTube IFrame API loading is now handled by ElectronYouTubePlayer component
 
     // Sync YouTube video to stem time periodically in Stem Mode (prevents drift)
     useEffect(() => {
@@ -625,28 +637,11 @@ export default function IntegratedEcologicalOS() {
     };
 
 
-    // --- RENDER HELPERS ---
-    const initPlayer = (node) => {
-        if (!node || player) return;
-        if (!selectedSong || !window.YT) return;
-        new window.YT.Player(node, {
-            height: '100%', width: '100%',
-            videoId: selectedSong.videoId,
-            playerVars: { autoplay: 1, controls: 0, modestbranding: 1 },
-            events: {
-                onReady: (e) => {
-                    setPlayer(e.target);
-                    setDuration(e.target.getDuration());
-                    setIsPlaying(true);
-                },
-                onStateChange: (e) => setIsPlaying(e.data === 1)
-            }
-        });
-    };
-
     // Auto-update player when song changes
     useEffect(() => {
-        if (player && selectedSong) player.loadVideoById(selectedSong.videoId);
+        if (playerRef.current && selectedSong) {
+            playerRef.current.loadVideoById(selectedSong.videoId);
+        }
     }, [selectedSong]);
 
 
@@ -734,7 +729,29 @@ export default function IntegratedEcologicalOS() {
                     {/* Player Surface */}
                     <div className="h-[40%] bg-black relative">
                         {selectedSong ? (
-                            <div id="integrated-player" ref={initPlayer} className="w-full h-full opacity-50 mix-blend-screen" />
+                            <ElectronYouTubePlayer
+                                ref={playerRef}
+                                videoId={selectedSong.videoId}
+                                autoplay={true}
+                                controls={false}
+                                muted={useStems}
+                                className="w-full h-full opacity-50 mix-blend-screen"
+                                onReady={(e) => {
+                                    setPlayer(playerRef.current);
+                                    setDuration(playerRef.current?.getDuration?.() || 0);
+                                    setIsPlaying(true);
+                                }}
+                                onStateChange={(e) => {
+                                    if (!useStems) {
+                                        setIsPlaying(e.data === 1);
+                                    }
+                                }}
+                                onTimeUpdate={(time) => {
+                                    if (!useStems) {
+                                        setCurrentTime(time);
+                                    }
+                                }}
+                            />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center text-slate-700 text-xs font-mono">WAITING_FOR_SELECTION</div>
                         )}
@@ -836,9 +853,42 @@ export default function IntegratedEcologicalOS() {
 
                                 {/* Stem Toggle + Volume Controls */}
                                 <div className="flex items-center gap-3">
-                                    {/* Stem/YT Toggle */}
+                                    {/* Stem/YT Toggle - also triggers stem loading in Electron */}
                                     <button
-                                        onClick={() => {
+                                        onClick={async () => {
+                                            // In Electron, stems might not be auto-loaded (to prevent crash)
+                                            // Load them manually on first click
+                                            if (!stemsLoaded && splitResult?.vocalDownloadUrl && splitResult?.bandDownloadUrl) {
+                                                setStemError(null);
+                                                console.log('[Stems] Manual load triggered...');
+                                                try {
+                                                    const vocalUrl = `${API_URL}${splitResult.vocalDownloadUrl}`;
+                                                    const bandUrl = `${API_URL}${splitResult.bandDownloadUrl}`;
+                                                    console.log('[Stems] Loading manually:', { vocalUrl, bandUrl });
+
+                                                    const result = await audioManagerRef.current?.loadStems(bandUrl, vocalUrl);
+                                                    if (result?.success) {
+                                                        setStemsLoaded(true);
+                                                        setStemError(null);
+                                                        setDuration(audioManagerRef.current.getDuration());
+                                                        audioManagerRef.current?.setVolume('vocal', vocalVolume);
+                                                        audioManagerRef.current?.setVolume('band', bandVolume);
+                                                        console.log('[Stems] Loaded successfully');
+                                                        // Now enable stem mode
+                                                        setUseStems(true);
+                                                        player?.setVolume?.(0);
+                                                        setViewMode('preview');
+                                                    } else {
+                                                        setStemError(result?.error || 'Failed to load stems');
+                                                    }
+                                                } catch (err) {
+                                                    console.error('[Stems] Manual load error:', err);
+                                                    setStemError(err.message);
+                                                }
+                                                return;
+                                            }
+
+                                            // Normal toggle logic (stems already loaded)
                                             const newUseStems = !useStems;
                                             setUseStems(newUseStems);
 
@@ -857,14 +907,18 @@ export default function IntegratedEcologicalOS() {
                                                 setViewMode('editor'); // Back to editor mode
                                             }
                                         }}
-                                        disabled={!stemsLoaded}
+                                        disabled={!splitResult?.vocalDownloadUrl}
                                         className={`px-2 py-1 text-[9px] font-bold rounded border transition-all ${useStems
                                             ? 'bg-cyan-900/50 text-cyan-400 border-cyan-500/50'
-                                            : 'bg-slate-800/50 text-slate-500 border-slate-700'
-                                            } ${!stemsLoaded ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-700'}`}
-                                        title={stemsLoaded ? 'Toggle between YouTube and Stem audio' : 'Split stems first'}
+                                            : stemsLoaded
+                                                ? 'bg-slate-800/50 text-slate-400 border-slate-700'
+                                                : splitResult?.vocalDownloadUrl
+                                                    ? 'bg-amber-900/30 text-amber-400 border-amber-500/30 animate-pulse'
+                                                    : 'bg-slate-800/50 text-slate-500 border-slate-700'
+                                            } ${!splitResult?.vocalDownloadUrl ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-700'}`}
+                                        title={stemsLoaded ? 'Toggle between YouTube and Stem audio' : splitResult?.vocalDownloadUrl ? 'Click to load and play stems' : 'Split stems first'}
                                     >
-                                        {useStems ? 'STEMS' : 'YT'}
+                                        {useStems ? 'STEMS' : stemsLoaded ? 'YT' : splitResult?.vocalDownloadUrl ? 'LOAD' : 'YT'}
                                     </button>
 
                                     {/* Vocal Volume */}
