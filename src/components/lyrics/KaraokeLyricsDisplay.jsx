@@ -54,8 +54,8 @@ const KaraokeLyricsDisplay = ({
         return playbackTime < countdownEndTime && countdownDuration > 0;
     }, [activeGap, playbackTime]);
 
-    // 6. Get current page (pass gaps for prep buffer page preloading)
-    const { currentPage } = getCurrentPage(pages, playbackTime, normalizedLyrics.gaps);
+    // 6. Get current page (word-anchor-based: page derived from next highlightable word)
+    const { currentPage } = getCurrentPage(pages, playbackTime, normalizedLyrics.gaps, normalizedLyrics);
 
     // --- Render ---
     return (

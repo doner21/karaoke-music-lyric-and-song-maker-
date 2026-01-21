@@ -199,6 +199,24 @@ export default function IntegratedEcologicalOS() {
         return () => clearInterval(syncInterval);
     }, [useStems, player, isPlaying, currentTime]);
 
+    // Mute/unmute YouTube when stem mode changes
+    // Critical for web mode where the muted prop on ElectronYouTubePlayer only affects initialization
+    useEffect(() => {
+        if (!player) return;
+
+        if (useStems) {
+            // Stem mode ON: mute YouTube audio completely
+            console.log('[StemMode] Muting YouTube audio');
+            player.mute?.();
+            player.setVolume?.(0);
+        } else {
+            // Stem mode OFF: restore YouTube audio
+            console.log('[StemMode] Unmuting YouTube audio');
+            player.unMute?.();
+            player.setVolume?.(100);
+        }
+    }, [useStems, player]);
+
     // Search Debounce
     useEffect(() => {
         const timer = setTimeout(() => {

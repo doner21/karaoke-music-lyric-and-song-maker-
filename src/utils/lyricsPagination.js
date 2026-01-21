@@ -39,53 +39,95 @@ export function calculatePages(normalizedLyrics, linesPerPage = 2) {
     return pages;
 }
 
-// Buffer time before next lyrics where countdown hides and lyrics become visible
-const PREP_BUFFER_SECONDS = 3.0;
+/**
+ * Find the next highlightable word based on current time.
+ * A word is "highlightable" if its endTime > currentTime (not yet fully completed).
+ * 
+ * KEY INVARIANT: This is the ground truth for page selection. The page shown
+ * should always be the one containing the next word to highlight, ensuring
+ * we never show a "future" page during an instrumental if there are still
+ * words to highlight on the current page.
+ * 
+ * @param {Object} normalizedLyrics - Normalized lyrics structure
+ * @param {number} currentTime - Current playback time
+ * @returns {Object|null} { wordIndex, lineIndex, word } or null if all complete
+ */
+export function findNextHighlightableWord(normalizedLyrics, currentTime) {
+    if (!normalizedLyrics?.lines) return null;
+
+    for (const line of normalizedLyrics.lines) {
+        for (const word of line.words) {
+            // First word whose endTime is after currentTime (not yet fully highlighted)
+            if (word.endTime > currentTime) {
+                return {
+                    wordIndex: word.wordIndex,
+                    lineIndex: line.lineIndex,
+                    word
+                };
+            }
+        }
+    }
+    return null; // All words complete
+}
+
+/**
+ * Find which page contains a specific line by lineIndex.
+ * 
+ * @param {Array} pages - Array of page objects
+ * @param {number} lineIndex - Line index to find
+ * @returns {number} Page index containing the line, or -1 if not found
+ */
+export function findPageContainingLine(pages, lineIndex) {
+    return pages.findIndex(page =>
+        page.lines.some(line => line.lineIndex === lineIndex)
+    );
+}
 
 /**
  * Determines the current page based on playback time.
- * Supports gap-aware page pre-loading: during the 3s prep buffer before lyrics resume,
- * returns the page containing the upcoming lyrics.
+ * 
+ * KEY INVARIANT: Page selection is derived from the next highlightable word,
+ * NOT from gap timing. This ensures we never show a "future" page during
+ * an instrumental if there are still words to highlight on the current page.
+ * 
+ * This fixes the bug where:
+ * 1. An instrumental gap begins mid-page (unfinished words remain)
+ * 2. Old logic would pre-load the post-gap page during prep buffer
+ * 3. When lyrics resume, it would jump BACK to finish the previous page
+ * 
+ * New behavior:
+ * - During instrumental, page stays on the one with unfinished words
+ * - No backward page jumps when lyrics resume
  *
  * @param {Array} pages - Calculated pages
  * @param {number} currentTime - Current playback time
- * @param {Array} gaps - Array of gap objects from normalizedLyrics (optional)
+ * @param {Array} gaps - Array of gap objects (kept for API compatibility, not used for page selection)
+ * @param {Object} normalizedLyrics - Full normalized lyrics structure (optional but recommended)
  * @returns {Object} { currentPage, nextPage }
  */
-export function getCurrentPage(pages, currentTime, gaps = []) {
+export function getCurrentPage(pages, currentTime, gaps = [], normalizedLyrics = null) {
     if (!pages || pages.length === 0) return { currentPage: null, nextPage: null };
 
-    // Check if we're in a gap's 3s prep buffer - if so, pre-load the next page
-    if (gaps && gaps.length > 0) {
-        for (const gap of gaps) {
-            const countdownDuration = Math.max(0, gap.duration - PREP_BUFFER_SECONDS);
-            const countdownEndTime = gap.startTime + countdownDuration;
+    // CORE FIX: Derive page from next highlightable word
+    // This ensures we stay on the correct page during instrumental gaps
+    if (normalizedLyrics) {
+        const nextWord = findNextHighlightableWord(normalizedLyrics, currentTime);
 
-            // Check if we're in the 3s prep buffer (after countdown ends, before gap ends)
-            if (currentTime >= countdownEndTime && currentTime < gap.endTime) {
-                // Find the page that contains lyrics starting at or after gap.endTime
-                const nextPageIndex = pages.findIndex(p => p.startTime >= gap.endTime - 0.1);
-                if (nextPageIndex !== -1) {
-                    return {
-                        currentPage: pages[nextPageIndex],
-                        nextPage: pages[nextPageIndex + 1] || null
-                    };
-                }
-                // If no page starts exactly at gap end, find page that contains the gap end time
-                const containingPageIndex = pages.findIndex(p =>
-                    gap.endTime >= p.startTime && gap.endTime <= p.endTime
-                );
-                if (containingPageIndex !== -1) {
-                    return {
-                        currentPage: pages[containingPageIndex],
-                        nextPage: pages[containingPageIndex + 1] || null
-                    };
-                }
+        if (nextWord) {
+            // Find page containing this word's line
+            const pageIndex = findPageContainingLine(pages, nextWord.lineIndex);
+
+            if (pageIndex !== -1) {
+                return {
+                    currentPage: pages[pageIndex],
+                    nextPage: pages[pageIndex + 1] || null
+                };
             }
         }
     }
 
-    // Standard page selection: find the first page where currentTime < endTime
+    // Fallback: use time-based logic for cases where normalizedLyrics not available
+    // or all words are complete (used for outro/end-of-song scenarios)
     let activeIndex = pages.findIndex(page => currentTime < page.endTime);
 
     // If all pages have finished, return the last page
