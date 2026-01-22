@@ -325,10 +325,48 @@ export default function IntegratedEcologicalOS() {
 
             if (vocalStem || bandStem) {
                 // Use artifact-based download URLs (stable, job-independent)
+                const vocalUrl = vocalStem ? `/artifacts/${vocalStem.id}/download` : null;
+                const bandUrl = bandStem ? `/artifacts/${bandStem.id}/download` : null;
+
                 setSplitResult({
-                    vocalDownloadUrl: vocalStem ? `/artifacts/${vocalStem.id}/download` : null,
-                    bandDownloadUrl: bandStem ? `/artifacts/${bandStem.id}/download` : null
+                    vocalDownloadUrl: vocalUrl,
+                    bandDownloadUrl: bandUrl
                 });
+
+                // AUTO-LOAD STEMS for database songs with both stems available
+                // This is safe since stems are already processed/cached
+                if (vocalUrl && bandUrl) {
+                    console.log('[Hydration] Database song has stems, loading them now...');
+                    // AWAIT the stem loading so hydration completes with stems ready
+                    try {
+                        const fullVocalUrl = `${API_URL}${vocalUrl}`;
+                        const fullBandUrl = `${API_URL}${bandUrl}`;
+                        console.log('[Stems] Loading for database song:', { fullVocalUrl, fullBandUrl });
+
+                        const result = await audioManagerRef.current?.loadStems(fullBandUrl, fullVocalUrl);
+                        if (result?.success) {
+                            setStemsLoaded(true);
+                            setStemError(null);
+                            const stemDuration = audioManagerRef.current?.getDuration() || 0;
+                            if (stemDuration > 0) {
+                                setDuration(stemDuration);
+                            }
+                            audioManagerRef.current?.setVolume('vocal', vocalVolume);
+                            audioManagerRef.current?.setVolume('band', bandVolume);
+                            console.log('[Stems] Stems loaded - song is READY TO PLAY');
+
+                            // Auto-enable stem mode for database songs with alignment
+                            setUseStems(true);
+                            setViewMode('preview');
+                        } else {
+                            console.warn('[Stems] Failed to load:', result?.error);
+                            setStemError(result?.error || 'Failed to load stems');
+                        }
+                    } catch (err) {
+                        console.error('[Stems] Load error:', err);
+                        setStemError(err.message);
+                    }
+                }
             }
 
             const timings = artifacts.find(a => a.kind === 'timings_json');
@@ -411,9 +449,64 @@ export default function IntegratedEcologicalOS() {
         setIsSearching(false);
     };
 
-    const handleSongSelect = (song) => {
+    // ACTIONS
+
+    // HELPER: CENTRALIZED STOP ALL (Playback & State)
+    const stopAllPlayback = () => {
+        console.log('[Playback] Executing STOP ALL (Global Reset)');
+
+        // 1. Audio Manager (Stems)
+        if (audioManagerRef.current) {
+            audioManagerRef.current.stop();
+        }
+
+        // 2. YouTube Player
+        // Critical: Unmute and reset volume so next play is clean
+        if (player) {
+            try {
+                player.pauseVideo?.();
+                player.seekTo?.(0, true);
+                player.unMute?.();
+                player.setVolume?.(100);
+            } catch (e) {
+                console.warn('[Playback] Player stop error:', e);
+            }
+        }
+
+        // 3. Reset React State
+        setIsPlaying(false);
+        setCurrentTime(0);
+        // Note: Duration reset is context-dependent, handled by caller if needed
+    };
+
+    // Force clean state on mount
+    useEffect(() => {
+        console.log('[Mount] Initializing clean playback state...');
+        stopAllPlayback();
+        setStemsLoaded(false);
+        setUseStems(false);
+        setDuration(0);
+    }, []);
+
+    const handleSongSelect = async (song) => {
+        // ATOMIC SONG SWITCH: Full stop of everything before switching
+        console.log('[SongSelect] === FULL STOP before song switch ===');
+
+        // 1. Stop everything using centralized helper
+        stopAllPlayback();
+
+        // 2. Clear song-specific state
+        setDuration(0); // Reset duration (fixes scrub bar on new song)
+        setStemsLoaded(false);
+        setUseStems(false);
+        setStemError(null);
+        setViewMode('editor');
+
+        console.log('[SongSelect] Baseline established. Loading:', song?.title);
+
+        // 3. Select and Hydrate
         setSelectedSong(song);
-        hydrateSongState(song);
+        await hydrateSongState(song);
     };
 
     const startArchive = async () => {
@@ -750,14 +843,17 @@ export default function IntegratedEcologicalOS() {
                             <ElectronYouTubePlayer
                                 ref={playerRef}
                                 videoId={selectedSong.videoId}
-                                autoplay={true}
+                                autoplay={false}
                                 controls={false}
                                 muted={useStems}
                                 className="w-full h-full opacity-50 mix-blend-screen"
                                 onReady={(e) => {
                                     setPlayer(playerRef.current);
-                                    setDuration(playerRef.current?.getDuration?.() || 0);
-                                    setIsPlaying(true);
+                                    // Only set duration if NOT in stem mode (prevent overwriting stem duration)
+                                    if (!useStemsRef.current) {
+                                        setDuration(playerRef.current?.getDuration?.() || 0);
+                                    }
+                                    // Player is ready but stopped
                                 }}
                                 onStateChange={(e) => {
                                     if (!useStems) {
@@ -780,10 +876,15 @@ export default function IntegratedEcologicalOS() {
                                 {/* Play/Pause/Stop Controls */}
                                 <div className="flex items-center gap-3">
                                     <button
-                                        onClick={() => {
+                                        onClick={async () => {
                                             if (useStems && stemsLoaded) {
                                                 // Stem Mode: play stems + play YouTube (muted visual)
-                                                audioManagerRef.current?.play(currentTime);
+                                                await audioManagerRef.current?.play(currentTime);
+                                                player?.playVideo();
+                                            } else if (useStems && !stemsLoaded) {
+                                                // Stems expected but not ready - log warning
+                                                console.warn('[Play] Stem mode active but stems not loaded yet');
+                                                // Fall back to YouTube while stems load
                                                 player?.playVideo();
                                             } else {
                                                 player?.playVideo();
@@ -857,7 +958,8 @@ export default function IntegratedEcologicalOS() {
                                                 setCurrentTime(time);
                                                 // ALWAYS seek both systems to maintain sync
                                                 player?.seekTo(time, true);
-                                                if (useStems && stemsLoaded) {
+                                                // Always seek stems if loaded (keeps them in sync even when not active)
+                                                if (stemsLoaded) {
                                                     audioManagerRef.current?.seekTo(time);
                                                 }
                                             }}

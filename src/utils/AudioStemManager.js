@@ -116,7 +116,7 @@ export class AudioStemManager {
             this._setupVolumeControl();
 
             this._setState('stopped');
-            return { success: true };
+            return { success: true, duration: this._duration };
         } catch (err) {
             console.error('[AudioStemManager] loadStems failed:', err);
             this.onError(err);
@@ -167,6 +167,13 @@ export class AudioStemManager {
             if (!this._ctx) {
                 this._ctx = new (window.AudioContext || window.webkitAudioContext)();
                 console.log('[AudioStemManager] AudioContext created for volume control');
+                // Pre-warm: Attempt resume now (will succeed if called during a user gesture)
+                // This sets up the context so subsequent play() calls work immediately
+                if (this._ctx.state === 'suspended') {
+                    this._ctx.resume().catch(() => {
+                        console.log('[AudioStemManager] AudioContext pre-warm deferred (no user gesture yet)');
+                    });
+                }
             }
 
             // Create MediaElementSourceNodes (connects HTMLAudioElement to Web Audio)
@@ -201,7 +208,7 @@ export class AudioStemManager {
      * @param {number} [startTime=0] - Start position in seconds
      * @returns {boolean} - Whether play was successful
      */
-    play(startTime = 0) {
+    async play(startTime = 0) {
         if (!this._bandAudio && !this._vocalAudio) {
             console.warn('[AudioStemManager] No stems loaded, cannot play');
             this.onError(new Error('No audio loaded. Please load stems first.'));
@@ -209,9 +216,11 @@ export class AudioStemManager {
         }
 
         try {
-            // Resume AudioContext if suspended
+            // Resume AudioContext if suspended (MUST await for first play to work)
             if (this._ctx && this._ctx.state === 'suspended') {
-                this._ctx.resume();
+                console.log('[AudioStemManager] Resuming suspended AudioContext...');
+                await this._ctx.resume();
+                console.log('[AudioStemManager] AudioContext resumed, state:', this._ctx.state);
             }
 
             // Clamp start time
@@ -297,10 +306,17 @@ export class AudioStemManager {
         if (this._bandAudio) this._bandAudio.currentTime = clampedTime;
         if (this._vocalAudio) this._vocalAudio.currentTime = clampedTime;
 
-        // Fire a time update so UI syncs
+        // Fire a time update so UI syncs immediately
         this.onTimeUpdate(clampedTime);
 
-        console.log(`[AudioStemManager] Seek to ${clampedTime.toFixed(2)}s`);
+        console.log(`[AudioStemManager] Seek to ${clampedTime.toFixed(2)}s (wasPlaying: ${wasPlaying})`);
+
+        // If was playing, ensure playback continues from new position
+        // HTMLAudioElement.currentTime assignment can pause playback in some browsers
+        if (wasPlaying) {
+            if (this._bandAudio) this._bandAudio.play().catch(e => console.warn('[AudioStemManager] Band resume after seek:', e));
+            if (this._vocalAudio) this._vocalAudio.play().catch(e => console.warn('[AudioStemManager] Vocal resume after seek:', e));
+        }
     }
 
     /**
