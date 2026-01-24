@@ -100,7 +100,7 @@ router.post('/audio/acquire', async (req, res) => {
             force: false // TODO: Support force flag from UI
         });
 
-        res.status(202).json({ jobId: result.jobId, existing: result.existing });
+        res.status(202).json({ jobId: result.jobId, existing: result.existing, songId: song.id });
     } catch (e) {
         console.error("Acquire Error:", e);
         res.status(400).json({ error: { kind: 'unknown', message: e.message } });

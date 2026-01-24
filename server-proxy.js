@@ -73,6 +73,60 @@ const normalizeVideo = (item) => ({
 // --- ENDPOINTS: UNIFIED SEARCH ---
 import { UnifiedSearch } from './server/library/search.js';
 import { SongRepo } from './server/db/repo.js'; // For direct lookups if needed
+import { searchSong, getLyrics } from './server/services/genius.js';
+
+app.get('/api/lyrics/search', async (req, res) => {
+    const { artist, title, q } = req.query;
+    // Allow either q (general query) or artist+title
+    const query = q || `${artist || ''} ${title || ''}`.trim();
+    if (!query) return res.status(400).json({ error: 'Missing search query (q, or artist/title)' });
+
+    try {
+        console.log(`[Lyrics] Searching Genius for: ${query}`);
+        const matches = await searchSong(query);
+        res.json({ matches });
+    } catch (e) {
+        console.error('[Lyrics] Search failed:', e);
+        res.status(500).json({ error: e.message });
+    }
+});
+
+app.get('/api/lyrics/fetch', async (req, res) => {
+    const { url } = req.query;
+    if (!url) return res.status(400).json({ error: 'Missing url' });
+
+    try {
+        console.log(`[Lyrics] Fetching from: ${url}`);
+        const result = await getLyrics(url);
+        res.json(result);
+    } catch (e) {
+        console.error('[Lyrics] Fetch failed:', e);
+        res.status(500).json({ error: e.message });
+    }
+});
+
+app.post('/api/lyrics/save', (req, res) => {
+    const { songId, text, source, url } = req.body;
+    if (!songId || !text) return res.status(400).json({ error: 'Missing songId or text' });
+
+    try {
+        const result = SongRepo.saveLyrics(songId, text, source || 'manual');
+        res.json(result);
+    } catch (e) {
+        console.error('[Lyrics] Save failed:', e);
+        res.status(500).json({ error: e.message });
+    }
+});
+
+app.get('/api/lyrics/:songId', (req, res) => {
+    try {
+        const lyrics = SongRepo.getLyrics(req.params.songId);
+        res.json(lyrics || null);
+    } catch (e) {
+        console.error('[Lyrics] Get failed:', e);
+        res.status(500).json({ error: e.message });
+    }
+});
 
 app.get('/api/youtube/search', async (req, res) => {
     const { q, pageToken } = req.query;

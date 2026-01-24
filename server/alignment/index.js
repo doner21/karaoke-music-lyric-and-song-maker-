@@ -74,27 +74,48 @@ router.post('/submit', async (req, res) => {
         // vocalStemId can be:
         // 1. A split job ID (UUID format)
         // 2. A download URL like "http://localhost:3001/split/download/UUID/vocals"
-        // 3. A direct file path
+        // 3. An artifact URL like "/artifacts/UUID/download"
+        // 4. A direct file path
         let vocalStemPath = vocalStemId;
         let resolvedJobId = null;
 
-        // Check if it's a download URL
-        const urlMatch = vocalStemId.match(/\/split\/download\/([a-f0-9-]{36})\/vocals/i);
-        if (urlMatch) {
-            resolvedJobId = urlMatch[1];
-            console.log('[Alignment] Extracted jobId from URL:', resolvedJobId);
-        } else if (vocalStemId.match(/^[0-9a-f-]{36}$/i)) {
-            resolvedJobId = vocalStemId;
-        }
+        // Check if it's an artifact URL first
+        const artifactMatch = vocalStemId.match(/\/artifacts\/([a-f0-9-]+)\/download/i);
+        if (artifactMatch) {
+            const artifactId = artifactMatch[1];
+            console.log('[Alignment] Extracted artifact ID from URL:', artifactId);
 
-        // Try to resolve from split job
-        if (resolvedJobId) {
-            const splitJobPath = await resolveSplitJobVocal(resolvedJobId);
-            if (splitJobPath) {
-                vocalStemPath = splitJobPath;
-                console.log('[Alignment] Resolved vocal path:', vocalStemPath);
+            // Look up artifact from database to get actual file path
+            const { SongRepo } = await import('../db/repo.js');
+            const artifact = SongRepo.getArtifactById(artifactId);
+            if (artifact && artifact.storage_ref) {
+                vocalStemPath = artifact.storage_ref;
+                console.log('[Alignment] Resolved vocal path from artifact:', vocalStemPath);
             } else {
-                console.log('[Alignment] Could not resolve split job, using raw ID');
+                console.error('[Alignment] Artifact not found or missing storage_ref:', artifactId);
+                return res.status(404).json({
+                    error: { kind: 'artifact_not_found', message: `Artifact ${artifactId} not found` }
+                });
+            }
+        } else {
+            // Check if it's a split download URL
+            const urlMatch = vocalStemId.match(/\/split\/download\/([a-f0-9-]{36})\/vocals/i);
+            if (urlMatch) {
+                resolvedJobId = urlMatch[1];
+                console.log('[Alignment] Extracted jobId from URL:', resolvedJobId);
+            } else if (vocalStemId.match(/^[0-9a-f-]{36}$/i)) {
+                resolvedJobId = vocalStemId;
+            }
+
+            // Try to resolve from split job
+            if (resolvedJobId) {
+                const splitJobPath = await resolveSplitJobVocal(resolvedJobId);
+                if (splitJobPath) {
+                    vocalStemPath = splitJobPath;
+                    console.log('[Alignment] Resolved vocal path:', vocalStemPath);
+                } else {
+                    console.log('[Alignment] Could not resolve split job, using raw ID');
+                }
             }
         }
 

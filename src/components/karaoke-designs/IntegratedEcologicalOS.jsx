@@ -14,7 +14,7 @@ import ElectronYouTubePlayer from '../ElectronYouTubePlayer';
   SEEDS: 9910 | HEAT: 0.85 | NOISE: 0.45 | COUPLING: 0.9
 */
 
-const API_URL = 'http://localhost:3001';
+const API_URL = 'http://localhost:3002';
 const DEBOUNCE_MS = 300;
 const fmtTime = (s) => {
     if (!s) return '0:00';
@@ -58,6 +58,11 @@ export default function IntegratedEcologicalOS() {
 
     // Song Artifacts (for stable downloads)
     const [songArtifacts, setSongArtifacts] = useState([]);
+
+    // Genius Integration
+    const [geniusMatches, setGeniusMatches] = useState([]);
+    const [showMatchModal, setShowMatchModal] = useState(false);
+    const [isFetchingLyrics, setIsFetchingLyrics] = useState(false);
 
     // Config (v5 Resilience Mode)
     const [enginePref, setEnginePref] = useState('auto'); // Default to Resilient Auto
@@ -308,7 +313,26 @@ export default function IntegratedEcologicalOS() {
 
         console.log('[Hydration] Fetching state for:', song.id);
 
+        let dbLyricsFound = false; // Flag to prevent overwriting with old job data
+
         try {
+            // 0. FETCH SAVED LYRICS (New)
+            try {
+                const lyricsRes = await fetch(`${API_URL}/api/lyrics/${song.id}`);
+                if (lyricsRes.ok) {
+                    const lyricsData = await lyricsRes.json();
+                    if (lyricsData && lyricsData.text) {
+                        console.log('[Hydration] Found saved lyrics in DB');
+                        setLyricsText(lyricsData.text);
+                        dbLyricsFound = true;
+                        // If we have saved lyrics, we don't want to overwrite them with old job params later
+                        // unless we explicitly decide to. For now, let's assume DB is truth.
+                    }
+                }
+            } catch (err) {
+                console.warn('[Hydration] Failed to fetch saved lyrics:', err);
+            }
+
             // 1. Fetch Artifacts via stable endpoint
             const artRes = await fetch(`${API_URL}/artifacts/check?videoId=${song.videoId}`);
             const artifacts = await artRes.json();
@@ -398,28 +422,30 @@ export default function IntegratedEcologicalOS() {
                     setAlignResult(alJob.result);
 
                     // LOAD EXISTING LYRICS from alignment result so user can edit them
-                    // Check if result has lyrics in the expected format
-                    if (alJob.result.lyrics && Array.isArray(alJob.result.lyrics)) {
-                        // Extract text from lyrics array structure
-                        const existingLyrics = alJob.result.lyrics.map(line =>
-                            line.words ? line.words.map(w => w.text || w.word || '').join(' ') : (line.text || '')
-                        ).join('\n');
-                        if (existingLyrics.trim()) {
-                            console.log('[Hydration] Loading existing lyrics:', existingLyrics.length, 'chars');
-                            setLyricsText(existingLyrics);
+                    if (!dbLyricsFound) {
+                        // Check if result has lyrics in the expected format
+                        if (alJob.result.lyrics && Array.isArray(alJob.result.lyrics)) {
+                            // Extract text from lyrics array structure
+                            const existingLyrics = alJob.result.lyrics.map(line =>
+                                line.words ? line.words.map(w => w.text || w.word || '').join(' ') : (line.text || '')
+                            ).join('\n');
+                            if (existingLyrics.trim()) {
+                                console.log('[Hydration] Loading existing lyrics:', existingLyrics.length, 'chars');
+                                setLyricsText(existingLyrics);
+                            }
+                        } else if (alJob.params?.lyricsText) {
+                            // Fallback: use the original lyrics from job params
+                            console.log('[Hydration] Loading lyrics from job params:', alJob.params.lyricsText.length, 'chars');
+                            setLyricsText(alJob.params.lyricsText);
+                        } else {
+                            setLyricsText(''); // No existing lyrics found
                         }
-                    } else if (alJob.params?.lyricsText) {
-                        // Fallback: use the original lyrics from job params
-                        console.log('[Hydration] Loading lyrics from job params:', alJob.params.lyricsText.length, 'chars');
-                        setLyricsText(alJob.params.lyricsText);
-                    } else {
-                        setLyricsText(''); // No existing lyrics found
                     }
                 } else {
-                    setLyricsText(''); // Job not done, clear lyrics
+                    if (!dbLyricsFound) setLyricsText(''); // Job not done, clear lyrics
                 }
             } else {
-                setLyricsText(''); // No alignment job, clear lyrics
+                if (!dbLyricsFound) setLyricsText(''); // No alignment job, clear lyrics
             }
 
             // Staleness Check
@@ -447,6 +473,42 @@ export default function IntegratedEcologicalOS() {
             setResults(data.items || []);
         } catch (e) { console.error(e); }
         setIsSearching(false);
+    };
+
+    const handleFetchGeniusLyrics = async (match) => {
+        setIsFetchingLyrics(true);
+        try {
+            const res = await fetch(`${API_URL}/api/lyrics/fetch?url=${encodeURIComponent(match.url)}`);
+            const data = await res.json();
+            if (data.lyrics) {
+                setLyricsText(data.lyrics); // Update Lyrics Text
+                setShowMatchModal(false);
+                if (alignResult) setIsStale(true); // Mark alignment as stale
+
+                // SAVE LYRICS TO DB IMMEDIATEY
+                if (selectedSong && selectedSong.id) {
+                    try {
+                        await fetch(`${API_URL}/api/lyrics/save`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                songId: selectedSong.id,
+                                text: data.lyrics,
+                                source: 'Genius'
+                            })
+                        });
+                        console.log('Genius lyrics saved to DB');
+                    } catch (saveErr) {
+                        console.error('Failed to save Genius lyrics to DB:', saveErr);
+                    }
+                }
+            }
+        } catch (e) {
+            console.error("Lyrics fetch failed", e);
+            setErrorModal({ title: 'Lyrics Error', message: 'Failed to fetch lyrics from Genius.' });
+        } finally {
+            setIsFetchingLyrics(false);
+        }
     };
 
     // ACTIONS
@@ -507,6 +569,22 @@ export default function IntegratedEcologicalOS() {
         // 3. Select and Hydrate
         setSelectedSong(song);
         await hydrateSongState(song);
+
+        // 4. Auto-Search Genius
+        try {
+            const cleanQuery = song.title
+                .replace(/[\(\[].*?[\)\]]/g, '')
+                .replace(/ft\.|feat\./i, '')
+                .trim();
+            const res = await fetch(`${API_URL}/api/lyrics/search?q=${encodeURIComponent(cleanQuery)}`);
+            const data = await res.json();
+            if (data.matches && data.matches.length > 0) {
+                setGeniusMatches(data.matches);
+                setShowMatchModal(true);
+            }
+        } catch (e) {
+            console.error('Genius Auto-Search Failed:', e);
+        }
     };
 
     const startArchive = async () => {
@@ -531,6 +609,13 @@ export default function IntegratedEcologicalOS() {
 
             // Start polling (which happens via useEffect on archiveJob)
             setArchiveJob({ jobId: data.jobId, state: 'queued', progress: 0 });
+
+            // UPDATE SELECTED SONG WITH PERSISTENT ID
+            if (data.songId && (!selectedSong.id || selectedSong.id !== data.songId)) {
+                console.log('[Archive] Updating selectedSong with persistent ID:', data.songId);
+                setSelectedSong(prev => ({ ...prev, id: data.songId }));
+                // Note: This triggers useEffect checks dependent on selectedSong
+            }
 
             // Clear downstream
             // setLocalAsset(null); // Keep old if re-downloading? No, clear.
@@ -599,6 +684,15 @@ export default function IntegratedEcologicalOS() {
     const startAlignment = async () => {
         if (!splitResult?.vocalDownloadUrl) return;
         try {
+            // AUTO-SAVE LYRICS before alignment
+            if (selectedSong?.id && lyricsText) {
+                await fetch(`${API_URL}/api/lyrics/save`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ songId: selectedSong.id, text: lyricsText, source: 'User Edit' })
+                }).catch(e => console.warn('Failed to auto-save lyrics before align:', e));
+            }
+
             const res = await fetch(`${API_URL}/align/submit`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -640,6 +734,15 @@ export default function IntegratedEcologicalOS() {
             return;
         }
         try {
+            // AUTO-SAVE LYRICS before re-alignment
+            if (selectedSong?.id && lyricsText) {
+                await fetch(`${API_URL}/api/lyrics/save`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ songId: selectedSong.id, text: lyricsText, source: 'User Edit' })
+                }).catch(e => console.warn('Failed to auto-save lyrics before realign:', e));
+            }
+
             console.log('[RE-ALIGN] Making fetch request to:', `${API_URL}/align/submit`);
             console.log('[RE-ALIGN] Request body:', JSON.stringify({
                 vocalStemId: splitJob?.jobId || splitResult.vocalDownloadUrl,
@@ -1190,7 +1293,12 @@ export default function IntegratedEcologicalOS() {
 
                             <div className="flex gap-2">
                                 <button onClick={() => setStems(2)} className={`flex-1 py-1 text-[10px] border rounded ${stems === 2 ? 'bg-cyan-900/30 text-cyan-400 border-cyan-500/50' : 'border-slate-800 text-slate-600'}`}>2-STEM</button>
-                                <button onClick={() => setStems(4)} className={`flex-1 py-1 text-[10px] border rounded ${stems === 4 ? 'bg-cyan-900/30 text-cyan-400 border-cyan-500/50' : 'border-slate-800 text-slate-600'}`}>4-STEM</button>
+                                <button
+                                    onClick={() => modelId !== 'uvr-mdx-inst-main' && setStems(4)}
+                                    disabled={modelId === 'uvr-mdx-inst-main'}
+                                    className={`flex-1 py-1 text-[10px] border rounded ${stems === 4 ? 'bg-cyan-900/30 text-cyan-400 border-cyan-500/50' : 'border-slate-800 text-slate-600'} ${modelId === 'uvr-mdx-inst-main' ? 'opacity-40 cursor-not-allowed' : ''}`}
+                                    title={modelId === 'uvr-mdx-inst-main' ? 'UVR MDX only supports 2-stem separation' : ''}
+                                >4-STEM</button>
                             </div>
 
                             {/* Splitter Configuration Grid */}
@@ -1198,10 +1306,22 @@ export default function IntegratedEcologicalOS() {
                                 {/* Model Selector */}
                                 <div>
                                     <label className="block text-[9px] text-slate-500 mb-1 uppercase font-bold">Model</label>
-                                    <select value={modelId} onChange={e => setModelId(e.target.value)} className="w-full bg-[#162032] text-xs text-slate-400 p-2 rounded border border-slate-700 outline-none">
+                                    <select
+                                        value={modelId}
+                                        onChange={e => {
+                                            const newModel = e.target.value;
+                                            setModelId(newModel);
+                                            // UVR only supports 2-stem, auto-switch if needed
+                                            if (newModel === 'uvr-mdx-inst-main' && stems !== 2) {
+                                                setStems(2);
+                                            }
+                                        }}
+                                        className="w-full bg-[#162032] text-xs text-slate-400 p-2 rounded border border-slate-700 outline-none"
+                                    >
                                         <option value="v3-sim">Spec-Sim</option>
                                         <option value="htdemucs">Hybrid (Real)</option>
                                         <option value="mdx-extra">MDX (Real)</option>
+                                        <option value="uvr-mdx-inst-main">UVR MDX Inst Main</option>
                                     </select>
                                 </div>
                                 {/* Device Selector */}
@@ -1431,6 +1551,45 @@ export default function IntegratedEcologicalOS() {
                 </div>
 
             </div>
+            {/* GENIUS MATCH MODAL */}
+            {showMatchModal && (
+                <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+                    <div className="bg-slate-900 border border-emerald-500/30 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+                        <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+                            <h3 className="font-bold text-sm text-emerald-400 flex items-center gap-2">
+                                <Zap size={14} /> SELECT LYRICS (GENIUS)
+                            </h3>
+                            <button onClick={() => setShowMatchModal(false)} className="text-slate-500 hover:text-white"><X size={18} /></button>
+                        </div>
+                        <div className="p-2 max-h-[60vh] overflow-y-auto custom-scrollbar space-y-1">
+                            {geniusMatches.map(match => (
+                                <button
+                                    key={match.id}
+                                    onClick={() => handleFetchGeniusLyrics(match)}
+                                    className="w-full text-left p-3 hover:bg-slate-800 rounded border border-transparent hover:border-slate-700 flex items-center gap-4 transition-colors group"
+                                >
+                                    <div className="w-10 h-10 bg-black rounded overflow-hidden shrink-0">
+                                        <img src={match.thumbnail} className="w-full h-full object-cover opacity-80 group-hover:opacity-100" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="font-bold text-xs text-slate-200 truncate group-hover:text-emerald-400">{match.title}</div>
+                                        <div className="text-[10px] text-slate-500">{match.artist}</div>
+                                    </div>
+                                    {isFetchingLyrics && <RefreshCw className="w-3 h-3 animate-spin text-slate-500" />}
+                                </button>
+                            ))}
+                        </div>
+                        <div className="p-3 border-t border-slate-800 bg-slate-950/30">
+                            <button
+                                onClick={() => setShowMatchModal(false)}
+                                className="w-full py-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs font-bold border border-slate-700"
+                            >
+                                USE MANUAL ENTRY
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }

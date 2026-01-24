@@ -46,7 +46,19 @@ export class SongRepository {
             `),
             getArtifactsBySong: prepare('SELECT * FROM artifacts WHERE song_id = ?'),
             getArtifactById: prepare('SELECT * FROM artifacts WHERE id = ?'),
-            getJobsBySong: prepare('SELECT * FROM jobs WHERE song_id = ? ORDER BY created_at DESC')
+            getJobsBySong: prepare('SELECT * FROM jobs WHERE song_id = ? ORDER BY created_at DESC'),
+            // Lyrics
+            getLyricsBySong: prepare('SELECT * FROM lyrics WHERE song_id = ? AND is_active = 1'),
+            upsertLyrics: prepare(`
+                INSERT INTO lyrics (id, song_id, text, source, is_active, created_at, updated_at)
+                VALUES (@id, @song_id, @text, @source, 1, @created_at, @updated_at)
+                ON CONFLICT(id) DO UPDATE SET
+                    text = @text,
+                    source = @source,
+                    updated_at = @updated_at,
+                    is_active = 1
+            `),
+            deactivateLyrics: prepare('UPDATE lyrics SET is_active = 0 WHERE song_id = ?')
         };
     }
 
@@ -121,6 +133,38 @@ export class SongRepository {
 
     getArtifactById(artifactId) {
         return this.stmts.getArtifactById.get(artifactId);
+    }
+    getArtifactById(artifactId) {
+        return this.stmts.getArtifactById.get(artifactId);
+    }
+
+    // --- Lyrics ---
+
+    getLyrics(songId) {
+        return this.stmts.getLyricsBySong.get(songId);
+    }
+
+    saveLyrics(songId, text, source = 'manual') {
+        // Deactivate old active lyrics
+        this.stmts.deactivateLyrics.run(songId);
+
+        const id = crypto.randomUUID();
+        const now = Date.now();
+
+        try {
+            this.stmts.upsertLyrics.run({
+                id,
+                song_id: songId,
+                text,
+                source,
+                created_at: now,
+                updated_at: now
+            });
+            return { id, song_id: songId, text, source };
+        } catch (e) {
+            console.error('[SongRepo] saveLyrics Failed:', e);
+            throw e;
+        }
     }
 }
 

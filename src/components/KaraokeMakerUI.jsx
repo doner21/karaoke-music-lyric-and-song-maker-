@@ -93,6 +93,12 @@ export default function KaraokeMakerUI() {
     const [audioError, setAudioError] = useState(null);
     const [stemsLoaded, setStemsLoaded] = useState(false);
 
+    // Genius Integration
+    const [geniusMatches, setGeniusMatches] = useState([]);
+    const [showMatchModal, setShowMatchModal] = useState(false);
+    const [isSearchingGenius, setIsSearchingGenius] = useState(false);
+    const [isFetchingLyrics, setIsFetchingLyrics] = useState(false);
+
     // AudioStemManager - crash-safe audio engine
     const audioManagerRef = useRef(null);
 
@@ -138,15 +144,57 @@ export default function KaraokeMakerUI() {
         }
     };
 
-    const handleSelectSong = (song) => {
+    const handleSelectSong = async (song) => {
         setSelectedSong(song);
-        setLyrics(INITIAL_LYRICS);
+        setLyrics(''); // Clear initially
         setProcessStage(0);
-        setTimings(null);
         setCurrentTime(0);
         setIsPlaying(false);
         setActiveTab('studio');
+
+        // Auto-search Genius
+        setIsSearchingGenius(true);
+        try {
+            // Simple cleanup of title for better search
+            const cleanQuery = song.title
+                .replace(/[\(\[].*?[\)\]]/g, '') // Remove (Official Video) etc
+                .replace(/ft\.|feat\./i, '')
+                .trim();
+
+            const res = await fetch(`http://localhost:3002/api/lyrics/search?artist=&title=${encodeURIComponent(cleanQuery)}`);
+            const data = await res.json();
+
+            if (data.matches && data.matches.length > 0) {
+                setGeniusMatches(data.matches);
+                setShowMatchModal(true);
+            } else {
+                setLyrics(INITIAL_LYRICS); // Fallback
+            }
+        } catch (e) {
+            console.error("Genius search failed", e);
+            setLyrics(INITIAL_LYRICS); // Fallback
+        } finally {
+            setIsSearchingGenius(false);
+        }
+
         setTimeout(() => setShowConfig(true), 500);
+    };
+
+    const handleFetchGeniusLyrics = async (match) => {
+        setIsFetchingLyrics(true);
+        try {
+            const res = await fetch(`http://localhost:3002/api/lyrics/fetch?url=${encodeURIComponent(match.url)}`);
+            const data = await res.json();
+            if (data.lyrics) {
+                setLyrics(data.lyrics);
+                setShowMatchModal(false);
+            }
+        } catch (e) {
+            console.error("Lyrics fetch failed", e);
+            alert("Failed to fetch lyrics");
+        } finally {
+            setIsFetchingLyrics(false);
+        }
     };
 
     // Process Lyrics into Indexed format
@@ -725,6 +773,42 @@ export default function KaraokeMakerUI() {
                 </div>
             )}
 
+
+            {/* GENIUS MATCH MODAL */}
+            {showMatchModal && (
+                <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+                    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+                        <div className="p-6 border-b border-zinc-800 flex justify-between items-center">
+                            <h3 className="font-bold text-lg text-white">Select Lyrics</h3>
+                            <button onClick={() => setShowMatchModal(false)} className="text-zinc-500 hover:text-white"><X className="w-5 h-5" /></button>
+                        </div>
+                        <div className="p-2 max-h-[60vh] overflow-y-auto">
+                            {geniusMatches.map(match => (
+                                <button
+                                    key={match.id}
+                                    onClick={() => handleFetchGeniusLyrics(match)}
+                                    className="w-full text-left p-3 hover:bg-zinc-800 rounded-xl flex items-center gap-4 transition-colors group"
+                                >
+                                    <img src={match.thumbnail} className="w-12 h-12 rounded-lg object-cover bg-zinc-800" />
+                                    <div className="flex-1 min-w-0">
+                                        <div className="font-bold text-zinc-200 truncate group-hover:text-rose-400">{match.title}</div>
+                                        <div className="text-xs text-zinc-500">{match.artist}</div>
+                                    </div>
+                                    {isFetchingLyrics && <RefreshCw className="w-4 h-4 animate-spin text-zinc-500" />}
+                                </button>
+                            ))}
+                        </div>
+                        <div className="p-4 border-t border-zinc-800 bg-zinc-950/50">
+                            <button
+                                onClick={() => { setShowMatchModal(false); setLyrics(''); }}
+                                className="w-full py-3 rounded-xl border border-zinc-700 text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors text-sm font-medium"
+                            >
+                                Enter Manually
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

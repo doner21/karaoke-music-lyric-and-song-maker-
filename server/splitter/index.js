@@ -4,6 +4,7 @@ import { Queue } from './queue.js';
 import { DemucsAdapter } from './demucs-adapter.js';
 import { FFmpegSplitterAdapter } from './ffmpeg-splitter-adapter.js';
 import { AudioSeparatorAdapter } from './audio-separator-adapter.js';
+import { UVRMDXNetAdapter } from './uvr-mdx-net-adapter.js';
 import { MockSplitterAdapter } from './mock-adapter.js';
 import { SongRepo } from '../db/repo.js';
 import path from 'path';
@@ -13,22 +14,56 @@ const router = express.Router();
 // Auto-Detection with Fallback Chain: Demucs AI -> FFmpeg -> AudioSeparator -> Mock
 export const initSplitterService = async () => {
     const demucs = new DemucsAdapter();
+    const uvrMdxNet = new UVRMDXNetAdapter();
     const ffmpegSplit = new FFmpegSplitterAdapter();
     const audioSep = new AudioSeparatorAdapter();
     const mock = new MockSplitterAdapter();
 
+    // Health checks
+    const demucsHealth = await demucs.checkHealth();
+    const uvrHealth = await uvrMdxNet.checkHealth();
 
+    console.log(`[SplitterService] Adapter Availability:`);
+    console.log(`  - Demucs: ${demucsHealth.available}`);
+    console.log(`  - UVR-MDX-NET: ${uvrHealth.available}`);
 
-    // Try Demucs FIRST (AI - HTDemucs/MDX)
-    let health = await demucs.checkHealth();
-    if (health.available) {
-        console.log(`[SplitterService] Active Adapter: ${demucs.name} (AI - HTDemucs/MDX)`);
+    // Helper to check if model should use UVR adapter
+    const isUVRModel = (modelId) => {
+        if (!modelId) return false;
+        const id = modelId.toLowerCase();
+        return id.includes('uvr-mdx') || id.includes('uvr_mdx') || id === 'uvr-mdx-inst-main';
+    };
+
+    // Smart processor that routes based on modelId
+    if (demucsHealth.available || uvrHealth.available) {
+        console.log(`[SplitterService] Active Adapter: Smart Router (Demucs + UVR-MDX-NET)`);
         Queue.setProcessor(async (job, onProgress) => {
-            return await demucs.separate(job.jobId, job.inputPath, {
-                modelId: job.modelId,
-                stems: job.stems,
-                device: job.device
-            }, onProgress);
+            // Route to UVR adapter if UVR model selected AND available
+            if (isUVRModel(job.modelId) && uvrHealth.available) {
+                console.log(`[SplitterService] Routing to UVR-MDX-NET for model: ${job.modelId}`);
+                return await uvrMdxNet.separate(job.jobId, job.inputPath, {
+                    modelId: job.modelId,
+                    stems: job.stems
+                }, onProgress);
+            }
+            // Default to Demucs for other models
+            if (demucsHealth.available) {
+                console.log(`[SplitterService] Routing to Demucs for model: ${job.modelId}`);
+                return await demucs.separate(job.jobId, job.inputPath, {
+                    modelId: job.modelId,
+                    stems: job.stems,
+                    device: job.device
+                }, onProgress);
+            }
+            // Fallback to UVR if only it's available
+            if (uvrHealth.available) {
+                console.log(`[SplitterService] Fallback to UVR-MDX-NET for model: ${job.modelId}`);
+                return await uvrMdxNet.separate(job.jobId, job.inputPath, {
+                    modelId: job.modelId,
+                    stems: job.stems
+                }, onProgress);
+            }
+            throw new Error('No AI splitter available');
         });
         return;
     }
