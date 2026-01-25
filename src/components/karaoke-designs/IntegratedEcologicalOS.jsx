@@ -3,11 +3,12 @@ import {
     Search, Play, Pause, Square, SkipBack, SkipForward, Cpu, Wifi, Activity,
     Disc, Layers, Zap, Info, Minimize2, Maximize2, X, Download, HardDrive,
     FileAudio, RefreshCw, CheckCircle2, Lock, FileJson, Eye, EyeOff, AlertTriangle,
-    Mic2, Music // Added for Karaoke Icon and Stem controls
+    Mic2, Music, Film // Added for Karaoke Icon, Stem controls, and MP4 export
 } from 'lucide-react';
 import KaraokeLyricsDisplay from '../lyrics/KaraokeLyricsDisplay';
 import { AudioStemManager } from '../../utils/AudioStemManager';
 import ElectronYouTubePlayer from '../ElectronYouTubePlayer';
+import { useKaraokeExport } from '../../hooks/useKaraokeExport';
 
 /* 
   ECOLOGICAL_OS_v5::[ResilienceTest, MockEngine, HighHeat]
@@ -93,6 +94,18 @@ export default function IntegratedEcologicalOS() {
     const audioManagerRef = useRef(null);
     const useStemsRef = useRef(false); // Ref to avoid stale closure in callbacks
     const seekBarRef = useRef(null); // Ref for seek bar element to get accurate bounding rect
+
+    // --- MP4 EXPORT HOOK (Canvas Frame + FFmpeg) ---
+    const { isExporting, exportProgress, exportError, startExport } = useKaraokeExport({
+        songId: selectedSong?.id,
+        bandVolume,
+        vocalVolume,
+        timingJson: alignResult, // Raw timing data for lyrics rendering
+        linesPerPage,
+        highlightColor,
+        trackDuration: duration,
+        songTitle: selectedSong?.title || 'karaoke-export'
+    });
 
     // Keep ref in sync with state
     useEffect(() => {
@@ -1460,8 +1473,11 @@ export default function IntegratedEcologicalOS() {
                         <div className={`space-y-3 transition-opacity ${!splitResult ? 'opacity-30 pointer-events-none' : ''}`}>
                             <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 uppercase">
                                 <span>4. EXPORT ARTIFACTS</span>
+                                {isExporting && (
+                                    <span className="text-rose-400 animate-pulse">EXPORTING {Math.round(exportProgress * 100)}%</span>
+                                )}
                             </div>
-                            <div className="grid grid-cols-3 gap-2">
+                            <div className="grid grid-cols-4 gap-2">
                                 <a href={`${API_URL}${splitResult?.vocalDownloadUrl}`} download className="p-3 bg-slate-800 border border-slate-700 rounded flex flex-col items-center gap-1 hover:border-emerald-500/50 hover:bg-slate-800/80 group">
                                     <Download size={14} className="text-slate-500 group-hover:text-emerald-400" />
                                     <span className="text-[9px] font-bold text-slate-400">VOCALS</span>
@@ -1478,7 +1494,35 @@ export default function IntegratedEcologicalOS() {
                                     <FileJson size={14} className="text-slate-500 group-hover:text-violet-400" />
                                     <span className="text-[9px] font-bold text-slate-400">JSON</span>
                                 </button>
+                                <button
+                                    onClick={startExport}
+                                    disabled={!alignResult || !stemsLoaded || isPlaying || isExporting}
+                                    className={`p-3 border rounded flex flex-col items-center gap-1 group disabled:opacity-30 ${isExporting
+                                        ? 'bg-rose-900/30 border-rose-500/50'
+                                        : 'bg-slate-800 border-slate-700 hover:border-rose-500/50 hover:bg-slate-800/80'
+                                        }`}
+                                    title={!alignResult ? 'Align lyrics first' : !stemsLoaded ? 'Load stems first' : isPlaying ? 'Stop playback first' : 'Export karaoke MP4'}
+                                >
+                                    {isExporting ? (
+                                        <RefreshCw size={14} className="text-rose-400 animate-spin" />
+                                    ) : (
+                                        <Film size={14} className="text-slate-500 group-hover:text-rose-400" />
+                                    )}
+                                    <span className="text-[9px] font-bold text-slate-400">MP4</span>
+                                </button>
                             </div>
+                            {/* Export Progress Bar */}
+                            {isExporting && (
+                                <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                                    <div className="h-full bg-rose-500 transition-all duration-300" style={{ width: `${exportProgress * 100}%` }} />
+                                </div>
+                            )}
+                            {/* Export Error */}
+                            {exportError && (
+                                <div className="px-2 py-1 bg-rose-900/30 border border-rose-500/30 rounded text-[9px] text-rose-400">
+                                    Export Error: {exportError}
+                                </div>
+                            )}
                         </div>
 
                         {/* SECTION E: DISPLAY CONFIG */}

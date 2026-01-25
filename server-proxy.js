@@ -8,6 +8,8 @@ import downloaderRouter from './server/downloader/index.js';
 import splitterRouter, { initSplitterService } from './server/splitter/index.js';
 import alignmentRouter, { initAlignmentService } from './server/alignment/index.js';
 import artifactsRouter from './server/artifacts/index.js';
+import path from 'path';
+import fs from 'fs';
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -174,6 +176,108 @@ app.get('/api/library/songs/:id/jobs', (req, res) => {
     res.json(jobs);
 });
 
+// API to get stem file storage paths for export
+app.get('/api/library/songs/:id/stem-paths', (req, res) => {
+    try {
+        const artifacts = SongRepo.getArtifacts(req.params.id);
+        const vocalArtifact = artifacts.find(a => a.kind === 'vocal_stem');
+        const bandArtifact = artifacts.find(a => a.kind === 'band_stem');
+
+        if (!vocalArtifact || !bandArtifact) {
+            return res.status(404).json({ error: 'Stems not found' });
+        }
+
+        res.json({
+            vocalPath: vocalArtifact.storage_ref,
+            bandPath: bandArtifact.storage_ref
+        });
+    } catch (e) {
+        console.error('[stem-paths] Error:', e);
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// --- EXPORT ENDPOINT (Remotion-based MP4 Creation) ---
+app.post('/export/mp4', async (req, res) => {
+    const { songId, bandVolume = 1, vocalVolume = 1, lyricsData, highlightColor = '#6EE7B7', durationSec } = req.body;
+
+    if (!songId) {
+        return res.status(400).json({ error: 'Missing songId' });
+    }
+
+    try {
+        console.log(`[Export] Starting Remotion export for song: ${songId}`);
+
+        // Get artifacts for this song
+        const artifacts = SongRepo.getArtifacts(songId);
+        const vocalArtifact = artifacts.find(a => a.kind === 'vocal_stem');
+        const bandArtifact = artifacts.find(a => a.kind === 'band_stem');
+
+        if (!vocalArtifact || !bandArtifact) {
+            return res.status(400).json({ error: 'Stems not available for this song' });
+        }
+
+        // Resolve paths
+        const vocalPath = vocalArtifact.storage_ref;
+        const bandPath = bandArtifact.storage_ref;
+
+        if (!fs.existsSync(vocalPath) || !fs.existsSync(bandPath)) {
+            return res.status(400).json({ error: 'Stem files not found on disk' });
+        }
+
+        // Get song info for filename
+        const song = SongRepo.getById(songId);
+        const safeName = (song?.track_title || 'karaoke-export').replace(/[<>:"/\\|?*]/g, '_');
+
+        // Output to exports folder
+        const exportsDir = path.resolve('./exports');
+        if (!fs.existsSync(exportsDir)) {
+            fs.mkdirSync(exportsDir, { recursive: true });
+        }
+        const outputPath = path.join(exportsDir, `${safeName}_${Date.now()}.mp4`);
+
+        // Import the correct export function
+        const { exportKaraokeVideo } = await import('./server/services/exportService.js');
+
+        // Run export with Remotion
+        const result = await exportKaraokeVideo({
+            bandStemPath: bandPath,
+            vocalStemPath: vocalPath,
+            bandVolume: parseFloat(bandVolume),
+            vocalVolume: parseFloat(vocalVolume),
+            lyricsData: lyricsData || { lyrics: [] },
+            durationSec: parseFloat(durationSec) || 180,
+            highlightColor,
+            outputPath,
+            onProgress: (p, msg) => console.log(`[Export] ${Math.round(p * 100)}%: ${msg}`)
+        });
+
+        console.log(`[Export] Complete: ${outputPath}`);
+
+        // Return download URL
+        res.json({
+            success: true,
+            downloadUrl: `/export/download/${path.basename(outputPath)}`,
+            filename: path.basename(outputPath)
+        });
+
+    } catch (e) {
+        console.error('[Export] Failed:', e);
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Serve exported files
+app.get('/export/download/:filename', (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path.resolve('./exports', filename);
+
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ error: 'File not found' });
+    }
+
+    res.download(filePath);
+});
 
 // --- ENDPOINTS: AUDIO ACQUISITION (Simulated) ---
 
