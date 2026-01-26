@@ -909,7 +909,7 @@ export default function IntegratedEcologicalOS() {
             <div className="w-full h-screen bg-[#0a0f18] text-slate-300 font-sans grid grid-cols-[300px_1fr_320px] overflow-hidden divide-x divide-slate-800">
 
                 {/* [COL 1] INGEST: PROXY SEARCH */}
-                <div className="flex flex-col bg-[#05080c]">
+                <div className="flex flex-col bg-[#05080c] overflow-hidden">
                     <div className="h-12 border-b border-slate-800 flex items-center px-4 bg-slate-900/50">
                         <span className="text-[10px] font-bold tracking-widest text-orange-500 flex items-center gap-2">
                             <Activity size={14} className="animate-pulse" /> RESILIENCE_NODE_v5 [MOCK]
@@ -934,12 +934,12 @@ export default function IntegratedEcologicalOS() {
                     </div>
                     <div className="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar">
                         {results.map((r, i) => (
-                            <button key={i} onClick={() => handleSongSelect(r)} className={`w-full flex items-start gap-3 p-2 rounded border text-left transition-all ${selectedSong?.videoId === r.videoId ? 'bg-emerald-900/20 border-emerald-500/30' : 'border-transparent hover:bg-slate-900'}`}>
+                            <button key={i} onClick={() => handleSongSelect(r)} className={`w-full flex items-start gap-3 p-2 rounded border text-left transition-all overflow-hidden ${selectedSong?.videoId === r.videoId ? 'bg-emerald-900/20 border-emerald-500/30' : 'border-transparent hover:bg-slate-900'}`}>
                                 <div className="relative w-16 h-10 shrink-0 bg-black rounded overflow-hidden">
                                     <img src={r.thumbnailUrl} className="w-full h-full object-cover opacity-80" />
                                     {r.isLocal && <div className="absolute top-0 right-0 bg-emerald-500 text-black text-[8px] font-bold px-1">DB</div>}
                                 </div>
-                                <div className="min-w-0">
+                                <div className="min-w-0 flex-1">
                                     <div className={`text-[11px] font-bold truncate ${selectedSong?.videoId === r.videoId ? 'text-emerald-400' : 'text-slate-300'}`}>{r.title}</div>
                                     <div className="text-[9px] text-slate-500 truncate flex items-center gap-1">
                                         {r.channelTitle}
@@ -1088,7 +1088,7 @@ export default function IntegratedEcologicalOS() {
                                 </div>
 
                                 {/* Stem Toggle + Volume Controls */}
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-3 overflow-hidden">
                                     {/* Stem/YT Toggle - also triggers stem loading in Electron */}
                                     <button
                                         onClick={async () => {
@@ -1158,7 +1158,7 @@ export default function IntegratedEcologicalOS() {
                                     </button>
 
                                     {/* Vocal Volume */}
-                                    <div className="flex items-center gap-1.5 group" title="Vocal Volume">
+                                    <div className="flex items-center gap-1.5 group shrink" title="Vocal Volume">
                                         <Mic2 size={12} className={`${useStems ? 'text-rose-400' : 'text-slate-600'}`} />
                                         <input
                                             type="range"
@@ -1168,12 +1168,12 @@ export default function IntegratedEcologicalOS() {
                                             value={vocalVolume}
                                             onChange={(e) => setVocalVolume(parseFloat(e.target.value))}
                                             disabled={!useStems}
-                                            className={`w-14 h-1 rounded-full cursor-pointer accent-rose-500 ${!useStems ? 'opacity-30' : ''}`}
+                                            className={`min-w-8 max-w-14 w-full h-1 rounded-full cursor-pointer accent-rose-500 ${!useStems ? 'opacity-30' : ''}`}
                                         />
                                     </div>
 
                                     {/* Band Volume */}
-                                    <div className="flex items-center gap-1.5 group" title="Band Volume">
+                                    <div className="flex items-center gap-1.5 group shrink" title="Band Volume">
                                         <Music size={12} className={`${useStems ? 'text-cyan-400' : 'text-slate-600'}`} />
                                         <input
                                             type="range"
@@ -1183,7 +1183,7 @@ export default function IntegratedEcologicalOS() {
                                             value={bandVolume}
                                             onChange={(e) => setBandVolume(parseFloat(e.target.value))}
                                             disabled={!useStems}
-                                            className={`w-14 h-1 rounded-full cursor-pointer accent-cyan-500 ${!useStems ? 'opacity-30' : ''}`}
+                                            className={`min-w-8 max-w-14 w-full h-1 rounded-full cursor-pointer accent-cyan-500 ${!useStems ? 'opacity-30' : ''}`}
                                         />
                                     </div>
                                 </div>
@@ -1251,7 +1251,7 @@ export default function IntegratedEcologicalOS() {
                 </div>
 
                 {/* [COL 3] FABRICATION: JOBS */}
-                <div className="flex flex-col bg-[#05080c]">
+                <div className="flex flex-col bg-[#05080c] overflow-hidden">
                     <div className="h-12 border-b border-slate-800 flex items-center px-4 bg-slate-900/50 justify-between">
                         <span className="text-[10px] font-bold tracking-widest text-emerald-500 flex items-center gap-2">
                             <Cpu size={14} /> FAB_PROCESSOR
@@ -1259,7 +1259,7 @@ export default function IntegratedEcologicalOS() {
                         <Activity size={12} className={archiveJob || splitJob ? "animate-pulse text-emerald-500" : "text-slate-700"} />
                     </div>
 
-                    <div className="p-4 space-y-8 overflow-y-auto">
+                    <div className="flex-1 p-4 pb-8 space-y-8 overflow-y-auto custom-scrollbar">
                         {/* SECTION A: ACQUISITION */}
                         <div className={`space-y-3 transition-opacity ${!selectedSong ? 'opacity-50 pointer-events-none' : ''}`}>
                             <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 uppercase">
