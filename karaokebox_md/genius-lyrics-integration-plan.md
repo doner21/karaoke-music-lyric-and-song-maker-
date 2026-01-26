@@ -140,7 +140,13 @@ User edits if needed → POST /api/lyrics/save
 
 **Search endpoint:** `https://api.genius.com/search?q={query}`
 - Returns song metadata including `url` field
+- Returns song metadata including `url` field
 - Auth: `Authorization: Bearer {token}` header
+
+**Fallback Strategy (Implemented):**
+- **Issue**: The `/search` endpoint is prone to returning 500 errors.
+- **Solution 1 (ID Lookup)**: If a specific song ID is known (not applicable for broad search), the `/songs/:id` endpoint is reliable.
+- **Solution 2 (URL Guessing)**: If the API fails, the system constructs potential Genius URLs from the artist and title (e.g., `genius.com/Artist-Title-Lyrics`) and verifies them via valid HTTP requests before returning a "fallback" match. This bypasses the search API entirely.
 
 **Lyrics retrieval:**
 - Genius API does NOT return lyrics directly
