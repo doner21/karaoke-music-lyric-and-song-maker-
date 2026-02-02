@@ -1,4 +1,4 @@
 {
-  "message": "[UVR-MDX-NET] No vocal or instrumental files produced",
-  "stack": "Error: [UVR-MDX-NET] No vocal or instrumental files produced\n    at ChildProcess.<anonymous> (file:///C:/Users/donald%20clark/.gemini/antigravity/scratch/karaoke-box/server/splitter/uvr-mdx-net-adapter.js:191:39)"
+  "message": "Cannot read properties of undefined (reading 'videoId')",
+  "stack": "TypeError: Cannot read properties of undefined (reading 'videoId')\n    at YtdlCoreAdapter.download (file:///C:/Users/donald%20clark/.gemini/antigravity/scratch/karaoke-box/server/downloader/adapters/ytdl-core.js:41:39)\n    at EngineManager.download (file:///C:/Users/donald%20clark/.gemini/antigravity/scratch/karaoke-box/server/downloader/engine-manager.js:53:37)\n    at JobQueue.processDownload (file:///C:/Users/donald%20clark/.gemini/antigravity/scratch/karaoke-box/server/downloader/job-queue.js:59:42)\n    at async JobManager.processNext (file:///C:/Users/donald%20clark/.gemini/antigravity/scratch/karaoke-box/server/orchestrator/index.js:132:28)\n    at async JobManager.poll (file:///C:/Users/donald%20clark/.gemini/antigravity/scratch/karaoke-box/server/orchestrator/index.js:93:13)"
 }

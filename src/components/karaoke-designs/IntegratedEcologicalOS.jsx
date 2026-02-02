@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
     Search, Play, Pause, Square, SkipBack, SkipForward, Cpu, Wifi, Activity,
-    Disc, Layers, Zap, Info, Minimize2, Maximize2, X, Download, HardDrive,
-    FileAudio, RefreshCw, CheckCircle2, Lock, FileJson, Eye, EyeOff, AlertTriangle,
+    Disc, Layers, Zap, Info, Minimize2, Maximize2, X, Download, HardDrive, Package, RefreshCw,
+    FileAudio, CheckCircle2, Lock, FileJson, Eye, EyeOff, AlertTriangle,
     Mic2, Music, Film // Added for Karaoke Icon, Stem controls, and MP4 export
 } from 'lucide-react';
 import KaraokeLyricsDisplay from '../lyrics/KaraokeLyricsDisplay';
@@ -69,6 +69,12 @@ export default function IntegratedEcologicalOS() {
     const [enginePref, setEnginePref] = useState('auto'); // Default to Resilient Auto
     const [modelId, setModelId] = useState('v3-sim'); // 'v3-sim' | 'htdemucs' | 'mdx-extra'
     const [splitterDevice, setSplitterDevice] = useState('cpu'); // 'cpu' | 'gpu'
+
+    // yt-dlp Updater State
+    const [ytdlpStatus, setYtdlpStatus] = useState(null); // { updateAvailable, currentVersion, latestVersion }
+    const [isCheckingYtdlp, setIsCheckingYtdlp] = useState(false);
+    const [isUpdatingYtdlp, setIsUpdatingYtdlp] = useState(false);
+    const [ytdlpUpdateResult, setYtdlpUpdateResult] = useState(null);
 
     const [stems, setStems] = useState(2);
 
@@ -863,6 +869,40 @@ export default function IntegratedEcologicalOS() {
         URL.revokeObjectURL(url);
     };
 
+    // yt-dlp Update Handlers
+    const handleCheckYtdlpUpdate = async () => {
+        setIsCheckingYtdlp(true);
+        setYtdlpUpdateResult(null);
+        try {
+            const res = await fetch(`${API_URL}/ytdlp/status`);
+            const data = await res.json();
+            setYtdlpStatus(data);
+        } catch (e) {
+            console.error('Failed to check yt-dlp status:', e);
+            setYtdlpStatus({ error: e.message });
+        } finally {
+            setIsCheckingYtdlp(false);
+        }
+    };
+
+    const handleUpdateYtdlp = async () => {
+        setIsUpdatingYtdlp(true);
+        setYtdlpUpdateResult(null);
+        try {
+            const res = await fetch(`${API_URL}/ytdlp/update`, { method: 'POST' });
+            const data = await res.json();
+            setYtdlpUpdateResult(data);
+            if (data.success) {
+                await handleCheckYtdlpUpdate();
+            }
+        } catch (e) {
+            console.error('Failed to update yt-dlp:', e);
+            setYtdlpUpdateResult({ success: false, message: e.message });
+        } finally {
+            setIsUpdatingYtdlp(false);
+        }
+    };
+
 
     // Auto-update player when song changes
     useEffect(() => {
@@ -1274,6 +1314,70 @@ export default function IntegratedEcologicalOS() {
                                 <option value="ytdl-core">YouTube (Legacy)</option>
                                 <option value="mock">Resilience Test (Mock)</option>
                             </select>
+
+                            {/* yt-dlp Updater Section */}
+                            <div className="p-2 bg-slate-900/50 border border-slate-800 rounded mb-2">
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className="text-[9px] font-bold text-slate-500 uppercase flex items-center gap-1">
+                                        <Package size={10} /> yt-dlp
+                                    </span>
+                                    {ytdlpStatus && !ytdlpStatus.error && (
+                                        <span className={`text-[9px] font-bold ${ytdlpStatus.updateAvailable ? 'text-amber-400' : 'text-emerald-400'}`}>
+                                            {ytdlpStatus.updateAvailable ? 'UPDATE_AVAIL' : 'UP_TO_DATE'}
+                                        </span>
+                                    )}
+                                </div>
+
+                                {/* Version Info */}
+                                {ytdlpStatus && !ytdlpStatus.error && (
+                                    <div className="text-[9px] text-slate-500 mb-2 space-y-0.5">
+                                        <div className="flex justify-between">
+                                            <span>Current:</span>
+                                            <span className="font-mono text-slate-400">{ytdlpStatus.currentVersion || 'N/A'}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span>Latest:</span>
+                                            <span className="font-mono text-slate-400">{ytdlpStatus.latestVersion || 'N/A'}</span>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Error Display */}
+                                {ytdlpStatus?.error && (
+                                    <div className="text-[9px] text-rose-400 mb-2">
+                                        Error: {ytdlpStatus.error}
+                                    </div>
+                                )}
+
+                                {/* Update Result */}
+                                {ytdlpUpdateResult && (
+                                    <div className={`text-[9px] mb-2 p-1.5 rounded ${ytdlpUpdateResult.success ? 'bg-emerald-900/30 text-emerald-400' : 'bg-rose-900/30 text-rose-400'}`}>
+                                        {ytdlpUpdateResult.success ? '✓ ' : '✗ '}{ytdlpUpdateResult.message}
+                                    </div>
+                                )}
+
+                                {/* Action Buttons */}
+                                <div className="flex gap-1">
+                                    <button
+                                        onClick={handleCheckYtdlpUpdate}
+                                        disabled={isCheckingYtdlp || isUpdatingYtdlp}
+                                        className="flex-1 py-1.5 text-[9px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-400 rounded border border-slate-700 flex items-center justify-center gap-1 disabled:opacity-50"
+                                    >
+                                        {isCheckingYtdlp ? <RefreshCw size={10} className="animate-spin" /> : <RefreshCw size={10} />}
+                                        CHECK
+                                    </button>
+                                    {ytdlpStatus?.updateAvailable && (
+                                        <button
+                                            onClick={handleUpdateYtdlp}
+                                            disabled={isCheckingYtdlp || isUpdatingYtdlp}
+                                            className="flex-1 py-1.5 text-[9px] font-bold bg-amber-900/50 hover:bg-amber-800/50 text-amber-400 rounded border border-amber-500/30 flex items-center justify-center gap-1 disabled:opacity-50"
+                                        >
+                                            {isUpdatingYtdlp ? <RefreshCw size={10} className="animate-spin" /> : <Download size={10} />}
+                                            UPDATE
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
 
                             {!localAsset ? (
                                 <button onClick={startArchive} disabled={!selectedSong || archiveJob} className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded flex items-center justify-center gap-2 border border-slate-700">

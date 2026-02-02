@@ -10,6 +10,7 @@ import alignmentRouter, { initAlignmentService } from './server/alignment/index.
 import artifactsRouter from './server/artifacts/index.js';
 import path from 'path';
 import fs from 'fs';
+import { checkForUpdate, performUpdate, checkAndUpdateOnStartup } from './server/services/ytdlp-updater.js';
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -46,6 +47,11 @@ setTimeout(() => {
 }, 5000);
 
 initAlignmentService();
+
+// yt-dlp Auto-Update Check on Startup (delayed to not block server startup)
+setTimeout(() => {
+    checkAndUpdateOnStartup().catch(e => console.error('[ytdlp-updater] Startup check error:', e));
+}, 10000);
 
 
 // --- CACHE & STATE ---
@@ -369,6 +375,31 @@ app.post('/audio/cancel', (req, res) => {
         job.progress = 0;
     }
     res.json({ ok: true });
+});
+
+
+// --- ENDPOINTS: yt-dlp Updater ---
+
+app.get('/ytdlp/status', async (req, res) => {
+    try {
+        console.log('[ytdlp] Checking update status...');
+        const status = await checkForUpdate();
+        res.json(status);
+    } catch (e) {
+        console.error('[ytdlp] Status check failed:', e);
+        res.status(500).json({ error: e.message });
+    }
+});
+
+app.post('/ytdlp/update', async (req, res) => {
+    try {
+        console.log('[ytdlp] Performing manual update...');
+        const result = await performUpdate();
+        res.json(result);
+    } catch (e) {
+        console.error('[ytdlp] Update failed:', e);
+        res.status(500).json({ success: false, message: e.message });
+    }
 });
 
 
