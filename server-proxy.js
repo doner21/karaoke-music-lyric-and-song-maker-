@@ -287,6 +287,78 @@ app.get('/export/download/:filename', (req, res) => {
 
 // --- ENDPOINTS: AUDIO ACQUISITION (Simulated) ---
 
+// WAVEFORM CACHE (Simple In-Memory)
+import { generateWaveform } from './server/utils/waveform.js';
+const WaveformCache = new Map(); // path -> number[]
+
+app.get('/api/audio/waveform', async (req, res) => {
+    const { path: filePath, url } = req.query;
+
+    let targetPath = filePath;
+
+    // Resolve URL to path if needed
+    if (!targetPath && url) {
+        try {
+            const urlObj = new URL(url.startsWith('http') ? url : `http://localhost:${PORT}${url}`);
+
+            // Case 2: Splitter download /split/download/:jobId/:type
+            const splitMatch = urlObj.pathname.match(/\/split\/download\/([^\/]+)\/(vocals|accompaniment)/);
+            if (splitMatch) {
+                const jobId = splitMatch[1];
+                const type = splitMatch[2];
+
+                // Use Queue to find the job and result
+                const { Queue } = await import('./server/splitter/queue.js');
+                const job = Queue.getJob(jobId);
+
+                if (job && job.result && job.result.files) {
+                    targetPath = job.result.files[type];
+                }
+            }
+
+            // Case 3: Export download
+            const exportMatch = urlObj.pathname.match(/\/export\/download\/([^\/]+)/);
+            if (exportMatch) {
+                targetPath = path.resolve('./exports', exportMatch[1]);
+            }
+
+            // Case 4: Artifact download
+            const artifactMatch = urlObj.pathname.match(/\/artifacts\/([^\/]+)\/download/);
+            if (artifactMatch) {
+                const artifactId = artifactMatch[1];
+                const artifact = SongRepo.getArtifactById(artifactId);
+                if (artifact && artifact.storage_ref) {
+                    targetPath = artifact.storage_ref;
+                }
+            }
+
+        } catch (e) {
+            console.error('[Waveform] URL resolution failed', e);
+        }
+    }
+
+    if (!targetPath) return res.status(400).json({ error: 'Could not resolve path from URL' });
+    if (!fs.existsSync(targetPath)) return res.status(404).json({ error: 'File not found' });
+
+    try {
+        // Check cache
+        if (WaveformCache.has(targetPath)) {
+            // console.log('[Waveform] Serving from cache');
+            return res.json(WaveformCache.get(targetPath));
+        }
+
+        const peaks = await generateWaveform(targetPath);
+
+        // Cache it
+        WaveformCache.set(targetPath, peaks);
+
+        res.json(peaks);
+    } catch (e) {
+        console.error('[Waveform] Generation failed:', e);
+        res.status(500).json({ error: e.message });
+    }
+});
+
 app.get('/audio/status/:jobId', (req, res) => {
     const job = AudioJobs.get(req.params.jobId);
     if (!job) return res.status(404).json({ error: 'Job not found' });

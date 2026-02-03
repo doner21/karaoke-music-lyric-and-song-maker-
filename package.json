@@ -8,6 +8,8 @@
         "dev": "vite",
         "build": "vite build",
         "preview": "vite preview",
+        "test": "vitest run",
+        "test:watch": "vitest",
         "electron:dev": "concurrently \"vite\" \"node server-proxy.js\" \"wait-on tcp:5173 && cross-env NODE_ENV=development electron .\"",
         "clean-start": "powershell -ExecutionPolicy Bypass -File ./scripts/cleanup.ps1 && npm run electron:dev",
         "electron:build": "vite build && electron-builder",
@@ -22,6 +24,7 @@
         "cors": "^2.8.5",
         "dotenv": "^17.2.3",
         "express": "^5.2.1",
+        "ffmpeg-static": "^5.3.0",
         "fs-extra": "^11.3.3",
         "lucide-react": "^0.562.0",
         "mp4-muxer": "^5.2.2",
@@ -44,6 +47,7 @@
         "electron": "^28.0.0",
         "electron-builder": "^24.6.0",
         "vite": "^5.2.0",
+        "vitest": "^4.0.18",
         "wait-on": "^7.0.1"
     },
     "build": {

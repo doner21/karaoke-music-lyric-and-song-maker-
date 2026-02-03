@@ -3,12 +3,13 @@ import {
     Search, Play, Pause, Square, SkipBack, SkipForward, Cpu, Wifi, Activity,
     Disc, Layers, Zap, Info, Minimize2, Maximize2, X, Download, HardDrive, Package, RefreshCw,
     FileAudio, CheckCircle2, Lock, FileJson, Eye, EyeOff, AlertTriangle,
-    Mic2, Music, Film // Added for Karaoke Icon, Stem controls, and MP4 export
+    Mic2, Music, Film, Edit3 // Added for Karaoke Icon, Stem controls, MP4 export, and Edit Timing
 } from 'lucide-react';
 import KaraokeLyricsDisplay from '../lyrics/KaraokeLyricsDisplay';
 import { AudioStemManager } from '../../utils/AudioStemManager';
 import ElectronYouTubePlayer from '../ElectronYouTubePlayer';
 import { useKaraokeExport } from '../../hooks/useKaraokeExport';
+import TokenEditorPanel from '../editor/TokenEditorPanel';
 
 /* 
   ECOLOGICAL_OS_v5::[ResilienceTest, MockEngine, HighHeat]
@@ -80,6 +81,7 @@ export default function IntegratedEcologicalOS() {
 
     // --- STATE: PRESENTATION ---
     const [viewMode, setViewMode] = useState('editor'); // 'editor' | 'preview'
+    const [editorMode, setEditorMode] = useState(false); // Token timing editor modal
 
     // --- STATE: DISPLAY PREFS (Lifted from KaraokeLyricsDisplay) ---
     const [linesPerPage, setLinesPerPage] = useState(() => parseInt(localStorage.getItem('karaoke_linesPerPage') || '2'));
@@ -1524,13 +1526,21 @@ export default function IntegratedEcologicalOS() {
                                             <div className="opacity-70">{alignResult?.tokens?.length || 0} tokens aligned</div>
                                         </div>
                                     </div>
-                                    <button
-                                        onClick={startRealignment}
-                                        disabled={alignJob && alignJob.state !== 'done' && alignJob.state !== 'error'}
-                                        className="px-2 py-1 bg-violet-800/50 hover:bg-violet-700/50 text-violet-300 text-[9px] font-bold rounded border border-violet-500/30 flex items-center gap-1 disabled:opacity-50"
-                                    >
-                                        <RefreshCw size={10} /> RE-ALIGN
-                                    </button>
+                                    <div className="flex items-center gap-1">
+                                        <button
+                                            onClick={() => setEditorMode(true)}
+                                            className="px-2 py-1 bg-cyan-800/50 hover:bg-cyan-700/50 text-cyan-300 text-[9px] font-bold rounded border border-cyan-500/30 flex items-center gap-1"
+                                        >
+                                            <Edit3 size={10} /> EDIT TIMING
+                                        </button>
+                                        <button
+                                            onClick={startRealignment}
+                                            disabled={alignJob && alignJob.state !== 'done' && alignJob.state !== 'error'}
+                                            className="px-2 py-1 bg-violet-800/50 hover:bg-violet-700/50 text-violet-300 text-[9px] font-bold rounded border border-violet-500/30 flex items-center gap-1 disabled:opacity-50"
+                                        >
+                                            <RefreshCw size={10} /> RE-ALIGN
+                                        </button>
+                                    </div>
                                 </div>
                             )}
 
@@ -1736,6 +1746,23 @@ export default function IntegratedEcologicalOS() {
                             </button>
                         </div>
                     </div>
+                </div>
+            )}
+
+            {/* TOKEN EDITOR MODAL */}
+            {editorMode && alignResult && (
+                <div className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-sm flex flex-col">
+                    <TokenEditorPanel
+                        lyricsJson={alignResult}
+                        trackDurationMs={duration * 1000}
+                        vocalUrl={splitResult?.vocalDownloadUrl ? `${API_URL}${splitResult.vocalDownloadUrl}` : null}
+                        audioManagerRef={audioManagerRef}
+                        onApply={(updatedJson) => {
+                            setAlignResult(updatedJson);
+                            setEditorMode(false);
+                        }}
+                        onDiscard={() => setEditorMode(false)}
+                    />
                 </div>
             )}
         </>

@@ -1,0 +1,95 @@
+﻿
+ RUN  v4.0.18 C:/Users/donald clark/.gemini/antigravity/scratch/karaoke-box
+
+ Γ£ô src/editor/__tests__/jsonAdapters.test.js (20 tests) 14ms
+ Γ¥» src/editor/__tests__/undoStack.test.js (26 tests | 1 failed) 18ms
+       Γ£ô should return initial state 2ms
+       Γ£ô should return current state after push 0ms
+       Γ£ô should update current state 0ms
+       Γ£ô should allow undoing after push 0ms
+       Γ£ô should clear redo stack 0ms
+       Γ£ô should return previous state 0ms
+       Γ£ô should update getState to previous 0ms
+       Γ£ô should return null when nothing to undo 0ms
+       Γ£ô should allow redoing after undo 0ms
+       Γ£ô should return undone state 0ms
+       Γ£ô should update getState after redo 0ms
+       Γ£ô should return null when nothing to redo 0ms
+       Γ£ô canUndo should be false initially 0ms
+       Γ£ô canRedo should be false initially 0ms
+       Γ£ô canUndo should be true after push 0ms
+       Γ£ô canRedo should be true after undo 0ms
+       Γ£ô canUndo should be false after undoing all 0ms
+       Γ£ô canRedo should be false after redoing all 0ms
+       Γ£ô should clear undo stack 0ms
+       Γ£ô should clear redo stack 0ms
+       Γ£ô should preserve current state 0ms
+       Γ£ô should limit undo stack to maxDepth 0ms
+       ├ù should remove oldest entries when exceeding maxDepth 9ms
+       Γ£ô should handle 5 edits then 5 undos correctly 0ms
+       Γ£ô should handle 5 edits, 5 undos, then 5 redos correctly 0ms
+       Γ£ô should handle interleaved undo/redo/push 0ms
+ Γ£ô src/editor/__tests__/tokenTransforms.test.js (50 tests) 22ms
+node.exe : 
+At line:1 char:1
++ & "C:\Program Files\
+nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (:String) [   
+ ], RemoteExceptio    
+n
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» 
+Failed Tests 1 
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  src/editor/__te
+sts__/undoStack.test.j
+s > createUndoStack > 
+max depth eviction > 
+should remove oldest 
+entries when 
+exceeding maxDepth
+AssertionError: 
+expected 'initial' 
+not to be 'initial' 
+// Object.is equality
+ Γ¥» src/editor/__test
+s__/undoStack.test.js:
+189:50
+    187|             
+smallStack.undo(); // 
+back to 'one'
+    188| 
+    189|             e
+xpect(stack.getState()
+[0].text).not.toBe('in
+itial');
+       |              
+                      
+              ^
+    190|         });
+    191|     });
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ
+»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»[1/1]ΓÄ»
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 95 passed (96)
+   Start at  20:06:00
+   Duration  638ms (transform 197ms, setup 0ms, import 282ms, tests 53ms, environment 1ms)
+
