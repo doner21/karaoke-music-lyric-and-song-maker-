@@ -115,15 +115,25 @@ export default function VocalWaveform({
         if (!canvas) return;
 
         const ctx = canvas.getContext('2d');
-        const width = Math.ceil(trackDurationMs * pxPerMs);
+        const displayWidth = Math.ceil(trackDurationMs * pxPerMs);
 
-        // Resize canvas if needed
-        if (canvas.width !== width || canvas.height !== height) {
-            canvas.width = width;
+        // Cap canvas intrinsic resolution to avoid exceeding browser limits.
+        // Browsers silently fail when canvas dimensions exceed ~32,767px.
+        // We draw at a capped resolution and use CSS to stretch to full width.
+        const MAX_CANVAS_WIDTH = 16384;
+        const canvasWidth = Math.min(displayWidth, MAX_CANVAS_WIDTH);
+
+        // Resize canvas intrinsic dimensions if needed
+        if (canvas.width !== canvasWidth || canvas.height !== height) {
+            canvas.width = canvasWidth;
             canvas.height = height;
         }
 
-        ctx.clearRect(0, 0, width, height);
+        // CSS stretches the canvas to the full timeline width
+        canvas.style.width = `${displayWidth}px`;
+        canvas.style.height = `${height}px`;
+
+        ctx.clearRect(0, 0, canvasWidth, height);
 
         if (!waveformData) return;
 
@@ -132,12 +142,10 @@ export default function VocalWaveform({
         if (len === 0) return;
 
         ctx.fillStyle = color;
-        ctx.beginPath();
 
-        // Draw logic
-        for (let x = 0; x < width; x++) {
-            // Nearest neighbor mapping
-            const i = Math.floor((x / width) * len);
+        // Draw at the capped intrinsic resolution
+        for (let x = 0; x < canvasWidth; x++) {
+            const i = Math.floor((x / canvasWidth) * len);
             const val = data[i] || 0;
 
             const barHeight = Math.max(1, val * height);

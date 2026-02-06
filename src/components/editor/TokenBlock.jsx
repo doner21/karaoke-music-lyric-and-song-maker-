@@ -22,6 +22,8 @@ export default function TokenBlock({
     token,
     isSelected,
     hasIssue,
+    isWordLengthActive,
+    isActive, // True when playhead is within this token's time range
     pxPerMs,
     onMouseDown,
     onClick,
@@ -57,11 +59,27 @@ export default function TokenBlock({
 
     // Visual styles based on state
     const getBackgroundClass = () => {
+        if (isWordLengthActive) {
+            return 'bg-amber-600/80 border-amber-300 ring-2 ring-amber-400 shadow-lg shadow-amber-500/50';
+        }
+
+        // Active glow when playhead is on this token
+        const activeGlow = isActive
+            ? 'ring-2 ring-emerald-400 shadow-lg shadow-emerald-500/60'
+            : '';
+
         if (hasIssue) {
             return isSelected
-                ? 'bg-red-700/80 border-red-400'
-                : 'bg-red-900/60 border-red-600/50';
+                ? `bg-red-700/80 border-red-400 ${activeGlow}`
+                : `bg-red-900/60 border-red-600/50 ${activeGlow}`;
         }
+
+        if (isActive) {
+            return isSelected
+                ? 'bg-emerald-600/90 border-emerald-300 ring-2 ring-emerald-400 shadow-lg shadow-emerald-500/60'
+                : 'bg-emerald-700/80 border-emerald-400 ring-2 ring-emerald-400 shadow-lg shadow-emerald-500/60';
+        }
+
         return isSelected
             ? 'bg-cyan-600/80 border-cyan-400'
             : 'bg-slate-700/80 border-slate-600/50';

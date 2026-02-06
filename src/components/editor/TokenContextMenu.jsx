@@ -6,7 +6,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import {
-    Type, Scissors, Merge, Plus, Trash2
+    Type, Scissors, Merge, Plus, Trash2, ArrowUpDown
 } from 'lucide-react';
 
 /**
@@ -61,6 +61,7 @@ export default function TokenContextMenu({
 
     const menuItems = [
         { id: 'edit', label: 'Edit Text', icon: Type, shortcut: 'E' },
+        { id: 'word-length', label: 'Word Length', icon: ArrowUpDown, shortcut: '↑↓', disabled: selectedCount !== 1 },
         { id: 'split', label: 'Split Token', icon: Scissors, shortcut: 'S', disabled: selectedCount !== 1 },
         { id: 'merge', label: 'Merge Tokens', icon: Merge, shortcut: 'M', disabled: selectedCount < 2 },
         { type: 'separator' },

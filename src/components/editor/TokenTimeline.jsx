@@ -5,7 +5,7 @@
  * Supports selection, drag-to-move, edge resize, and scrolling.
  */
 
-import React, { useState, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import TokenBlock from './TokenBlock.jsx';
 import InlineTextEditor from './InlineTextEditor.jsx';
 import VocalWaveform from './VocalWaveform.jsx';
@@ -39,6 +39,7 @@ export default function TokenTimeline({
     vocalUrl,
     editingTokenId,
     currentTimeMs, // New prop
+    isPlaying, // Playback state for auto-scroll
     onTimelineClick, // New prop
     onSelectToken,
     onMoveTokens,
@@ -49,10 +50,38 @@ export default function TokenTimeline({
     onTextCommit,
     onTextCancel,
     onScrollChange,
+    wordLengthTokenId,
 }) {
     const containerRef = useRef(null);
     const [dragState, setDragState] = useState(null);
     // { type: 'move' | 'resize-start' | 'resize-end', tokenId, initialX, initialMs }
+
+    // Auto-scroll to keep playhead visible during playback
+    useEffect(() => {
+        if (!isPlaying || !containerRef.current) return;
+
+        const container = containerRef.current;
+        const containerWidth = container.clientWidth;
+        const playheadPx = currentTimeMs * pxPerMs;
+        const scrollLeft = container.scrollLeft;
+
+        // Buffer zone: keep playhead in the middle 60% of the viewport
+        const leftBuffer = containerWidth * 0.2;
+        const rightBuffer = containerWidth * 0.8;
+
+        // If playhead moves past 80% of visible area, scroll to put it at 20%
+        if (playheadPx > scrollLeft + rightBuffer) {
+            const newScrollLeft = playheadPx - leftBuffer;
+            container.scrollLeft = newScrollLeft;
+            onScrollChange(newScrollLeft / pxPerMs);
+        }
+        // If playhead is before 20% of visible area (e.g., after seeking back), scroll
+        else if (playheadPx < scrollLeft + leftBuffer && scrollLeft > 0) {
+            const newScrollLeft = Math.max(0, playheadPx - leftBuffer);
+            container.scrollLeft = newScrollLeft;
+            onScrollChange(newScrollLeft / pxPerMs);
+        }
+    }, [isPlaying, currentTimeMs, pxPerMs, onScrollChange]);
 
     // Sort tokens by startMs for single-lane display
     const sortedTokens = useMemo(() => {
@@ -246,6 +275,8 @@ export default function TokenTimeline({
                                 token={token}
                                 isSelected={selection.selectedIds.has(token.id)}
                                 hasIssue={issuesByToken.has(token.id)}
+                                isWordLengthActive={wordLengthTokenId === token.id}
+                                isActive={currentTimeMs >= token.startMs && currentTimeMs <= token.endMs}
                                 pxPerMs={pxPerMs}
                                 onMouseDown={(e, zone) => handleMouseDown(e, token.id, zone)}
                                 onClick={(e) => {

@@ -1244,6 +1244,14 @@ export default function IntegratedEcologicalOS() {
                     <div className="flex-1 relative bg-[#0B1015] overflow-hidden">
                         {/* Toolbar */}
                         <div className="absolute top-2 right-8 z-20 flex items-center gap-2">
+                            {alignResult && (
+                                <button
+                                    onClick={() => setEditorMode(true)}
+                                    className="flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold border transition-all bg-cyan-500/20 text-cyan-400 border-cyan-500/50 hover:bg-cyan-500/30"
+                                >
+                                    <Edit3 size={12} /> EDIT TIMING
+                                </button>
+                            )}
                             <button
                                 onClick={() => setViewMode(m => m === 'editor' ? 'preview' : 'editor')}
                                 className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold border transition-all ${viewMode === 'preview'
@@ -1526,21 +1534,13 @@ export default function IntegratedEcologicalOS() {
                                             <div className="opacity-70">{alignResult?.tokens?.length || 0} tokens aligned</div>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-1">
-                                        <button
-                                            onClick={() => setEditorMode(true)}
-                                            className="px-2 py-1 bg-cyan-800/50 hover:bg-cyan-700/50 text-cyan-300 text-[9px] font-bold rounded border border-cyan-500/30 flex items-center gap-1"
-                                        >
-                                            <Edit3 size={10} /> EDIT TIMING
-                                        </button>
-                                        <button
-                                            onClick={startRealignment}
-                                            disabled={alignJob && alignJob.state !== 'done' && alignJob.state !== 'error'}
-                                            className="px-2 py-1 bg-violet-800/50 hover:bg-violet-700/50 text-violet-300 text-[9px] font-bold rounded border border-violet-500/30 flex items-center gap-1 disabled:opacity-50"
-                                        >
-                                            <RefreshCw size={10} /> RE-ALIGN
-                                        </button>
-                                    </div>
+                                    <button
+                                        onClick={startRealignment}
+                                        disabled={alignJob && alignJob.state !== 'done' && alignJob.state !== 'error'}
+                                        className="px-2 py-1 bg-violet-800/50 hover:bg-violet-700/50 text-violet-300 text-[9px] font-bold rounded border border-violet-500/30 flex items-center gap-1 disabled:opacity-50"
+                                    >
+                                        <RefreshCw size={10} /> RE-ALIGN
+                                    </button>
                                 </div>
                             )}
 

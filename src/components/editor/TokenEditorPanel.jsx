@@ -5,7 +5,7 @@
  * Provides token timeline, toolbar, and validation panel.
  */
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import {
     Undo2, Redo2, Save, X, Copy, Download, Upload,
     AlertTriangle, ChevronDown, ChevronUp, ZoomIn, ZoomOut,
@@ -16,6 +16,8 @@ import TokenTimeline from './TokenTimeline.jsx';
 import ValidationPanel from './ValidationPanel.jsx';
 import TokenContextMenu from './TokenContextMenu.jsx';
 import InlineTextEditor from './InlineTextEditor.jsx';
+import KaraokeLyricsDisplay from '../lyrics/KaraokeLyricsDisplay';
+import { tokensToExportJSON } from '../../editor/jsonAdapters.js';
 
 /**
  * @param {Object} props
@@ -41,10 +43,11 @@ export default function TokenEditorPanel({
     const editor = useTokenEditor(lyricsJson, effectiveTrackDuration);
 
     // UI State
-    const [pxPerMs, setPxPerMs] = useState(0.05); // 50px per second
+    const [pxPerMs, setPxPerMs] = useState(0.169); // 169px per second
     const [scrollLeftMs, setScrollLeftMs] = useState(0);
     const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, tokenId: null });
     const [editingTokenId, setEditingTokenId] = useState(null);
+    const [wordLengthTokenId, setWordLengthTokenId] = useState(null);
     const [validationPanelOpen, setValidationPanelOpen] = useState(false);
     const [copyFeedback, setCopyFeedback] = useState(false);
 
@@ -54,6 +57,12 @@ export default function TokenEditorPanel({
     const rafRef = useRef(null);
 
     const panelRef = useRef(null);
+
+    // Derive canonical JSON for lyrics preview (only recomputes when tokens change)
+    const previewJson = useMemo(() => {
+        if (!editor.tokens || editor.tokens.length === 0) return null;
+        return tokensToExportJSON(editor.tokens, {});
+    }, [editor.tokens]);
 
     // --- Playback Logic ---
 
@@ -131,7 +140,29 @@ export default function TokenEditorPanel({
     // Keyboard shortcuts
     useEffect(() => {
         const handleKeyDown = (e) => {
-            // Only handle if panel is focused
+            // Word Length mode handles keys globally (focus may be on body after context menu)
+            if (wordLengthTokenId) {
+                if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    const token = editor.tokens.find(t => t.id === wordLengthTokenId);
+                    if (token) {
+                        const step = e.shiftKey ? 100 : 10;
+                        const delta = e.key === 'ArrowUp' ? step : -step;
+                        const newEndMs = token.endMs + delta;
+                        if (newEndMs > token.startMs + (editor.policy.minDurationMs || 50)) {
+                            editor.resizeTokenEnd(wordLengthTokenId, newEndMs);
+                        }
+                    }
+                    return;
+                }
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    setWordLengthTokenId(null);
+                    return;
+                }
+            }
+
+            // Only handle remaining shortcuts if panel is focused
             if (!panelRef.current?.contains(document.activeElement) && document.activeElement === document.body) {
                 return;
             }
@@ -226,7 +257,14 @@ export default function TokenEditorPanel({
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [editor, contextMenu, editingTokenId]);
+    }, [editor, contextMenu, editingTokenId, wordLengthTokenId]);
+
+    // Exit word-length mode if the token is deselected or selection changes
+    useEffect(() => {
+        if (wordLengthTokenId && !editor.selection.selectedIds.has(wordLengthTokenId)) {
+            setWordLengthTokenId(null);
+        }
+    }, [editor.selection.selectedIds, wordLengthTokenId]);
 
     // Handle Apply
     const handleApply = useCallback(() => {
@@ -323,6 +361,12 @@ export default function TokenEditorPanel({
         switch (action) {
             case 'edit':
                 setEditingTokenId(tokenId);
+                break;
+            case 'word-length':
+                setWordLengthTokenId(tokenId);
+                editor.selectToken(tokenId, 'replace');
+                // Focus the panel so keyboard events (ArrowUp/Down) are captured
+                setTimeout(() => panelRef.current?.focus(), 0);
                 break;
             case 'split': {
                 const token = editor.tokens.find(t => t.id === tokenId);
@@ -517,6 +561,27 @@ export default function TokenEditorPanel({
                 </div>
             </div>
 
+            {/* Lyrics Preview - positioned prominently above timeline */}
+            {previewJson && (
+                <div
+                    style={{ height: '280px', minHeight: '280px', flexShrink: 0 }}
+                    className="bg-gray-950 border-b-2 border-emerald-700/50 relative"
+                >
+                    <div className="absolute top-2 left-3 text-[10px] font-semibold tracking-widest text-emerald-600 uppercase select-none z-10">
+                        Lyrics Preview
+                    </div>
+                    <KaraokeLyricsDisplay
+                        timingJson={previewJson}
+                        audioRef={null}
+                        currentTime={currentTimeMs / 1000}
+                        highlightColor="#7CB87C"
+                        fontSize={26}
+                        linesPerPage={4}
+                        trackDuration={effectiveTrackDuration / 1000}
+                    />
+                </div>
+            )}
+
             {/* Timeline Area */}
             <div className="flex-1 overflow-hidden relative">
                 <TokenTimeline
@@ -528,7 +593,9 @@ export default function TokenEditorPanel({
                     trackDurationMs={effectiveTrackDuration}
                     vocalUrl={vocalUrl}
                     editingTokenId={editingTokenId}
+                    wordLengthTokenId={wordLengthTokenId}
                     currentTimeMs={currentTimeMs}
+                    isPlaying={isPlaying}
                     onTimelineClick={handleTimelineClick}
                     onSelectToken={handleSelectToken}
                     onMoveTokens={(selectionIds, deltaMs) => editor.moveTokens(selectionIds, deltaMs)}
@@ -546,7 +613,9 @@ export default function TokenEditorPanel({
             <div className="flex items-center justify-between p-2 bg-gray-800 border-t border-gray-700 text-xs">
                 {/* Selection Info */}
                 <div className="text-gray-400">
-                    {editor.selection.selectedIds.size > 0 ? (
+                    {wordLengthTokenId ? (
+                        <span className="text-amber-300 font-semibold">Word Length mode — ↑ lengthen / ↓ shorten (Shift for 100ms) · Esc to exit</span>
+                    ) : editor.selection.selectedIds.size > 0 ? (
                         <span>{editor.selection.selectedIds.size} selected</span>
                     ) : (
                         <span>{editor.tokens.length} tokens</span>
