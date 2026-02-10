@@ -9,8 +9,40 @@ import React, { useEffect, useRef, useImperativeHandle, forwardRef, useState } f
  * Note: We previously tried a webview-based approach for Electron but it caused
  * YouTube Error 153 (player configuration error). The IFrame API works better.
  */
+/**
+ * Extract a clean 11-char YouTube video ID from various formats:
+ * - Plain ID: "dQw4w9WgXcQ"
+ * - Full URL: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+ * - Short URL: "https://youtu.be/dQw4w9WgXcQ"
+ * - Embed URL: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+ * Returns null if no valid ID can be extracted.
+ */
+const extractVideoId = (input) => {
+    if (!input || typeof input !== 'string') return null;
+    const trimmed = input.trim();
+
+    // Already a valid 11-char YouTube ID
+    if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
+
+    // Try to extract from URL patterns
+    const patterns = [
+        /[?&]v=([a-zA-Z0-9_-]{11})/,           // ?v=ID or &v=ID
+        /\/embed\/([a-zA-Z0-9_-]{11})/,          // /embed/ID
+        /\/v\/([a-zA-Z0-9_-]{11})/,              // /v/ID
+        /youtu\.be\/([a-zA-Z0-9_-]{11})/,        // youtu.be/ID
+        /\/shorts\/([a-zA-Z0-9_-]{11})/,         // /shorts/ID
+    ];
+
+    for (const pattern of patterns) {
+        const match = trimmed.match(pattern);
+        if (match) return match[1];
+    }
+
+    return null;
+};
+
 const ElectronYouTubePlayer = forwardRef(({
-    videoId,
+    videoId: rawVideoId,
     onReady,
     onStateChange,
     onTimeUpdate,
@@ -27,6 +59,9 @@ const ElectronYouTubePlayer = forwardRef(({
     // Always use IFrame API - webview causes Error 153
     const [isElectron] = useState(false);
     const [isReady, setIsReady] = useState(false);
+
+    // Sanitize videoId on every render
+    const videoId = extractVideoId(rawVideoId);
     const [duration, setDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
     const [playerState, setPlayerState] = useState(-1);
@@ -95,11 +130,16 @@ const ElectronYouTubePlayer = forwardRef(({
         },
         isMuted: () => muted,
         loadVideoById: (newVideoId) => {
+            const cleanId = extractVideoId(newVideoId);
+            if (!cleanId) {
+                console.warn('[ElectronYouTubePlayer] loadVideoById called with invalid ID:', newVideoId);
+                return;
+            }
             if (isElectron && webviewRef.current) {
-                const embedUrl = `https://www.youtube.com/embed/${newVideoId}?autoplay=1&controls=0&enablejsapi=1&modestbranding=1&rel=0`;
+                const embedUrl = `https://www.youtube.com/embed/${cleanId}?autoplay=1&controls=0&enablejsapi=1&modestbranding=1&rel=0`;
                 webviewRef.current.src = embedUrl;
             } else if (playerRef.current?.loadVideoById) {
-                playerRef.current.loadVideoById(newVideoId);
+                playerRef.current.loadVideoById(cleanId);
             }
         },
         getPlayerState: () => playerState,
@@ -121,10 +161,16 @@ const ElectronYouTubePlayer = forwardRef(({
         }
 
         const initPlayer = () => {
-            if (!containerRef.current || !window.YT?.Player || !videoId) return;
+            if (!containerRef.current || !window.YT?.Player || !videoId) {
+                if (rawVideoId && !videoId) {
+                    console.warn('[ElectronYouTubePlayer] Invalid video ID received:', rawVideoId);
+                    onError?.({ error: `Invalid video ID: "${rawVideoId}"` });
+                }
+                return;
+            }
 
             try {
-                console.log('[ElectronYouTubePlayer] Initializing YouTube player for video:', videoId);
+                console.log('[ElectronYouTubePlayer] Initializing YouTube player for video:', videoId, '(raw:', rawVideoId, ')');
 
                 playerRef.current = new window.YT.Player(containerRef.current, {
                     height: '100%',
@@ -188,7 +234,7 @@ const ElectronYouTubePlayer = forwardRef(({
                 }
             }
         };
-    }, [isElectron, videoId, autoplay, controls, onError]);
+    }, [isElectron, videoId, rawVideoId, autoplay, controls, onError]);
 
     // Set up time tracking for browser mode
     useEffect(() => {
