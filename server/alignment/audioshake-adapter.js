@@ -1,8 +1,10 @@
 /**
- * AudioShake Adapter - Hides Tasks API internals
- * SEED 44019 | SSE Observability Persona
- * 
- * AudioShake API Reference: https://docs.audioshake.ai
+ * AudioShake Adapter - Tasks API v2
+ * Migrated from Legacy API to new Tasks API
+ *
+ * AudioShake API Reference: https://developer.audioshake.ai
+ *
+ * Flow: Upload audio asset → Upload transcript asset → Create task with alignment target → Poll → Fetch result
  */
 
 import fs from 'fs';
@@ -16,31 +18,30 @@ const AUDIOSHAKE_API_BASE = 'https://api.audioshake.ai';
 export class AudioShakeAdapter {
     constructor(apiKey) {
         this.apiKey = apiKey?.trim();
-        this.name = 'AudioShake Tasks API';
+        this.name = 'AudioShake Tasks API v2';
     }
 
     async checkHealth() {
         if (!this.apiKey) {
             return { available: false, error: 'Missing AUDIOSHAKE_API_KEY' };
         }
-        // Simple health check - try to access API
         try {
-            const res = await fetch(`${AUDIOSHAKE_API_BASE}/`, {
+            const res = await fetch(`${AUDIOSHAKE_API_BASE}/assets`, {
                 method: 'GET',
-                headers: { 'Authorization': `Bearer ${this.apiKey}` }
+                headers: { 'x-api-key': this.apiKey }
             });
-            return { available: true };
+            return { available: res.ok };
         } catch (e) {
             return { available: false, error: e.message };
         }
     }
 
     /**
-     * Submit alignment job to AudioShake
-     * Strict Mode: Uploads lyrics as a separate asset to force alignment-only.
+     * Submit alignment task to AudioShake Tasks API
+     * Strict Mode: Uploads lyrics as a transcript asset to force alignment-only (no transcription).
      * @param {Object} params
      * @param {string} params.audioPath - Local path to vocal stem
-     * @param {string} [params.lyricsText] - Optional lyrics text
+     * @param {string} params.lyricsText - Required lyrics text
      * @returns {Promise<string>} Provider task ID
      */
     async submitAlignment({ audioPath, lyricsText }) {
@@ -57,73 +58,65 @@ export class AudioShakeAdapter {
         const lyricsHash = crypto.createHash('md5').update(lyricsText).digest('hex').substring(0, 8);
         console.log(`[AudioShakeAdapter] LYRICS DEBUG: hash=${lyricsHash}, preview="${lyricsPreview}..."`);
 
-        // Step 1: Upload the audio file
+        // Step 1: Upload the audio file to /assets
         const assetId = await this.uploadAsset(audioPath);
         console.log(`[AudioShakeAdapter] Audio Asset uploaded: ${assetId}`);
 
-        // Step 2: Upload the lyrics text as an asset (Strict Mode)
-        // Note: Creating JSON asset as per documentation ("transcription in JSON format")
-        console.log(`[AudioShakeAdapter] Uploading lyrics text asset (JSON format)...`);
-        const textAssetId = await this.uploadLyricsAsset(lyricsText);
-        console.log(`[AudioShakeAdapter] Text Asset uploaded: ${textAssetId}`);
+        // Step 2: Upload the lyrics text as a transcript asset
+        console.log(`[AudioShakeAdapter] Uploading transcript asset...`);
+        const transcriptAssetId = await this.uploadLyricsAsset(lyricsText);
+        console.log(`[AudioShakeAdapter] Transcript Asset uploaded: ${transcriptAssetId}`);
 
-        // Step 3: Create alignment-only job using otherSourceAssets
-        const jobPayload = {
+        // Step 3: Create alignment task using Tasks API
+        const taskPayload = {
             assetId: assetId,
-            callbackUrl: 'https://audioshake.ai/dummy-callback',
-            metadata: {
-                format: 'json',
-                name: 'alignment',
-                language: 'en'
-            },
-            otherSourceAssets: [
+            targets: [
                 {
-                    id: textAssetId,
-                    type: 'transcription',
-                    name: 'transcription'
+                    model: 'alignment',
+                    formats: ['json'],
+                    transcriptAssetId: transcriptAssetId,
+                    language: 'en'
                 }
             ]
-            // Note: 'text' field is explicitly OMITTED to avoid ambiguity
         };
 
-        console.log(`[AudioShakeAdapter] Creating job with payload:`, JSON.stringify(jobPayload, null, 2));
+        console.log(`[AudioShakeAdapter] Creating task with payload:`, JSON.stringify(taskPayload, null, 2));
 
-        const res = await fetch(`${AUDIOSHAKE_API_BASE}/job`, {
+        const res = await fetch(`${AUDIOSHAKE_API_BASE}/tasks`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${this.apiKey}`,
+                'x-api-key': this.apiKey,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(jobPayload)
+            body: JSON.stringify(taskPayload)
         });
 
         if (!res.ok) {
             const errorText = await res.text();
-            console.error(`[AudioShakeAdapter] Job creation failed: ${res.status} - ${errorText}`);
-            throw new Error(`AudioShake job creation failed: ${res.status} - ${errorText}`);
+            console.error(`[AudioShakeAdapter] Task creation failed: ${res.status} - ${errorText}`);
+            throw new Error(`AudioShake task creation failed: ${res.status} - ${errorText}`);
         }
 
         const data = await res.json();
-        console.log(`[AudioShakeAdapter] Job created:`, JSON.stringify(data, null, 2));
+        console.log(`[AudioShakeAdapter] Task created:`, JSON.stringify(data, null, 2));
 
-        const jobId = data.job?.id || data.id || data.jobId;
-        if (!jobId) {
-            throw new Error('AudioShake did not return a job ID');
+        const taskId = data.id || data.taskId;
+        if (!taskId) {
+            throw new Error('AudioShake did not return a task ID');
         }
 
-        return jobId;
+        return taskId;
     }
 
     /**
-     * Helper to upload lyrics as a temporary JSON asset
+     * Helper to upload lyrics as a temporary transcript asset
      */
     async uploadLyricsAsset(text) {
         const tmpDir = os.tmpdir();
-        const tmpPath = path.join(tmpDir, `lyrics_${Date.now()}.json`);
+        const tmpPath = path.join(tmpDir, `lyrics_${Date.now()}.txt`);
 
-        // Wrap text in JSON object as per typical API expectation for unstructured text payload
-        const content = JSON.stringify({ text: text });
-        fs.writeFileSync(tmpPath, content);
+        // Write plain text — the Tasks API alignment model expects a transcript file
+        fs.writeFileSync(tmpPath, text);
 
         try {
             const assetId = await this.uploadAsset(tmpPath);
@@ -136,7 +129,7 @@ export class AudioShakeAdapter {
     }
 
     /**
-     * Upload audio file to AudioShake
+     * Upload file to AudioShake /assets endpoint
      * @param {string} filePath - Local file path
      * @returns {Promise<string>} Asset ID
      */
@@ -157,11 +150,10 @@ export class AudioShakeAdapter {
                 const bodyEnd = Buffer.from(`\r\n--${boundary}--\r\n`);
                 const fullBody = Buffer.concat([bodyStart, fileBuffer, bodyEnd]);
 
-                const url = new URL(`${AUDIOSHAKE_API_BASE}/upload/`); // Ensure trailing slash
+                const url = new URL(`${AUDIOSHAKE_API_BASE}/assets`);
                 const options = {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${this.apiKey}`,
                         'x-api-key': this.apiKey,
                         'Content-Type': `multipart/form-data; boundary=${boundary}`,
                         'Content-Length': fullBody.length
@@ -177,7 +169,7 @@ export class AudioShakeAdapter {
                                 const json = JSON.parse(data);
                                 resolve(json.id || json.assetId);
                             } catch (e) {
-                                reject(new Error(`Invalid JSON response: ${data.substring(0, 100)}`));
+                                reject(new Error(`Invalid JSON response: ${data.substring(0, 200)}`));
                             }
                         } else {
                             reject(new Error(`AudioShake upload failed: ${res.statusCode} - ${data}`));
@@ -200,15 +192,15 @@ export class AudioShakeAdapter {
     }
 
     /**
-     * Poll job status
+     * Poll task status via Tasks API
      * @param {string} taskId - Provider task ID
      * @returns {Promise<{state: string, progress?: number, result?: object, error?: string}>}
      */
     async poll(taskId) {
-        const res = await fetch(`${AUDIOSHAKE_API_BASE}/job/${taskId}/`, {
+        const res = await fetch(`${AUDIOSHAKE_API_BASE}/tasks/${taskId}`, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${this.apiKey}`
+                'x-api-key': this.apiKey
             }
         });
 
@@ -218,9 +210,16 @@ export class AudioShakeAdapter {
 
         const data = await res.json();
 
-        // Map AudioShake status to our internal states
+        // Tasks API nests status and output inside targets[0]
+        const target = data.targets?.[0];
+        const targetStatus = target?.status?.toLowerCase();
+
+        console.log(`[AudioShakeAdapter] POLL: target.status="${targetStatus}", output count=${target?.output?.length || 0}`);
+
+        // Map AudioShake Tasks API status to our internal states
         const stateMap = {
             'queued': 'queued',
+            'pending': 'queued',
             'processing': 'processing',
             'in_progress': 'processing',
             'completed': 'completed',
@@ -229,46 +228,51 @@ export class AudioShakeAdapter {
             'error': 'error'
         };
 
-        const state = stateMap[data.status?.toLowerCase()] || data.status || 'processing';
+        const state = stateMap[targetStatus] || targetStatus || 'processing';
 
         const result = {
             state,
             progress: data.progress || (state === 'completed' ? 1.0 : 0.5)
         };
 
-        if (state === 'completed' && data.outputAssets) {
-            // Fetch the actual result
-            result.result = await this.fetchResult(data.outputAssets);
+        if (state === 'completed') {
+            const outputs = target?.output;
+            if (outputs && outputs.length > 0) {
+                result.result = await this.fetchResult(outputs);
+            } else {
+                console.warn('[AudioShakeAdapter] Task completed but no outputs found. Full response:', JSON.stringify(data, null, 2));
+                result.result = data;
+            }
         }
 
         if (state === 'failed' || state === 'error') {
-            console.log('[AudioShakeAdapter] Job failed details:', JSON.stringify(data, null, 2));
-            result.error = data.error || data.message || 'Unknown error';
+            console.log('[AudioShakeAdapter] Task failed details:', JSON.stringify(data, null, 2));
+            result.error = target?.error || data.error || data.message || 'Unknown error';
         }
 
         return result;
     }
 
     /**
-     * Fetch alignment result from output assets
+     * Fetch alignment result from task outputs
      */
-    async fetchResult(outputAssets) {
-        console.log('[AudioShakeAdapter] Available Output Assets:', JSON.stringify(outputAssets, null, 2));
+    async fetchResult(outputs) {
+        console.log('[AudioShakeAdapter] Available Outputs:', JSON.stringify(outputs, null, 2));
 
         // Find the JSON output
-        const jsonAsset = outputAssets.find(a =>
+        const jsonOutput = outputs.find(a =>
             a.format === 'json' ||
             a.name?.endsWith('.json') ||
-            a.link?.endsWith('.json')
+            a.link?.endsWith('.json') ||
+            a.type === 'json'
         );
 
-        if (!jsonAsset) {
-            // Return raw assets if no JSON found
-            return { rawAssets: outputAssets };
+        if (!jsonOutput) {
+            return { rawAssets: outputs };
         }
 
-        const link = jsonAsset.link || jsonAsset.url;
-        if (!link) return { rawAssets: outputAssets };
+        const link = jsonOutput.link || jsonOutput.url || jsonOutput.download;
+        if (!link) return { rawAssets: outputs };
 
         const res = await fetch(link);
         if (!res.ok) {
@@ -277,17 +281,15 @@ export class AudioShakeAdapter {
 
         const json = await res.json();
         console.log('[AudioShakeAdapter] Fetched result JSON keys:', Object.keys(json));
-        // Log deep structure snippet to help identify where tokens are
         const snippet = JSON.stringify(json).substring(0, 500);
         console.log('[AudioShakeAdapter] Result JSON snippet:', snippet);
         return json;
     }
 
     /**
-     * Cancel a job
+     * Cancel a task
      */
     async cancel(taskId) {
-        // AudioShake may not support cancellation - log and continue
         console.log(`[AudioShakeAdapter] Cancel requested for ${taskId} (may not be supported)`);
         return true;
     }

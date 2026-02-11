@@ -144,7 +144,7 @@ export class AlignmentJobQueue {
             mime_type: 'application/json',
             hash: null, // File hash not computed for now
             params_hash: job.inputs_hash,
-            version_tag: 'audioshake-v1',
+            version_tag: 'audioshake-v2',
             artist_name: song?.artist_name || 'Unknown',
             track_title: song?.track_title || 'Unknown',
             canonical_display_name: song?.canonical_display_name || 'Unknown'
