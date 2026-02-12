@@ -67,8 +67,8 @@ export default function IntegratedEcologicalOS() {
     const [isFetchingLyrics, setIsFetchingLyrics] = useState(false);
 
     // Config (v5 Resilience Mode)
-    const [enginePref, setEnginePref] = useState('auto'); // Default to Resilient Auto
-    const [modelId, setModelId] = useState('v3-sim'); // 'v3-sim' | 'htdemucs' | 'mdx-extra'
+    const [enginePref, setEnginePref] = useState('yt-dlp');
+    const [modelId, setModelId] = useState('htdemucs');
     const [splitterDevice, setSplitterDevice] = useState('cpu'); // 'cpu' | 'gpu'
 
     // yt-dlp Updater State
@@ -1319,10 +1319,7 @@ export default function IntegratedEcologicalOS() {
 
                             {/* Engine Selector */}
                             <select value={enginePref} onChange={e => setEnginePref(e.target.value)} className="w-full bg-[#162032] text-xs text-slate-400 p-2 rounded border border-slate-700 outline-none mb-2">
-                                <option value="auto">Auto (Resilient - Recommended)</option>
                                 <option value="yt-dlp">YouTube (yt-dlp)</option>
-                                <option value="ytdl-core">YouTube (Legacy)</option>
-                                <option value="mock">Resilience Test (Mock)</option>
                             </select>
 
                             {/* yt-dlp Updater Section */}
@@ -1445,9 +1442,7 @@ export default function IntegratedEcologicalOS() {
                                         }}
                                         className="w-full bg-[#162032] text-xs text-slate-400 p-2 rounded border border-slate-700 outline-none"
                                     >
-                                        <option value="v3-sim">Spec-Sim</option>
                                         <option value="htdemucs">Hybrid (Real)</option>
-                                        <option value="mdx-extra">MDX (Real)</option>
                                         <option value="uvr-mdx-inst-main">UVR MDX Inst Main</option>
                                     </select>
                                 </div>
