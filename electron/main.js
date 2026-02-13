@@ -180,10 +180,10 @@ ipcMain.handle('export-frames', async (event, { exportId, frames }) => {
     }
 
     try {
-        // Write frames as JPEG files
+        // Write frames as PNG files (lossless — preserves text quality)
         for (const frame of frames) {
             const frameNum = String(frame.frameIndex).padStart(6, '0');
-            const framePath = path.join(exp.framesDir, `frame_${frameNum}.jpg`);
+            const framePath = path.join(exp.framesDir, `frame_${frameNum}.png`);
             const buffer = Buffer.from(frame.data, 'base64');
             await fs.promises.writeFile(framePath, buffer);
             exp.frameCount++;
@@ -205,11 +205,14 @@ ipcMain.handle('export-finalize', async (event, { exportId }) => {
     try {
         console.log(`[Export] Finalizing: ${exp.frameCount} frames`);
 
-        const inputPattern = path.join(exp.framesDir, 'frame_%06d.jpg');
+        const inputPattern = path.join(exp.framesDir, 'frame_%06d.png');
         const videoOnlyPath = path.join(exp.tempDir, 'video_only.mp4');
         const mixedAudioPath = path.join(exp.tempDir, 'mixed_audio.mp3');
 
         // Step 1: Encode video frames
+        // CRF 17 = visually lossless for synthetic/text content
+        // -tune animation = optimized for flat areas with sharp edges (karaoke text)
+        // -preset slow = better compression efficiency (offline export, speed less critical)
         console.log('[Export] Step 1: Encoding video frames...');
         await new Promise((resolve, reject) => {
             const ffmpeg = spawn(FFMPEG_PATH, [
@@ -217,8 +220,9 @@ ipcMain.handle('export-finalize', async (event, { exportId }) => {
                 '-framerate', String(exp.fps),
                 '-i', inputPattern,
                 '-c:v', 'libx264',
-                '-preset', 'fast',
-                '-crf', '23',
+                '-preset', 'slow',
+                '-crf', '17',
+                '-tune', 'animation',
                 '-pix_fmt', 'yuv420p',
                 videoOnlyPath
             ], { stdio: 'pipe' });

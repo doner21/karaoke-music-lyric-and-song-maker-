@@ -75,11 +75,17 @@ export async function exportToMp4({
                 error: (e) => { console.error("Video Encode Error", e); reject(e); }
             });
 
+            // Bitrate scales with pixel count for consistent quality across resolutions
+            // 720p → 5Mbps, 1080p → ~11Mbps, 1440p → ~20Mbps, 4K → ~45Mbps
+            const baseBitrate = 5_000_000;
+            const pixelRatio = (width * height) / (1280 * 720);
+            const bitrate = Math.round(baseBitrate * pixelRatio);
+
             videoEncoder.configure({
                 codec: 'avc1.4d002a', // Main Profile, Level 4.2 (Succficient for 1080p30 or 1080p60)
                 width,
                 height,
-                bitrate: 5_000_000, // 5Mbps
+                bitrate,
                 framerate: fps
             });
 

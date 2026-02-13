@@ -8,7 +8,7 @@ import {
 import KaraokeLyricsDisplay from '../lyrics/KaraokeLyricsDisplay';
 import { AudioStemManager } from '../../utils/AudioStemManager';
 import ElectronYouTubePlayer from '../ElectronYouTubePlayer';
-import { useKaraokeExport } from '../../hooks/useKaraokeExport';
+import { useKaraokeExport, RESOLUTION_MAP } from '../../hooks/useKaraokeExport';
 import TokenEditorPanel from '../editor/TokenEditorPanel';
 
 /* 
@@ -82,6 +82,7 @@ export default function IntegratedEcologicalOS() {
     // --- STATE: PRESENTATION ---
     const [viewMode, setViewMode] = useState('editor'); // 'editor' | 'preview'
     const [editorMode, setEditorMode] = useState(false); // Token timing editor modal
+    const [exportResolution, setExportResolution] = useState('720p'); // Export resolution preset
 
     // --- STATE: DISPLAY PREFS (Lifted from KaraokeLyricsDisplay) ---
     const [linesPerPage, setLinesPerPage] = useState(() => parseInt(localStorage.getItem('karaoke_linesPerPage') || '2'));
@@ -112,7 +113,8 @@ export default function IntegratedEcologicalOS() {
         linesPerPage,
         highlightColor,
         trackDuration: duration,
-        songTitle: selectedSong?.title || 'karaoke-export'
+        songTitle: selectedSong?.title || 'karaoke-export',
+        exportResolution
     });
 
     // Keep ref in sync with state
@@ -1610,7 +1612,7 @@ export default function IntegratedEcologicalOS() {
                                         ? 'bg-rose-900/30 border-rose-500/50'
                                         : 'bg-slate-800 border-slate-700 hover:border-rose-500/50 hover:bg-slate-800/80'
                                         }`}
-                                    title={!alignResult ? 'Align lyrics first' : !stemsLoaded ? 'Load stems first' : isPlaying ? 'Stop playback first' : 'Export karaoke MP4'}
+                                    title={!alignResult ? 'Align lyrics first' : !stemsLoaded ? 'Load stems first' : isPlaying ? 'Stop playback first' : `Export karaoke MP4 at ${exportResolution}`}
                                 >
                                     {isExporting ? (
                                         <RefreshCw size={14} className="text-rose-400 animate-spin" />
@@ -1619,6 +1621,18 @@ export default function IntegratedEcologicalOS() {
                                     )}
                                     <span className="text-[9px] font-bold text-slate-400">MP4</span>
                                 </button>
+                                {/* Resolution Selector */}
+                                <select
+                                    value={exportResolution}
+                                    onChange={(e) => setExportResolution(e.target.value)}
+                                    disabled={isExporting}
+                                    className="p-2 bg-slate-800 border border-slate-700 rounded text-[10px] font-bold text-slate-300 hover:border-slate-500 disabled:opacity-30 cursor-pointer"
+                                    title="Export resolution"
+                                >
+                                    {Object.keys(RESOLUTION_MAP).map(key => (
+                                        <option key={key} value={key}>{key.toUpperCase()}</option>
+                                    ))}
+                                </select>
                             </div>
                             {/* Export Progress Bar */}
                             {isExporting && (

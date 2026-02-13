@@ -3,6 +3,10 @@ import { clamp01, prettyTime } from './karaokeHelpers';
 /**
  * Draws a single frame of the Karaoke video to the provided 2D context.
  * 
+ * RESOLUTION-AWARE: All pixel dimensions scale proportionally via
+ * scaleFactor = height / 720. At 720p (scaleFactor=1.0) output is
+ * identical to the original hardcoded values.
+ * 
  * AESTHETICS MATCHING RESILENCE_NODE_V5 [MOCK] PREVIEW:
  * - White text with neon glow shadow
  * - Highlight color fills from left to right (clip style)
@@ -38,15 +42,20 @@ export function drawKaraokeFrame(ctx2d, {
     ctx2d.fillStyle = '#000000';
     ctx2d.fillRect(0, 0, width, height);
 
-    // Constants matching preview
-    const MARGIN = 60; // Margin on each side to prevent words going outside
+    // Resolution scale factor — all pixel dimensions derive from this
+    // At 720p: scaleFactor = 1.0 (identical to pre-change hardcoded values)
+    // At 1080p: scaleFactor = 1.5, at 4K: scaleFactor = 3.0
+    const scaleFactor = height / 720;
+
+    // Constants matching preview — scaled proportionally
+    const MARGIN = Math.round(60 * scaleFactor);
     const MAX_TEXT_WIDTH = width - (MARGIN * 2);
-    const LINE_SPACING = 1.8; // Relative line spacing
+    const LINE_SPACING = 1.8; // Already relative, no scaling needed
 
     // ========== OUTRO/INSTRUMENTAL DISPLAY ==========
     if (showOutro && outroGap) {
         drawIntervalDisplay(ctx2d, {
-            width, height,
+            width, height, scaleFactor,
             label: 'OUTRO',
             remaining: Math.max(0, outroGap.end - now),
             progress: outroProgress,
@@ -54,7 +63,7 @@ export function drawKaraokeFrame(ctx2d, {
         });
     } else if (showInstrumental && instrumentalGap) {
         drawIntervalDisplay(ctx2d, {
-            width, height,
+            width, height, scaleFactor,
             label: 'INSTRUMENTAL',
             remaining: Math.max(0, instrumentalGap.end - now),
             progress: instrumentalProgress,
@@ -64,7 +73,7 @@ export function drawKaraokeFrame(ctx2d, {
     // ========== LYRICS DISPLAY ==========
     else if (shouldShowLyrics && visibleSentences.length > 0) {
         drawLyricsPage(ctx2d, {
-            width, height,
+            width, height, scaleFactor,
             sentences: visibleSentences,
             now,
             highlightColor,
@@ -78,21 +87,30 @@ export function drawKaraokeFrame(ctx2d, {
 /**
  * Draw interval display (Instrumental/Outro)
  * Matches NoLyricsIntervalDisplay.jsx aesthetic
+ * All pixel values scaled by scaleFactor for resolution independence.
  */
-function drawIntervalDisplay(ctx2d, { width, height, label, remaining, progress, highlightColor }) {
+function drawIntervalDisplay(ctx2d, { width, height, scaleFactor, label, remaining, progress, highlightColor }) {
     const centerX = width / 2;
     const centerY = height / 2;
 
+    const labelFontSize = Math.round(18 * scaleFactor);
+    const timerFontSize = Math.round(48 * scaleFactor);
+    const labelOffsetY = Math.round(50 * scaleFactor);
+    const timerOffsetY = Math.round(20 * scaleFactor);
+    const barOffsetY = Math.round(60 * scaleFactor);
+    const glowBlur = Math.round(20 * scaleFactor);
+    const progressGlowBlur = Math.round(10 * scaleFactor);
+
     // Label (white, uppercase, smaller)
     ctx2d.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx2d.font = '600 18px Arial';
+    ctx2d.font = `600 ${labelFontSize}px Arial`;
     ctx2d.textAlign = 'center';
     ctx2d.letterSpacing = '4px';
-    ctx2d.fillText(label, centerX, centerY - 50);
+    ctx2d.fillText(label, centerX, centerY - labelOffsetY);
 
     // Timer (highlight color, large, monospace)
     ctx2d.fillStyle = highlightColor;
-    ctx2d.font = '300 48px monospace';
+    ctx2d.font = `300 ${timerFontSize}px monospace`;
 
     // Format time as M:SS
     const totalSeconds = Math.ceil(remaining);
@@ -102,19 +120,20 @@ function drawIntervalDisplay(ctx2d, { width, height, label, remaining, progress,
 
     // Add glow effect
     ctx2d.shadowColor = highlightColor;
-    ctx2d.shadowBlur = 20;
-    ctx2d.fillText(timeStr, centerX, centerY + 20);
+    ctx2d.shadowBlur = glowBlur;
+    ctx2d.fillText(timeStr, centerX, centerY + timerOffsetY);
     ctx2d.shadowBlur = 0;
 
-    // Progress bar (thin, 6px height, 300px width)
-    const barWidth = 300;
-    const barHeight = 6;
+    // Progress bar — scaled dimensions
+    const barWidth = Math.round(300 * scaleFactor);
+    const barHeight = Math.round(6 * scaleFactor);
+    const barRadius = Math.round(3 * scaleFactor);
     const barX = (width - barWidth) / 2;
-    const barY = centerY + 60;
+    const barY = centerY + barOffsetY;
 
     // Background
     ctx2d.fillStyle = 'rgba(255, 255, 255, 0.15)';
-    roundRect(ctx2d, barX, barY, barWidth, barHeight, 3);
+    roundRect(ctx2d, barX, barY, barWidth, barHeight, barRadius);
     ctx2d.fill();
 
     // Progress fill
@@ -122,8 +141,8 @@ function drawIntervalDisplay(ctx2d, { width, height, label, remaining, progress,
     if (fillWidth > 0) {
         ctx2d.fillStyle = highlightColor;
         ctx2d.shadowColor = highlightColor;
-        ctx2d.shadowBlur = 10;
-        roundRect(ctx2d, barX, barY, fillWidth, barHeight, 3);
+        ctx2d.shadowBlur = progressGlowBlur;
+        roundRect(ctx2d, barX, barY, fillWidth, barHeight, barRadius);
         ctx2d.fill();
         ctx2d.shadowBlur = 0;
     }
@@ -132,11 +151,15 @@ function drawIntervalDisplay(ctx2d, { width, height, label, remaining, progress,
 /**
  * Draw lyrics page with word-level highlighting
  * Matches LetterFillWord.jsx aesthetic
+ * All pixel values scaled by scaleFactor for resolution independence.
  */
-function drawLyricsPage(ctx2d, { width, height, sentences, now, highlightColor, lineColors, maxWidth, margin }) {
+function drawLyricsPage(ctx2d, { width, height, scaleFactor, sentences, now, highlightColor, lineColors, maxWidth, margin }) {
     // Calculate available height and line count
     const totalLines = sentences.length;
-    const fontSize = 32; // Base font size
+    const fontSize = Math.round(32 * scaleFactor); // Base font size — scaled
+    const wordGap = Math.round(8 * scaleFactor); // Gap between words — scaled
+    const glowBlur = Math.round(10 * scaleFactor); // Text glow — scaled
+    const minFontSize = Math.max(Math.round(18 * scaleFactor), 12); // Minimum font — scaled with floor
     const lineHeight = fontSize * 1.8;
     const totalHeight = totalLines * lineHeight;
     const startY = (height - totalHeight) / 2 + fontSize;
@@ -159,17 +182,17 @@ function drawLyricsPage(ctx2d, { width, height, sentences, now, highlightColor, 
                 spaceWidth,
                 progress: clamp01((now - w.start) / Math.max(0.001, w.end - w.start))
             });
-            testWidth += wordWidth + spaceWidth + 8; // 8 = margin between words (4px each side)
+            testWidth += wordWidth + spaceWidth + wordGap;
         });
 
         // Calculate total width
-        let totalWidth = lineWords.reduce((sum, w) => sum + w.width + 8, 0);
+        let totalWidth = lineWords.reduce((sum, w) => sum + w.width + wordGap, 0);
 
         // Scale font if needed to fit
         let scaledFontSize = fontSize;
         if (totalWidth > maxWidth) {
             const scale = maxWidth / totalWidth;
-            scaledFontSize = Math.max(18, Math.floor(fontSize * scale)); // Minimum 18px
+            scaledFontSize = Math.max(minFontSize, Math.floor(fontSize * scale));
             ctx2d.font = `bold ${scaledFontSize}px "Outfit", Arial, sans-serif`;
 
             // Recalculate widths with new font size
@@ -177,7 +200,7 @@ function drawLyricsPage(ctx2d, { width, height, sentences, now, highlightColor, 
             lineWords.forEach(w => {
                 w.width = ctx2d.measureText(w.text).width;
                 w.spaceWidth = ctx2d.measureText(' ').width;
-                totalWidth += w.width + 8;
+                totalWidth += w.width + wordGap;
             });
         }
 
@@ -197,7 +220,7 @@ function drawLyricsPage(ctx2d, { width, height, sentences, now, highlightColor, 
             ctx2d.globalAlpha = opacity;
             ctx2d.fillStyle = '#ffffff';
             ctx2d.shadowColor = 'rgba(255, 255, 255, 0.8)';
-            ctx2d.shadowBlur = 10;
+            ctx2d.shadowBlur = glowBlur;
             ctx2d.textAlign = 'left';
             ctx2d.fillText(w.text, currentX, lineY);
             ctx2d.shadowBlur = 0;
@@ -220,7 +243,7 @@ function drawLyricsPage(ctx2d, { width, height, sentences, now, highlightColor, 
             }
 
             ctx2d.globalAlpha = 1.0;
-            currentX += w.width + 8; // 8px margin between words
+            currentX += w.width + wordGap;
         });
     });
 }

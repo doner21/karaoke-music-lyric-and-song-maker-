@@ -5,6 +5,17 @@ import { normalizeLyrics } from '../utils/lyricsTimingNormalizer';
 const API_URL = 'http://localhost:3002';
 
 /**
+ * Resolution presets for MP4 export.
+ * Default is 720p — higher resolutions are opt-in (Constraint C3).
+ */
+const RESOLUTION_MAP = {
+    '720p': { width: 1280, height: 720 },
+    '1080p': { width: 1920, height: 1080 },
+    '1440p': { width: 2560, height: 1440 },
+    '4k': { width: 3840, height: 2160 }
+};
+
+/**
  * Hook for exporting karaoke video via Electron frame-based export
  * 
  * Uses the same canvas rendering as preview mode for pixel-perfect output.
@@ -23,7 +34,8 @@ export function useKaraokeExport({
     linesPerPage = 4,
     highlightColor = '#7CB87C', // Green highlight
     trackDuration,
-    songTitle = 'karaoke-export'
+    songTitle = 'karaoke-export',
+    exportResolution = '720p' // Resolution preset key — default 720p
 }) {
     const [isExporting, setIsExporting] = useState(false);
     const [exportProgress, setExportProgress] = useState(0);
@@ -49,6 +61,11 @@ export function useKaraokeExport({
         setIsExporting(true);
         setExportProgress(0);
         setExportError(null);
+
+        // Resolve resolution from map (fall back to 720p if invalid key)
+        const resolution = RESOLUTION_MAP[exportResolution] || RESOLUTION_MAP['720p'];
+        const { width, height } = resolution;
+        console.log(`[Export] Resolution: ${exportResolution} → ${width}x${height}`);
 
         try {
             // Step 1: Get stem file paths from server
@@ -120,14 +137,15 @@ export function useKaraokeExport({
                 allWords: allWords.length,
                 duration: trackDuration,
                 highlightColor,
+                resolution: `${width}x${height}`,
                 bandStemPath,
                 vocalStemPath
             });
 
-            // Step 3: Call the Electron-based export
+            // Step 3: Call the Electron-based export with selected resolution
             await exportToMp4Electron({
-                width: 1280,
-                height: 720,
+                width,
+                height,
                 fps: 30,
                 totalDuration: trackDuration,
                 lyrics,
@@ -154,7 +172,7 @@ export function useKaraokeExport({
         } finally {
             setIsExporting(false);
         }
-    }, [songId, bandVolume, vocalVolume, timingJson, linesPerPage, highlightColor, trackDuration, songTitle]);
+    }, [songId, bandVolume, vocalVolume, timingJson, linesPerPage, highlightColor, trackDuration, songTitle, exportResolution]);
 
     return {
         isExporting,
@@ -163,3 +181,6 @@ export function useKaraokeExport({
         startExport
     };
 }
+
+export { RESOLUTION_MAP };
+

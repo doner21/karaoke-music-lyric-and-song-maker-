@@ -143,7 +143,11 @@ export async function exportToMp4Electron({
         onProgress?.(0.05, 'Rendering frames...');
 
         // Step 2: Render and stream frames
-        const BATCH_SIZE = 30; // Send frames in batches to reduce IPC overhead
+        // Dynamic batch size — PNG frames are ~40x larger than JPEG.
+        // Scale batch size inversely with resolution to keep IPC payload ~40MB.
+        const estimatedFrameSize = (width * height * 4) / 3; // rough PNG size estimate
+        const BATCH_SIZE = Math.max(1, Math.floor(40_000_000 / estimatedFrameSize));
+        console.log(`[ElectronExport] Batch size: ${BATCH_SIZE} (est frame size: ${(estimatedFrameSize / 1024 / 1024).toFixed(1)}MB)`);
         let frameBuffer = [];
 
         for (let i = 0; i < totalFrames; i++) {
@@ -166,8 +170,8 @@ export async function exportToMp4Electron({
                 highlightColor: highlightColor
             });
 
-            // Get frame as base64 JPEG (smaller than PNG)
-            const frameData = canvas.toDataURL('image/jpeg', 0.9).split(',')[1];
+            // Get frame as base64 PNG (lossless — preserves text anti-aliasing)
+            const frameData = canvas.toDataURL('image/png').split(',')[1];
             frameBuffer.push({ frameIndex: i, data: frameData });
 
             // Send batch when full or on last frame
