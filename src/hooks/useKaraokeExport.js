@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { exportToMp4Electron } from '../utils/electronExport';
 import { normalizeLyrics } from '../utils/lyricsTimingNormalizer';
+import { detectGpuCapabilities, resolveGpuConfig } from '../utils/gpuCapabilities';
 
 const API_URL = 'http://localhost:3002';
 
@@ -35,7 +36,8 @@ export function useKaraokeExport({
     highlightColor = '#7CB87C', // Green highlight
     trackDuration,
     songTitle = 'karaoke-export',
-    exportResolution = '720p' // Resolution preset key — default 720p
+    exportResolution = '720p', // Resolution preset key — default 720p
+    gpuAcceleration = 'auto'   // 'auto' | 'force-gpu' | 'force-cpu' (Phase 7)
 }) {
     const [isExporting, setIsExporting] = useState(false);
     const [exportProgress, setExportProgress] = useState(0);
@@ -142,7 +144,19 @@ export function useKaraokeExport({
                 vocalStemPath
             });
 
-            // Step 3: Call the Electron-based export with selected resolution
+            // Step 3: Detect GPU capabilities and resolve config
+            const gpuCaps = await detectGpuCapabilities();
+            const { encoder, renderMode } = resolveGpuConfig(gpuAcceleration, gpuCaps);
+            console.log('[Export] GPU config:', {
+                gpuAcceleration, encoder, renderMode, gpuCaps: {
+                    webgl2: gpuCaps.webgl2,
+                    nvenc: gpuCaps.nvenc,
+                    qsv: gpuCaps.qsv,
+                    preferredEncoder: gpuCaps.preferredEncoder
+                }
+            });
+
+            // Step 4: Call the Electron-based export with selected resolution and GPU config
             await exportToMp4Electron({
                 width,
                 height,
@@ -157,6 +171,8 @@ export function useKaraokeExport({
                 vocalStemPath,
                 bandVol: bandVolume,
                 vocalVol: vocalVolume,
+                renderMode,
+                encoder,
                 onProgress: (progress, message) => {
                     setExportProgress(progress);
                     console.log(`[Export] ${Math.round(progress * 100)}%: ${message}`);
@@ -172,7 +188,7 @@ export function useKaraokeExport({
         } finally {
             setIsExporting(false);
         }
-    }, [songId, bandVolume, vocalVolume, timingJson, linesPerPage, highlightColor, trackDuration, songTitle, exportResolution]);
+    }, [songId, bandVolume, vocalVolume, timingJson, linesPerPage, highlightColor, trackDuration, songTitle, exportResolution, gpuAcceleration]);
 
     return {
         isExporting,

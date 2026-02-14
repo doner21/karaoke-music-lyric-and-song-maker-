@@ -82,11 +82,12 @@ export async function exportToMp4({
             const bitrate = Math.round(baseBitrate * pixelRatio);
 
             videoEncoder.configure({
-                codec: 'avc1.4d002a', // Main Profile, Level 4.2 (Succficient for 1080p30 or 1080p60)
+                codec: 'avc1.4d002a', // Main Profile, Level 4.2 (Sufficient for 1080p30 or 1080p60)
                 width,
                 height,
                 bitrate,
-                framerate: fps
+                framerate: fps,
+                hardwareAcceleration: 'prefer-hardware' // GPU encoding when available (Phase 5)
             });
 
             const audioEncoder = new AudioEncoder({

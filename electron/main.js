@@ -129,6 +129,35 @@ ipcMain.handle('copy-file', async (event, { sourcePath, destPath }) => {
     }
 });
 
+// ===== GPU Encoder Probing =====
+
+ipcMain.handle('probe-gpu-encoders', async () => {
+    try {
+        const result = await new Promise((resolve, reject) => {
+            const proc = spawn(FFMPEG_PATH, ['-encoders'], { stdio: 'pipe' });
+            let stdout = '';
+            let stderr = '';
+            proc.stdout.on('data', (data) => { stdout += data.toString(); });
+            proc.stderr.on('data', (data) => { stderr += data.toString(); });
+            proc.on('close', (code) => {
+                // FFmpeg -encoders exits with 0 on success
+                resolve(stdout);
+            });
+            proc.on('error', (err) => {
+                reject(err);
+            });
+        });
+
+        const nvenc = result.includes('h264_nvenc');
+        const qsv = result.includes('h264_qsv');
+        console.log(`[GPU Probe] NVENC: ${nvenc}, QSV: ${qsv}`);
+        return { success: true, nvenc, qsv };
+    } catch (err) {
+        console.error('[GPU Probe] Failed:', err.message);
+        return { success: false, nvenc: false, qsv: false, error: err.message };
+    }
+});
+
 // ===== FFmpeg Frame-Based Export =====
 // Using image2pipe format for exact preview match
 
@@ -136,7 +165,7 @@ const FFMPEG_PATH = 'C:\\Users\\donald clark\\AppData\\Roaming\\Youka Desktop\\y
 const activeExports = new Map(); // exportId -> { ffmpeg, tempDir, outputPath }
 
 ipcMain.handle('export-start', async (event, options) => {
-    const { exportId, width, height, fps, totalFrames, outputFilename, bandStemPath, vocalStemPath, bandVol, vocalVol } = options;
+    const { exportId, width, height, fps, totalFrames, outputFilename, bandStemPath, vocalStemPath, bandVol, vocalVol, encoder } = options;
 
     try {
         // Create temp directory
@@ -146,6 +175,10 @@ ipcMain.handle('export-start', async (event, options) => {
         const outputPath = path.join(tempDir, outputFilename);
         const framesDir = path.join(tempDir, 'frames');
         await fs.promises.mkdir(framesDir, { recursive: true });
+
+        // Validate encoder — default to libx264 if not specified or invalid
+        const validEncoders = ['h264_nvenc', 'h264_qsv', 'libx264'];
+        const resolvedEncoder = validEncoders.includes(encoder) ? encoder : 'libx264';
 
         // Store export state
         activeExports.set(exportId, {
@@ -160,7 +193,8 @@ ipcMain.handle('export-start', async (event, options) => {
             bandStemPath,
             vocalStemPath,
             bandVol: bandVol || 1,
-            vocalVol: vocalVol || 1
+            vocalVol: vocalVol || 1,
+            encoder: resolvedEncoder
         });
 
         console.log(`[Export] Started: ${exportId}, output: ${outputPath}`);
@@ -210,12 +244,49 @@ ipcMain.handle('export-finalize', async (event, { exportId }) => {
         const mixedAudioPath = path.join(exp.tempDir, 'mixed_audio.mp3');
 
         // Step 1: Encode video frames
-        // CRF 17 = visually lossless for synthetic/text content
-        // -tune animation = optimized for flat areas with sharp edges (karaoke text)
-        // -preset slow = better compression efficiency (offline export, speed less critical)
-        console.log('[Export] Step 1: Encoding video frames...');
-        await new Promise((resolve, reject) => {
-            const ffmpeg = spawn(FFMPEG_PATH, [
+        // Build FFmpeg args based on encoder selection
+        const encoder = exp.encoder || 'libx264';
+        let videoEncodeArgs;
+
+        if (encoder === 'h264_nvenc') {
+            // NVENC: GPU-accelerated encoding (NVIDIA)
+            // -preset p7 = highest quality NVENC preset
+            // -rc constqp -cq 19 ≈ x264 CRF 17 for synthetic/text content
+            // -rc-lookahead 32 = look-ahead for better quality
+            videoEncodeArgs = [
+                '-y',
+                '-framerate', String(exp.fps),
+                '-i', inputPattern,
+                '-c:v', 'h264_nvenc',
+                '-preset', 'p7',
+                '-rc', 'constqp',
+                '-cq', '19',
+                '-profile:v', 'high',
+                '-rc-lookahead', '32',
+                '-pix_fmt', 'yuv420p',
+                videoOnlyPath
+            ];
+            console.log('[Export] Step 1: Encoding video frames with NVENC (GPU)...');
+        } else if (encoder === 'h264_qsv') {
+            // QSV: GPU-accelerated encoding (Intel)
+            videoEncodeArgs = [
+                '-y',
+                '-framerate', String(exp.fps),
+                '-i', inputPattern,
+                '-c:v', 'h264_qsv',
+                '-preset', 'veryslow',
+                '-global_quality', '19',
+                '-profile:v', 'high',
+                '-pix_fmt', 'yuv420p',
+                videoOnlyPath
+            ];
+            console.log('[Export] Step 1: Encoding video frames with QSV (Intel GPU)...');
+        } else {
+            // CPU fallback: libx264 (unchanged from original)
+            // CRF 17 = visually lossless for synthetic/text content
+            // -tune animation = optimized for flat areas with sharp edges (karaoke text)
+            // -preset slow = better compression efficiency (offline export, speed less critical)
+            videoEncodeArgs = [
                 '-y',
                 '-framerate', String(exp.fps),
                 '-i', inputPattern,
@@ -225,13 +296,50 @@ ipcMain.handle('export-finalize', async (event, { exportId }) => {
                 '-tune', 'animation',
                 '-pix_fmt', 'yuv420p',
                 videoOnlyPath
-            ], { stdio: 'pipe' });
+            ];
+            console.log('[Export] Step 1: Encoding video frames with libx264 (CPU)...');
+        }
+
+        await new Promise((resolve, reject) => {
+            const ffmpeg = spawn(FFMPEG_PATH, videoEncodeArgs, { stdio: 'pipe' });
 
             let stderr = '';
             ffmpeg.stderr.on('data', (data) => { stderr += data.toString(); });
             ffmpeg.on('close', (code) => {
-                if (code === 0) resolve();
-                else reject(new Error(`Video encode failed: ${stderr.slice(-300)}`));
+                if (code === 0) {
+                    resolve();
+                } else {
+                    // If GPU encoder failed, try CPU fallback
+                    if (encoder !== 'libx264') {
+                        console.warn(`[Export] ${encoder} failed (code ${code}), falling back to libx264...`);
+                        console.warn(`[Export] ${encoder} stderr: ${stderr.slice(-200)}`);
+                        const fallbackFfmpeg = spawn(FFMPEG_PATH, [
+                            '-y',
+                            '-framerate', String(exp.fps),
+                            '-i', inputPattern,
+                            '-c:v', 'libx264',
+                            '-preset', 'slow',
+                            '-crf', '17',
+                            '-tune', 'animation',
+                            '-pix_fmt', 'yuv420p',
+                            videoOnlyPath
+                        ], { stdio: 'pipe' });
+
+                        let fallbackStderr = '';
+                        fallbackFfmpeg.stderr.on('data', (data) => { fallbackStderr += data.toString(); });
+                        fallbackFfmpeg.on('close', (fallbackCode) => {
+                            if (fallbackCode === 0) {
+                                console.log('[Export] CPU fallback encoding succeeded');
+                                resolve();
+                            } else {
+                                reject(new Error(`Video encode failed (both GPU and CPU): ${fallbackStderr.slice(-300)}`));
+                            }
+                        });
+                        fallbackFfmpeg.on('error', reject);
+                    } else {
+                        reject(new Error(`Video encode failed: ${stderr.slice(-300)}`));
+                    }
+                }
             });
             ffmpeg.on('error', reject);
         });
@@ -305,10 +413,250 @@ ipcMain.handle('export-finalize', async (event, { exportId }) => {
     }
 });
 
+// ===== GPU Streaming Export (Raw Pixel Pipeline) =====
+// Frames arrive as raw RGBA ArrayBuffers piped directly to FFmpeg stdin.
+// No intermediate PNG files on disk.
+
+ipcMain.handle('export-start-streaming', async (event, options) => {
+    const { exportId, width, height, fps, totalFrames, outputFilename, bandStemPath, vocalStemPath, bandVol, vocalVol, encoder } = options;
+
+    try {
+        const tempDir = path.join(app.getPath('temp'), 'karaoke-export', exportId);
+        await fs.promises.mkdir(tempDir, { recursive: true });
+
+        const outputPath = path.join(tempDir, outputFilename);
+        const videoOnlyPath = path.join(tempDir, 'video_only.mp4');
+
+        // Validate encoder
+        const validEncoders = ['h264_nvenc', 'h264_qsv', 'libx264'];
+        const resolvedEncoder = validEncoders.includes(encoder) ? encoder : 'libx264';
+
+        // Build FFmpeg args for raw video input via stdin pipe
+        let videoArgs = [
+            '-y',
+            '-f', 'rawvideo',
+            '-pix_fmt', 'rgba',
+            '-s', `${width}x${height}`,
+            '-r', String(fps),
+            '-i', 'pipe:0'
+        ];
+
+        // Encoder-specific args
+        if (resolvedEncoder === 'h264_nvenc') {
+            videoArgs.push(
+                '-c:v', 'h264_nvenc',
+                '-preset', 'p7',
+                '-rc', 'constqp',
+                '-cq', '19',
+                '-profile:v', 'high',
+                '-rc-lookahead', '32',
+                '-pix_fmt', 'yuv420p'
+            );
+        } else if (resolvedEncoder === 'h264_qsv') {
+            videoArgs.push(
+                '-c:v', 'h264_qsv',
+                '-preset', 'veryslow',
+                '-global_quality', '19',
+                '-profile:v', 'high',
+                '-pix_fmt', 'yuv420p'
+            );
+        } else {
+            videoArgs.push(
+                '-c:v', 'libx264',
+                '-preset', 'slow',
+                '-crf', '17',
+                '-tune', 'animation',
+                '-pix_fmt', 'yuv420p'
+            );
+        }
+
+        videoArgs.push(videoOnlyPath);
+
+        console.log(`[StreamExport] Spawning FFmpeg with ${resolvedEncoder}: ${videoArgs.join(' ')}`);
+
+        // Spawn FFmpeg immediately with stdin pipe
+        const ffmpegProcess = spawn(FFMPEG_PATH, videoArgs, {
+            stdio: ['pipe', 'pipe', 'pipe']
+        });
+
+        let ffmpegStderr = '';
+        ffmpegProcess.stderr.on('data', (data) => {
+            ffmpegStderr += data.toString();
+        });
+
+        // Track pending writes for backpressure
+        let pendingWrites = 0;
+
+        activeExports.set(exportId, {
+            tempDir,
+            outputPath,
+            videoOnlyPath,
+            width,
+            height,
+            fps,
+            totalFrames,
+            frameCount: 0,
+            bandStemPath,
+            vocalStemPath,
+            bandVol: bandVol || 1,
+            vocalVol: vocalVol || 1,
+            encoder: resolvedEncoder,
+            ffmpegProcess,
+            ffmpegStderr: () => ffmpegStderr,
+            pendingWrites: () => pendingWrites,
+            incrementPending: () => { pendingWrites++; },
+            decrementPending: () => { pendingWrites--; },
+            streaming: true
+        });
+
+        console.log(`[StreamExport] Started: ${exportId}, encoder: ${resolvedEncoder}`);
+        return { success: true, exportId };
+
+    } catch (err) {
+        console.error('[StreamExport] Start failed:', err);
+        return { success: false, error: err.message };
+    }
+});
+
+ipcMain.handle('export-frame-raw', async (event, { exportId, frameIndex, pixels }) => {
+    const exp = activeExports.get(exportId);
+    if (!exp || !exp.streaming) {
+        return { success: false, error: 'Streaming export not found' };
+    }
+
+    try {
+        // Check backpressure — if too many writes pending, signal back
+        if (exp.pendingWrites() > 30) {
+            return { success: false, backpressure: true };
+        }
+
+        const buffer = Buffer.from(pixels);
+        exp.incrementPending();
+
+        const canWrite = exp.ffmpegProcess.stdin.write(buffer, () => {
+            exp.decrementPending();
+        });
+
+        exp.frameCount++;
+
+        // If FFmpeg buffer is full, signal backpressure
+        if (!canWrite) {
+            return { success: true, backpressure: true };
+        }
+
+        return { success: true };
+    } catch (err) {
+        console.error('[StreamExport] Frame write failed:', err);
+        return { success: false, error: err.message };
+    }
+});
+
+ipcMain.handle('export-finalize-streaming', async (event, { exportId }) => {
+    const exp = activeExports.get(exportId);
+    if (!exp || !exp.streaming) {
+        return { success: false, error: 'Streaming export not found' };
+    }
+
+    try {
+        console.log(`[StreamExport] Finalizing: ${exp.frameCount} frames`);
+
+        // Close FFmpeg stdin to signal end of input
+        await new Promise((resolve, reject) => {
+            exp.ffmpegProcess.stdin.end(() => {
+                resolve();
+            });
+        });
+
+        // Wait for FFmpeg to finish encoding
+        await new Promise((resolve, reject) => {
+            exp.ffmpegProcess.on('close', (code) => {
+                if (code === 0) {
+                    resolve();
+                } else {
+                    const stderr = typeof exp.ffmpegStderr === 'function' ? exp.ffmpegStderr() : '';
+                    reject(new Error(`FFmpeg streaming encode failed (code ${code}): ${stderr.slice(-300)}`));
+                }
+            });
+            exp.ffmpegProcess.on('error', reject);
+        });
+
+        console.log('[StreamExport] Video encoded');
+
+        const mixedAudioPath = path.join(exp.tempDir, 'mixed_audio.mp3');
+
+        // Mix audio (same as CPU path)
+        if (exp.bandStemPath && exp.vocalStemPath) {
+            console.log('[StreamExport] Mixing audio stems...');
+            await new Promise((resolve, reject) => {
+                const ffmpeg = spawn(FFMPEG_PATH, [
+                    '-y',
+                    '-i', exp.bandStemPath,
+                    '-i', exp.vocalStemPath,
+                    '-filter_complex', `[0:a]volume=${exp.bandVol}[a0];[1:a]volume=${exp.vocalVol}[a1];[a0][a1]amix=inputs=2:duration=longest[aout]`,
+                    '-map', '[aout]',
+                    '-c:a', 'libmp3lame',
+                    '-q:a', '2',
+                    mixedAudioPath
+                ], { stdio: 'pipe' });
+
+                let stderr = '';
+                ffmpeg.stderr.on('data', (data) => { stderr += data.toString(); });
+                ffmpeg.on('close', (code) => {
+                    if (code === 0) resolve();
+                    else reject(new Error(`Audio mix failed: ${stderr.slice(-300)}`));
+                });
+                ffmpeg.on('error', reject);
+            });
+
+            console.log('[StreamExport] Audio mixed');
+
+            // Combine video + audio
+            console.log('[StreamExport] Combining video and audio...');
+            await new Promise((resolve, reject) => {
+                const ffmpeg = spawn(FFMPEG_PATH, [
+                    '-y',
+                    '-i', exp.videoOnlyPath,
+                    '-i', mixedAudioPath,
+                    '-c:v', 'copy',
+                    '-c:a', 'aac',
+                    '-b:a', '192k',
+                    '-shortest',
+                    exp.outputPath
+                ], { stdio: 'pipe' });
+
+                let stderr = '';
+                ffmpeg.stderr.on('data', (data) => { stderr += data.toString(); });
+                ffmpeg.on('close', (code) => {
+                    if (code === 0) resolve();
+                    else reject(new Error(`Combine failed: ${stderr.slice(-300)}`));
+                });
+                ffmpeg.on('error', reject);
+            });
+
+            console.log('[StreamExport] Combined');
+        } else {
+            await fs.promises.rename(exp.videoOnlyPath, exp.outputPath);
+        }
+
+        const stats = await fs.promises.stat(exp.outputPath);
+        console.log(`[StreamExport] Output: ${exp.outputPath}, Size: ${stats.size} bytes`);
+
+        return { success: true, outputPath: exp.outputPath, fileSize: stats.size };
+
+    } catch (err) {
+        console.error('[StreamExport] Finalize failed:', err);
+        return { success: false, error: err.message };
+    }
+});
+
 ipcMain.handle('export-cleanup', async (event, { exportId }) => {
     const exp = activeExports.get(exportId);
     if (exp) {
         try {
+            // Kill FFmpeg process if streaming export
+            if (exp.ffmpegProcess && !exp.ffmpegProcess.killed) {
+                try { exp.ffmpegProcess.kill('SIGKILL'); } catch (e) { /* ignore */ }
+            }
             // Remove temp directory
             await fs.promises.rm(exp.tempDir, { recursive: true, force: true });
             activeExports.delete(exportId);
