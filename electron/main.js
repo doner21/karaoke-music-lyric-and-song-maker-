@@ -44,6 +44,7 @@ function createWindow() {
     });
 
     const isDev = process.env.NODE_ENV === 'development';
+    const verifyMode = process.argv.includes('--verify-mode');
 
     // Add crash recovery - auto-reload if renderer crashes
     win.webContents.on('crashed', (event, killed) => {
@@ -75,12 +76,18 @@ function createWindow() {
 
     if (isDev) {
         // In dev mode, load the Vite server
-        win.loadURL('http://localhost:5173');
+        const url = verifyMode ? 'http://localhost:5173/#/verify' : 'http://localhost:5173';
+        win.loadURL(url);
         // Open DevTools for debugging
         win.webContents.openDevTools();
     } else {
         // In production, load the built index.html
-        win.loadFile(path.join(__dirname, '../dist/index.html'));
+        const hashSuffix = verifyMode ? '#/verify' : '';
+        win.loadFile(path.join(__dirname, '../dist/index.html'), { hash: hashSuffix });
+    }
+
+    if (verifyMode) {
+        console.log('[Electron] Started in VERIFY MODE — loading #/verify route');
     }
 
     return win;
@@ -666,4 +673,34 @@ ipcMain.handle('export-cleanup', async (event, { exportId }) => {
         }
     }
     return { success: true };
+});
+
+// ===== Verification Screenshot Capture =====
+
+ipcMain.handle('verify-capture', async (event, { cpuImage, gpuImage, diffImage, time, matchPct }) => {
+    try {
+        const outputDir = path.join(app.getPath('userData'), 'verify_output');
+        await fs.promises.mkdir(outputDir, { recursive: true });
+
+        const timestamp = String(Math.round(time * 100)).padStart(8, '0');
+
+        if (cpuImage) {
+            const cpuBuffer = Buffer.from(cpuImage.split(',')[1], 'base64');
+            await fs.promises.writeFile(path.join(outputDir, `cpu_t${timestamp}.png`), cpuBuffer);
+        }
+        if (gpuImage) {
+            const gpuBuffer = Buffer.from(gpuImage.split(',')[1], 'base64');
+            await fs.promises.writeFile(path.join(outputDir, `gpu_t${timestamp}.png`), gpuBuffer);
+        }
+        if (diffImage) {
+            const diffBuffer = Buffer.from(diffImage.split(',')[1], 'base64');
+            await fs.promises.writeFile(path.join(outputDir, `diff_t${timestamp}.png`), diffBuffer);
+        }
+
+        console.log(`[Verify] Captured at t=${time}s, match=${matchPct}%, saved to ${outputDir}`);
+        return { success: true, outputDir };
+    } catch (err) {
+        console.error('[Verify] Capture failed:', err);
+        return { success: false, error: err.message };
+    }
 });
