@@ -83,6 +83,7 @@ export default function IntegratedEcologicalOS() {
     const [viewMode, setViewMode] = useState('editor'); // 'editor' | 'preview'
     const [editorMode, setEditorMode] = useState(false); // Token timing editor modal
     const [exportResolution, setExportResolution] = useState('720p'); // Export resolution preset
+    const [gpuAcceleration, setGpuAcceleration] = useState('auto'); // Renderer: 'auto' (GPU first) | 'force-cpu'
 
     // --- STATE: DISPLAY PREFS (Lifted from KaraokeLyricsDisplay) ---
     const [linesPerPage, setLinesPerPage] = useState(() => parseInt(localStorage.getItem('karaoke_linesPerPage') || '2'));
@@ -114,7 +115,8 @@ export default function IntegratedEcologicalOS() {
         highlightColor,
         trackDuration: duration,
         songTitle: selectedSong?.title || 'karaoke-export',
-        exportResolution
+        exportResolution,
+        gpuAcceleration
     });
 
     // Keep ref in sync with state
@@ -1632,6 +1634,17 @@ export default function IntegratedEcologicalOS() {
                                     {Object.keys(RESOLUTION_MAP).map(key => (
                                         <option key={key} value={key}>{key.toUpperCase()}</option>
                                     ))}
+                                </select>
+                                {/* Renderer Selector */}
+                                <select
+                                    value={gpuAcceleration}
+                                    onChange={(e) => setGpuAcceleration(e.target.value)}
+                                    disabled={isExporting}
+                                    className="p-2 bg-slate-800 border border-slate-700 rounded text-[10px] font-bold text-slate-300 hover:border-slate-500 disabled:opacity-30 cursor-pointer"
+                                    title="Renderer: GPU (faster, auto-falls back to CPU) or CPU (always works)"
+                                >
+                                    <option value="auto">GPU</option>
+                                    <option value="force-cpu">CPU</option>
                                 </select>
                             </div>
                             {/* Export Progress Bar */}
