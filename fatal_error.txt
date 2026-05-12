@@ -1,4 +1,4 @@
 {
-  "message": "Lyrics text is required for alignment. Transcription mode has been disabled.",
-  "stack": "Error: Lyrics text is required for alignment. Transcription mode has been disabled.\n    at AudioShakeAdapter.submitAlignment (file:///C:/Users/donald%20clark/.gemini/antigravity/scratch/karaoke-box/server/alignment/audioshake-adapter.js:53:19)\n    at AlignmentJobQueue.processAlign (file:///C:/Users/donald%20clark/.gemini/antigravity/scratch/karaoke-box/server/alignment/job-queue.js:76:51)\n    at JobManager.processNext (file:///C:/Users/donald%20clark/.gemini/antigravity/scratch/karaoke-box/server/orchestrator/index.js:132:34)\n    at JobManager.poll (file:///C:/Users/donald%20clark/.gemini/antigravity/scratch/karaoke-box/server/orchestrator/index.js:93:24)"
+  "message": "Splitter processor not initialized (no adapter set)",
+  "stack": "Error: Splitter processor not initialized (no adapter set)\n    at SplitterQueue.processSplit (file:///C:/Users/doner/kraokebox_song_generator/server/splitter/queue.js:35:19)\n    at JobManager.processNext (file:///C:/Users/doner/kraokebox_song_generator/server/orchestrator/index.js:132:34)\n    at JobManager.poll (file:///C:/Users/doner/kraokebox_song_generator/server/orchestrator/index.js:93:24)"
 }
