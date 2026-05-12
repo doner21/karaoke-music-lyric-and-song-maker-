@@ -2,12 +2,13 @@ import { exec } from 'child_process';
 import util from 'util';
 import path from 'path';
 import fs from 'fs-extra';
+import ffmpegPath from 'ffmpeg-static';
 import { Storage } from '../downloader/storage.js';
 
 const execAsync = util.promisify(exec);
 
-// FFMPEG Path (Found in Youka Desktop)
-const FFMPEG_PATH = 'C:\\Users\\donald clark\\AppData\\Roaming\\Youka Desktop\\youka\\data\\binaries\\ffmpeg\\ffmpeg.exe';
+// FFMPEG Path (resolved from ffmpeg-static npm package)
+const FFMPEG_PATH = ffmpegPath;
 
 /**
  * FFmpeg Phase Inversion Vocal Remover

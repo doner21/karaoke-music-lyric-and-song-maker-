@@ -2,7 +2,11 @@ import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { createRequire } from 'module';
 import { spawn } from 'child_process';
+
+const require = createRequire(import.meta.url);
+const ffmpegPath = require('ffmpeg-static');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -168,7 +172,8 @@ ipcMain.handle('probe-gpu-encoders', async () => {
 // ===== FFmpeg Frame-Based Export =====
 // Using image2pipe format for exact preview match
 
-const FFMPEG_PATH = 'C:\\Users\\donald clark\\AppData\\Roaming\\Youka Desktop\\youka\\data\\binaries\\ffmpeg\\ffmpeg.exe';
+const FFMPEG_PATH = ffmpegPath;
+const FFMPEG_DIR = path.dirname(ffmpegPath);
 const activeExports = new Map(); // exportId -> { ffmpeg, tempDir, outputPath }
 
 ipcMain.handle('export-start', async (event, options) => {

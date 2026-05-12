@@ -2,6 +2,7 @@ import { exec, spawn } from 'child_process';
 import util from 'util';
 import path from 'path';
 import fs from 'fs-extra';
+import ffmpegPath from 'ffmpeg-static';
 import { Storage } from '../downloader/storage.js';
 
 const execAsync = util.promisify(exec);
@@ -9,9 +10,9 @@ const execAsync = util.promisify(exec);
 // Path to Venv Python
 const VENV_PYTHON = path.join(process.cwd(), 'venv', 'Scripts', 'python.exe');
 
-// FFMPEG Path
-const FFMPEG_DIR = 'C:\\Users\\donald clark\\AppData\\Roaming\\Youka Desktop\\youka\\data\\binaries\\ffmpeg';
-const FFMPEG_PATH = path.join(FFMPEG_DIR, 'ffmpeg.exe');
+// FFMPEG Path (resolved from ffmpeg-static npm package)
+const FFMPEG_PATH = ffmpegPath;
+const FFMPEG_DIR = path.dirname(ffmpegPath);
 
 export class UVRMDXNetAdapter {
     constructor() {

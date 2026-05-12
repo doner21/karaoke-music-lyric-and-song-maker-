@@ -7,11 +7,12 @@ import fs from 'fs';
 import path from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import ffmpegPath from 'ffmpeg-static';
 
 const execAsync = promisify(exec);
 
-// FFmpeg path (same as other adapters)
-const FFMPEG_PATH = 'C:\\Users\\donald clark\\AppData\\Roaming\\Youka Desktop\\youka\\data\\binaries\\ffmpeg\\ffmpeg.exe';
+// FFmpeg path (resolved from ffmpeg-static npm package)
+const FFMPEG_PATH = ffmpegPath;
 
 /**
  * Convert hex color to ASS BGR format

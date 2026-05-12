@@ -2,6 +2,7 @@ import { exec } from 'child_process';
 import util from 'util';
 import path from 'path';
 import fs from 'fs-extra';
+import ffmpegPath from 'ffmpeg-static';
 import { Storage } from '../downloader/storage.js';
 
 const execAsync = util.promisify(exec);
@@ -9,8 +10,8 @@ const execAsync = util.promisify(exec);
 // Path to Venv Python
 const VENV_PYTHON = path.join(process.cwd(), 'venv', 'Scripts', 'python.exe');
 
-// FFMPEG Path Injection (Found earlier in Youka Desktop)
-const FFMPEG_DIR = 'C:\\Users\\donald clark\\AppData\\Roaming\\Youka Desktop\\youka\\data\\binaries\\ffmpeg';
+// FFMPEG Path Injection (resolved from ffmpeg-static npm package)
+const FFMPEG_DIR = path.dirname(ffmpegPath);
 
 export class AudioSeparatorAdapter {
     constructor() {

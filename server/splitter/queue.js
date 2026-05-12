@@ -144,7 +144,8 @@ export class SplitterQueue {
             completed_at: Date.now(),
             error_json: null,
             result_json: null,
-            params_json: null
+            params_json: null,
+            updated_at: Date.now()
         });
         return true;
     }
