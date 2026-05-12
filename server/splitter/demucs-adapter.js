@@ -127,9 +127,17 @@ export class DemucsAdapter {
 
             const child = spawn(pythonExe, args, { env, cwd: process.cwd() });
 
+            child.stdout.on('data', (d) => {
+                const s = d.toString();
+                if (s.includes('%')) {
+                    const m = s.match(/(\d+)%/);
+                    if (m) onProgress(parseInt(m[1]) / 100);
+                }
+            });
+
             let stderrOutput = '';
 
-            child.stdout.on('data', (d) => {
+            child.stderr.on('data', (d) => {
                 const s = d.toString();
                 stderrOutput += s;
                 // Demucs prints progress to stderr usually
