@@ -125,19 +125,11 @@ export class DemucsAdapter {
             console.log(`[Demucs] Spawning: ${pythonExe} ${args.join(' ')}`);
             onProgress(0.05, `Running Demucs (${modelId})...`);
 
-            const child = spawn(pythonExe, args, { env });
-
-            child.stdout.on('data', (d) => {
-                const s = d.toString();
-                if (s.includes('%')) {
-                    const m = s.match(/(\d+)%/);
-                    if (m) onProgress(parseInt(m[1]) / 100);
-                }
-            });
+            const child = spawn(pythonExe, args, { env, cwd: process.cwd() });
 
             let stderrOutput = '';
 
-            child.stderr.on('data', (d) => {
+            child.stdout.on('data', (d) => {
                 const s = d.toString();
                 stderrOutput += s;
                 // Demucs prints progress to stderr usually
