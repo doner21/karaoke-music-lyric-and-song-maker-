@@ -48,9 +48,10 @@ export class AudioSeparatorAdapter {
         // Models: htdemucs, UVR-MDX-NET-Inst_HQ_3, etc.
 
         // Construct command with ffmpeg path in environment
+        const ffmpegDllsDir = path.join(process.cwd(), 'ffmpeg-dlls');
         const env = {
             ...process.env,
-            PATH: `${FFMPEG_DIR};${process.env.PATH}`
+            PATH: `${ffmpegDllsDir};${FFMPEG_DIR};${process.env.PATH}`
         };
 
         // audio-separator uses different model naming

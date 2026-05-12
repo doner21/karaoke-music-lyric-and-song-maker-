@@ -65,10 +65,11 @@ export class UVRMDXNetAdapter {
         const outputRoot = Storage.getFilePath(jobId, 'separated');
         await fs.ensureDir(outputRoot);
 
-        // Environment with FFmpeg in PATH
+        // Environment with FFmpeg in PATH (includes shared DLLs for torchcodec)
+        const ffmpegDllsDir = path.join(process.cwd(), 'ffmpeg-dlls');
         const env = {
             ...process.env,
-            PATH: `${FFMPEG_DIR};${process.env.PATH}`
+            PATH: `${ffmpegDllsDir};${FFMPEG_DIR};${process.env.PATH}`
         };
 
         // === CRITICAL: Pre-convert to 44.1kHz WAV for alignment integrity ===

@@ -54,9 +54,10 @@ export class DemucsAdapter {
         const outputRoot = Storage.getFilePath(jobId, 'separated');
         await fs.ensureDir(outputRoot);
 
+        const ffmpegDllsDir = path.join(process.cwd(), 'ffmpeg-dlls');
         const env = {
             ...process.env,
-            PATH: `${FFMPEG_DIR};${process.env.PATH}`
+            PATH: `${ffmpegDllsDir};${FFMPEG_DIR};${process.env.PATH}`
         };
 
         // PRE-CONVERT: torchaudio can't load webm/opus. Convert to wav first.
