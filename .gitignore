@@ -8,3 +8,28 @@ dist-electron/
 .env
 .DS_Store
 thumbs.db
+
+# Database
+*.db
+
+# Audio test files
+*.mp3
+*.wav
+
+# FFmpeg binaries
+ffmpeg-dlls/
+ffmpeg-shared/
+
+# Python
+__pycache__/
+*.pyc
+
+# Player scripts (YouTube API responses)
+*-player-script.js
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+*nul
