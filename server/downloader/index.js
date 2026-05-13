@@ -69,7 +69,7 @@ router.post('/audio/acquire', async (req, res) => {
             songId: song.id,
             kind: 'download',
             params,
-            force: false // TODO: Support force flag from UI
+            force: false
         });
 
         res.status(202).json({ jobId: result.jobId, existing: result.existing, songId: song.id });

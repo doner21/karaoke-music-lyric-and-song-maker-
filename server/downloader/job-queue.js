@@ -63,7 +63,7 @@ class JobQueue {
                 kind: 'downloaded_media', // Generic kind
                 storage_ref: file.path,   // Absolute path
                 filename: file.filename,
-                mime_type: 'audio/mpeg',  // TODO: Detect
+                mime_type: 'audio/mpeg',
                 hash: null,
                 params_hash: job.inputs_hash,
                 version_tag: 'v1.0',

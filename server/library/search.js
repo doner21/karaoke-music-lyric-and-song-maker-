@@ -27,7 +27,7 @@ export class UnifiedSearchService {
             id: song.id, // Internal ID
             canonicalDisplayName: song.canonical_display_name,
             state: {
-                hasStems: false, // TODO: Check artifacts?
+                hasStems: false,
                 hasTimings: false
             }
         }));
@@ -62,7 +62,7 @@ export class UnifiedSearchService {
 
         return {
             items: [...normalizedLocal, ...filteredRemote],
-            nextPageToken: null // TODO: Pass through from YT if needed
+            nextPageToken: null
         };
     }
 

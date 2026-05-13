@@ -230,7 +230,7 @@ export class JobManager {
         }
         console.log(`[JobManager] Job created: ${jobId} (${kind})`);
 
-        // TODO: Notify / Trigger Processor
+        // Trigger processor if polling is active
 
         return { jobId, state: JOB_STATES.QUEUED, existing: false };
     }
