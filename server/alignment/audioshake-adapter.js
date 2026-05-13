@@ -53,7 +53,7 @@ export class AudioShakeAdapter {
             throw new Error('Lyrics text is required for alignment. Transcription mode has been disabled.');
         }
 
-        // DEBUG: Log the lyrics being used
+        // Log the lyrics being used
         const lyricsPreview = lyricsText.substring(0, 100).replace(/\n/g, ' ');
         const lyricsHash = crypto.createHash('md5').update(lyricsText).digest('hex').substring(0, 8);
         console.log(`[AudioShakeAdapter] LYRICS DEBUG: hash=${lyricsHash}, preview="${lyricsPreview}..."`);

@@ -60,7 +60,7 @@ export class AlignmentJobQueue {
 
         console.log(`[Alignment] Processing job ${jobId}`);
 
-        // DEBUG: Log the lyrics from job params
+        // Log the lyrics from job params
         const lyricsPreview = request.lyricsText?.substring(0, 100)?.replace(/\n/g, ' ') || 'EMPTY';
         console.log(`[Alignment] JOB PARAMS LYRICS: "${lyricsPreview}..." (${request.lyricsText?.length || 0} chars)`);
 
