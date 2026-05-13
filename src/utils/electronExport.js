@@ -234,9 +234,15 @@ export async function exportToMp4Electron({
                 if (!frameResult.success) {
                     // Check for backpressure signal
                     if (frameResult.backpressure) {
+                        retries++;
+                        if (retries > RETRY_LIMIT) {
+                            throw new Error('Frame ' + i + ' retry limit exceeded. FFmpeg may have crashed.');
+                        }
                         await new Promise(r => setTimeout(r, 10));
                         i--; // Retry this frame
                         continue;
+                    } else {
+                        retries = 0;
                     }
                     throw new Error(frameResult.error || 'Failed to write frame');
                 }
