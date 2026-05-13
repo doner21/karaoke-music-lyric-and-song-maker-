@@ -3,7 +3,6 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import crypto from 'crypto';
-import play from 'play-dl';
 import downloaderRouter from './server/downloader/index.js';
 import splitterRouter, { initSplitterService } from './server/splitter/index.js';
 import alignmentRouter, { initAlignmentService } from './server/alignment/index.js';

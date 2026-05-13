@@ -6,9 +6,9 @@
  * Be respectful of rate limits and add delays between requests
  */
 
-const axios = require('axios');
-const cheerio = require('cheerio');
-const { parseLyrics } = require('../utils/lyricsParser');
+import axios from 'axios';
+import cheerio from 'cheerio';
+import { parseLyrics } from '../utils/lyricsParser.js';
 
 const BASE_URL = 'https://www.azlyrics.com';
 
@@ -322,7 +322,7 @@ function generateUrlVariations(artist, title) {
   return [...new Set(variations)]; // Remove duplicates
 }
 
-module.exports = {
+export {
   scrapeLyrics,
   searchLyrics,
   scrapeFromUrl,
