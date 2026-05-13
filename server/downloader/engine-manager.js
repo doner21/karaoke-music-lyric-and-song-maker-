@@ -55,12 +55,7 @@ export class EngineManager {
                 console.error(`[EngineManager] Engine ${name} failed:`, e.message);
                 errors.push({ engine: name, error: e.message });
 
-                // If specific engine was requested (not auto), don't fallback?
-                // Spec v1.0 says "Engine selection MUST be configurable".
-                // If user selected "ytdl-core", maybe we shouldn't fallback to "play-dl"?
-                // But Resiliency is the goal.
-                // Let's fallback ONLY if 'auto' OR if the error is explicitly marked 'retryable'?
-                // For now, if user specified valid engine, try that. If it fails, fail job.
+                // If user specified a valid engine and it fails, fail the job
                 if (preferredEngine !== 'auto' && preferredEngine === name) {
                     throw e;
                 }
