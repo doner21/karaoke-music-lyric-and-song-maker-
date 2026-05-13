@@ -11,16 +11,8 @@ const ffmpegPath = require('ffmpeg-static');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// NOTE: Hardware acceleration was previously disabled to prevent YouTube iframe crashes.
-// However, this breaks VideoEncoder API needed for MP4 export.
-// TRADE-OFF: Enabling GPU for MP4 export - if YouTube iframes become unstable,
-// consider alternative approaches like running export in a separate process.
-
-// REMOVED: These flags break VideoEncoder which needs GPU acceleration
-// app.disableHardwareAcceleration();
-// app.commandLine.appendSwitch('disable-gpu');
-// app.commandLine.appendSwitch('disable-gpu-compositing');
-// app.commandLine.appendSwitch('disable-software-rasterizer');
+// VideoEncoder API needs GPU acceleration, so hardware acceleration is kept enabled. 
+// If YouTube iframes become unstable, consider running export in a separate process.
 
 // Enable WebCodecs API for video encoding (required for MP4 export)
 app.commandLine.appendSwitch('enable-features', 'WebCodecs,WebCodecsEncoderEnergy');
