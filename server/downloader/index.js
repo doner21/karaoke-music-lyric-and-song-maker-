@@ -2,6 +2,7 @@ import express from 'express';
 import { JobMgr } from '../orchestrator/index.js';
 import { SongRepo } from '../db/repo.js'; // Use Repo
 import { Queue } from './job-queue.js'; // Keep for engine registry access
+import { parseVideoTitle } from '../utils/titleParser.js';
 import { Storage } from './storage.js';
 
 const router = express.Router();
