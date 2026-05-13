@@ -9,6 +9,7 @@ import alignmentRouter, { initAlignmentService } from './server/alignment/index.
 import artifactsRouter from './server/artifacts/index.js';
 import path from 'path';
 import fs from 'fs';
+import { parseVideoTitle } from './server/utils/titleParser.js';
 import { checkForUpdate, performUpdate, checkAndUpdateOnStartup } from './server/services/ytdlp-updater.js';
 
 const app = express();
