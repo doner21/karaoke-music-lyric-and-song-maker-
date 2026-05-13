@@ -564,25 +564,75 @@ ipcMain.handle('export-finalize-streaming', async (event, { exportId }) => {
     try {
         console.log(`[StreamExport] Finalizing: ${exp.frameCount} frames`);
 
-        // Close FFmpeg stdin to signal end of input
-        await new Promise((resolve, reject) => {
-            exp.ffmpegProcess.stdin.end(() => {
-                resolve();
-            });
-        });
-
-        // Wait for FFmpeg to finish encoding
-        await new Promise((resolve, reject) => {
+        // Attach close/error listeners BEFORE ending stdin to avoid race condition
+        // where FFmpeg's close event fires between stdin.end() resolution and listener attachment
+        const encodePromise = new Promise((resolve, reject) => {
             exp.ffmpegProcess.on('close', (code) => {
                 if (code === 0) {
                     resolve();
                 } else {
                     const stderr = typeof exp.ffmpegStderr === 'function' ? exp.ffmpegStderr() : '';
-                    reject(new Error(`FFmpeg streaming encode failed (code ${code}): ${stderr.slice(-300)}`));
+                    reject(Object.assign(
+                        new Error(`FFmpeg streaming encode failed (code ${code}): ${stderr.slice(-300)}`),
+                        { code, encoder: exp.encoder }
+                    ));
                 }
             });
             exp.ffmpegProcess.on('error', reject);
         });
+
+        // 30-second timeout guard to prevent permanent hangs
+        const ENCODE_TIMEOUT_MS = 30000;
+        const encodeTimeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('FFmpeg streaming encode timed out after 30s')), ENCODE_TIMEOUT_MS)
+        );
+
+        // End stdin — close listener already attached above, no race
+        exp.ffmpegProcess.stdin.end();
+
+        try {
+            await Promise.race([encodePromise, encodeTimeoutPromise]);
+        } catch (encodeErr) {
+            // GPU encoder fallback: re-encode video_only.mp4 with libx264
+            if (exp.encoder && exp.encoder !== 'libx264') {
+                console.warn(`[StreamExport] ${exp.encoder} failed, falling back to libx264...`);
+                const fallbackVideoPath = exp.videoOnlyPath.replace('.mp4', '_fallback.mp4');
+                try {
+                    await Promise.race([
+                        new Promise((resolve, reject) => {
+                            const ffmpeg = spawn(FFMPEG_PATH, [
+                                '-y', '-i', exp.videoOnlyPath,
+                                '-c:v', 'libx264', '-preset', 'slow',
+                                '-crf', '17', '-tune', 'animation',
+                                '-pix_fmt', 'yuv420p', fallbackVideoPath
+                            ], { stdio: 'pipe' });
+                            let fbStderr = '';
+                            ffmpeg.stderr.on('data', (d) => { fbStderr += d.toString(); });
+                            ffmpeg.on('close', (fbCode) => {
+                                if (fbCode === 0) {
+                                    console.log('[StreamExport] CPU fallback encoding succeeded');
+                                    resolve();
+                                } else {
+                                    reject(new Error('libx264 fallback failed (code ' + fbCode + '): ' + fbStderr.slice(-300)));
+                                }
+                            });
+                            ffmpeg.on('error', reject);
+                        }),
+                        new Promise((_, reject) =>
+                            setTimeout(() => reject(new Error('FFmpeg fallback encode timed out after 30s')), 30000)
+                        )
+                    ]);
+                    await fs.promises.rename(fallbackVideoPath, exp.videoOnlyPath);
+                } catch (fallbackErr) {
+                    throw new Error(
+                        'Video encode failed: ' + exp.encoder + ' error. ' +
+                        'CPU fallback also failed. Try disabling GPU acceleration.'
+                    );
+                }
+            } else {
+                throw encodeErr;
+            }
+        }
 
         console.log('[StreamExport] Video encoded');
 
@@ -591,7 +641,7 @@ ipcMain.handle('export-finalize-streaming', async (event, { exportId }) => {
         // Mix audio (same as CPU path)
         if (exp.bandStemPath && exp.vocalStemPath) {
             console.log('[StreamExport] Mixing audio stems...');
-            await new Promise((resolve, reject) => {
+            const audioMixPromise = new Promise((resolve, reject) => {
                 const ffmpeg = spawn(FFMPEG_PATH, [
                     '-y',
                     '-i', exp.bandStemPath,
@@ -611,12 +661,16 @@ ipcMain.handle('export-finalize-streaming', async (event, { exportId }) => {
                 });
                 ffmpeg.on('error', reject);
             });
+            await Promise.race([
+                audioMixPromise,
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Audio mix timed out after 30s')), 30000))
+            ]);
 
             console.log('[StreamExport] Audio mixed');
 
             // Combine video + audio
             console.log('[StreamExport] Combining video and audio...');
-            await new Promise((resolve, reject) => {
+            const combinePromise = new Promise((resolve, reject) => {
                 const ffmpeg = spawn(FFMPEG_PATH, [
                     '-y',
                     '-i', exp.videoOnlyPath,
@@ -636,6 +690,10 @@ ipcMain.handle('export-finalize-streaming', async (event, { exportId }) => {
                 });
                 ffmpeg.on('error', reject);
             });
+            await Promise.race([
+                combinePromise,
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Video+audio combine timed out after 30s')), 30000))
+            ]);
 
             console.log('[StreamExport] Combined');
         } else {
