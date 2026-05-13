@@ -1,4 +1,0 @@
-{
-  "message": "Demucs exited with code 1: ",
-  "stack": "Error: Demucs exited with code 1: \n    at ChildProcess.<anonymous> (file:///C:/Users/doner/kraokebox_song_generator/server/splitter/demucs-adapter.js:152:35)\n    at ChildProcess.emit (node:events:508:28)\n    at maybeClose (node:internal/child_process:1100:16)\n    at ChildProcess._handle.onexit (node:internal/child_process:305:5)"
-}
