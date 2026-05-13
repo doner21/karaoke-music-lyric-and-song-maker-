@@ -37,20 +37,8 @@ router.post('/audio/acquire', async (req, res) => {
         // Use Repo to lookup or create
         let song = SongRepo.getByVideoId(selectedSong.videoId);
         if (!song) {
-            // Parse "Artist - Song" from YouTube title
             const rawTitle = selectedSong.title || '';
-            let artistName = 'Unknown Artist';
-            let trackTitle = rawTitle || `Track ${selectedSong.videoId}`;
-
-            // Common patterns: "Artist - Song", "Artist – Song" (en-dash)
-            const delimiterMatch = rawTitle.match(/^(.+?)\s*[-–]\s*(.+)$/);
-            if (delimiterMatch) {
-                artistName = delimiterMatch[1].trim();
-                trackTitle = delimiterMatch[2].trim();
-                // Remove common suffix patterns like "(Official Video)", "[Lyrics]", "(Audio)"
-                trackTitle = trackTitle.replace(/\s*[\(\[](?:Official|Lyric|Audio|Video|HD|HQ|Lyrics|Music Video|Official Video|Official Audio).*?[\)\]]\s*/gi, '').trim();
-            }
-
+            const { artistName, trackTitle } = parseVideoTitle(rawTitle);
             const canonicalDisplayName = `${artistName} - ${trackTitle}`;
             console.log(`[Downloader] Parsed title: "${rawTitle}" -> Artist: "${artistName}", Track: "${trackTitle}"`);
 
