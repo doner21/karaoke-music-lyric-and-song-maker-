@@ -11,6 +11,8 @@ character: code
 
 > **17 nodes** | **Cohesion: 0.16** | **Primary file:** `src/utils/karaokeHelpers.js`
 
+## For Humans
+
 Audio encoding/decoding helpers used across the app. Provides WAV encoding (`encodeWAV`, `audioBufferToWav`), audio level clamping (`clamp01`), and CDG color palette utilities. These are pure utility functions with no side effects — the "toolbox" that other components reach into.
 
 ### Key Nodes
