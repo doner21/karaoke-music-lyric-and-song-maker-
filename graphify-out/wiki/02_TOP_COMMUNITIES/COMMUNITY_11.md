@@ -1,44 +1,66 @@
 ---
 type: community/narrative
 community_id: 11
-label: "KaraokeLyricsDisplay.jsx, gapDetector.js, lyricsPagination.js"
+label: "Lyrics Display & Pagination"
 size: 13
 cohesion: 0.23
 character: code
 ---
 
-# Community 11: KaraokeLyricsDisplay.jsx, gapDetector.js, lyricsPagination.js
+# Lyrics Display & Pagination
 
-> **13 nodes** | **Cohesion: 0.23** (moderately connected) | **Character: code**
+> **13 nodes** | **Cohesion: 0.23** (moderate) | **Files:** `PaginatedLyricsDisplay.jsx`, `KaraokeLyricsDisplay.jsx`, `lyricsPagination.js`, `gapDetector.js`
 
 ## For Humans
 
-This community contains **13 functions** primarily in **lyricsPagination.js**.
+**Real-world analogy:** This is the **teleprompter operator**. Long songs have many lyrics lines — way more than fit on one screen. This system splits them into readable "pages" and advances through them in sync with the music, like a broadcast teleprompter. It also detects gaps between lines for natural page breaks.
 
-The most connected function is **KaraokeLyricsDisplay.jsx** with 6 connections.
+### Architecture
+
+```
+┌───────────────────────────────────────┐
+│      PaginatedLyricsDisplay           │
+│  ┌─────────────────────────────────┐  │
+│  │  getCurrentPage()               │  │
+│  │  → which page is visible now?   │  │
+│  └──────────┬──────────────────────┘  │
+│             ▼                          │
+│  ┌─────────────────────────────────┐  │
+│  │  lyricsPagination.js            │  │
+│  │  → calculate pages from tokens  │  │
+│  │  → group lines by timing        │  │
+│  └──────────┬──────────────────────┘  │
+│             ▼                          │
+│  ┌─────────────────────────────────┐  │
+│  │  gapDetector.js                 │  │
+│  │  → find natural breaks between  │  │
+│  │    lines for page transitions   │  │
+│  └─────────────────────────────────┘  │
+└───────────────────────────────────────┘
+      │
+      ▼
+┌───────────────────────────────────────┐
+│     KaraokeLyricsDisplay              │
+│  → full-screen overlay                │
+│  → word highlighting animations       │
+│  → countdown bar, letter fill         │
+└───────────────────────────────────────┘
+```
+
+### Key Nodes
+- **getCurrentPage()** → Which page is visible at current playback time
+- **lyricsPagination.js** → Calculates page breaks from token timing
+- **gapDetector.js** → Finds natural pauses between lines
+- **KaraokeLyricsDisplay** → Full-screen lyrics overlay with animations
+
+### Cohesion: 0.23 (moderate)
+Shared data flow (tokens → pages → display) creates moderate coupling.
+
+### Bridges
+- **Token Editor (C1):** Edited tokens drive display updates
+- **Highlight Calc (C14):** Word-level animation timing
 
 ## For LLMs
 
-### Data
-
-- **ID:** 11
-- **Label:** KaraokeLyricsDisplay.jsx, gapDetector.js, lyricsPagination.js
-- **Size:** 13 nodes
-- **Cohesion:** 0.23
-- **Character:** code
-- **Primary file:** lyricsPagination.js
-
-### Top Nodes by Connectivity
-
-- **KaraokeLyricsDisplay.jsx** -- 6 connections [code]
-- **getCurrentPage()** -- 5 connections [code]
-- **lyricsPagination.js** -- 4 connections [code]
-- **KaraokeLyricsDisplay()** -- 4 connections [code]
-- **usePlaybackTime()** -- 3 connections [code]
-- **normalizeLyrics()** -- 3 connections [code]
-- **getActiveGap()** -- 3 connections [code]
-- **findPageContainingLine()** -- 2 connections [code]
-- **findNextHighlightableWord()** -- 2 connections [code]
-- **calculatePages()** -- 2 connections [code]
-
-**No cross-community edges -- this community is self-contained.**
+- **ID:** 11 · **Size:** 13 · **Cohesion:** 0.23
+- **Files:** `src/components/lyrics/PaginatedLyricsDisplay.jsx`, `KaraokeLyricsDisplay.jsx`, `src/utils/lyricsPagination.js`, `gapDetector.js`
