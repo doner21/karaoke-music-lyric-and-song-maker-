@@ -1,0 +1,17 @@
+# Graphify ignore — exclude third-party, build artifacts, and large binaries
+node_modules/
+dist/
+downloads/
+exports/
+ffmpeg-shared/
+ffmpeg-dlls/
+venv/
+graphify-out/
+*.db
+*.mp4
+*.mp3
+*.wav
+*.webm
+*.onnx
+*.ckpt
+*.bin
