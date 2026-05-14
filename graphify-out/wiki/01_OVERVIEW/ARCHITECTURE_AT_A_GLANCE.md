@@ -2,73 +2,44 @@
 type: overview/architecture
 ---
 
-# Architecture at a Glance (Deep Mode)
+# Architecture at a Glance
 
-KaraokeBox is a full-stack desktop application that downloads songs from YouTube, separates vocals from instrumentals using AI (Demucs/UVR-MDX-NET), syncs lyrics, and renders karaoke videos for export.
+## Core Concepts (God Nodes)
 
-**Deep Mode** reveals the architectural patterns, cross-cutting concerns, and data flows that AST-only analysis cannot capture.
+The most connected concepts form the backbone:
 
-## Pipeline Flow
+- **AudioStemManager** (21 connections)
+- **JobManager** (14 connections)
+- **SongRepository** (12 connections)
+- **AudioShakeAdapter** (11 connections)
+- **EngineManager** (10 connections)
+- **drawKaraokeFrame()** (10 connections)
+- **insertToken()** (9 connections)
+- **Canonicalizer** (8 connections)
+- **AlignmentJobQueue** (8 connections)
+- **DownloadEngine** (8 connections)
 
-```
-YouTube URL → [Download Pipeline] → audio.mp3
-                                        ↓
-                               [Split Pipeline] → vocals.mp3 + band.mp3
-                                        ↓
-                               [Alignment Pipeline] → synced lyrics JSON
-                                        ↓
-                               [Render Pipeline] → MP4 export
-```
+## Community Map
 
-## Architectural Patterns
-
-| Pattern | Implementation | Where |
-|---------|---------------|-------|
-| **Adapter Pattern** | Splitter adapters, download adapters | `server/splitter/*adapter.js`, `server/downloader/adapters/` |
-| **Strategy Pattern** | EngineManager selects download strategy | `server/downloader/engine-manager.js` |
-| **Smart Router** | `initSplitterService()` routes by modelId | `server/splitter/index.js` |
-| **Job Queue** | SQLite-backed JobManager | `server/orchestrator/index.js` |
-
-## Cross-Cutting Concerns
-
-| Concern | How Addressed |
-|---------|---------------|
-| **Stem Alignment Integrity** | Audio canonicalization (44.1kHz WAV) before ALL separation |
-| **GPU/CPU Fallback** | Automatic: CUDA → CPU degradation in Demucs + UVR |
-| **Windows Process Spawning** | `run_audio_separator.py` wrapper avoids pip .exe fragility |
-| **Python venv Isolation** | All Python deps in `venv/`, wrapper survives rebuilds |
-
-## Core Systems
-
-### 1. Download Pipeline (Community 0)
-YouTube → MP3 via yt-dlp. Strategy pattern: EngineManager tries YtDlpAdapter first, falls back to MockReliableAdapter.
-
-### 2. Split Pipeline (Community 2)
-AI vocal separation. Adapter pattern: Demucs, UVR-MDX-NET, FFmpeg phase-inversion, Mock. All adapters share canonicalization requirement.
-
-### 3. Alignment Pipeline (Community 5)
-AudioShake API for word-level lyrics timing. Canonicalizer ensures format compliance.
-
-### 4. Render Pipeline (Community 4)
-WebGL frame rendering → ffmpeg MP4 export. GPU-accelerated with CPU fallback.
-
-### 5. Orchestrator (Community 3)
-Central JobManager coordinates download, split, and alignment queues with SQLite persistence.
-
-### 6. Audio Stem Manager (Community 6)
-Multi-track synchronized playback via Web Audio API.
-
-### 7. Lyrics Pipeline (Communities 1, 11, 14)
-Token editor, pagination, word-level highlight calculation.
-
-## External Services
-
-| Service | Used By | Purpose |
-|---------|---------|---------|
-| yt-dlp CLI | YtDlpAdapter | YouTube audio download |
-| AudioShake API | AudioShakeAdapter | Lyrics-to-audio alignment |
-| FFmpeg | All splitters | Audio format conversion |
-| Genius API | Lyrics fetcher | Lyrics retrieval |
-| ONNX Runtime | UVRMDXNetAdapter | Neural network inference |
-| Demucs Model | DemucsAdapter | Hybrid transformer separation |
-| UVR-MDX-NET Model | UVRMDXNetAdapter | Instrument-focused separation |
+| # | Community | Nodes | Character |
+|---|-----------|-------|-----------|
+| 0 | [[../02_TOP_COMMUNITIES/COMMUNITY_0|engine-interface.js, engine-manager.js, jo...]] | 39 | code |
+| 1 | [[../02_TOP_COMMUNITIES/COMMUNITY_1|TokenEditorPanel.jsx, jsonAdapters.js, jso...]] | 37 | code |
+| 2 | [[../02_TOP_COMMUNITIES/COMMUNITY_2|audio-separator-adapter.js, demucs-adapter...]] | 33 | code |
+| 3 | [[../02_TOP_COMMUNITIES/COMMUNITY_3|index.js, migrate_add_logs.js, repo.js]] | 31 | code |
+| 4 | [[../02_TOP_COMMUNITIES/COMMUNITY_4|KaraokeRenderer.jsx, VerificationPanel.jsx...]] | 23 | code |
+| 5 | [[../02_TOP_COMMUNITIES/COMMUNITY_5|audioshake-adapter.js, canonicalizer.js, i...]] | 22 | code |
+| 6 | [[../02_TOP_COMMUNITIES/COMMUNITY_6|AudioStemManager Module (21 functions)]] | 21 | code |
+| 7 | [[../02_TOP_COMMUNITIES/COMMUNITY_7|azlyrics.js, genius.js, lyricsParser.js]] | 16 | code |
+| 8 | [[../02_TOP_COMMUNITIES/COMMUNITY_8|TimelineBlockContent.jsx, karaokeHelpers.js]] | 16 | code |
+| 9 | [[../02_TOP_COMMUNITIES/COMMUNITY_9|index.js, server-proxy.js, titleParser.js]] | 15 | code |
+| 10 | [[../02_TOP_COMMUNITIES/COMMUNITY_10|IntegratedEcologicalOS.jsx, gpuCapabilitie...]] | 13 | code |
+| 11 | [[../02_TOP_COMMUNITIES/COMMUNITY_11|KaraokeLyricsDisplay.jsx, gapDetector.js, ...]] | 13 | code |
+| 12 | [[../02_TOP_COMMUNITIES/COMMUNITY_12|job-queue Module (10 functions)]] | 10 | code |
+| 13 | [[../02_TOP_COMMUNITIES/COMMUNITY_13|queue Module (8 functions)]] | 8 | code |
+| 14 | [[../02_TOP_COMMUNITIES/COMMUNITY_14|wordHighlightCalculator Module (7 functions)]] | 7 | code |
+| 15 | [[../02_TOP_COMMUNITIES/COMMUNITY_15|debug_separate.py]] | 6 | code |
+| 16 | [[../02_TOP_COMMUNITIES/COMMUNITY_16|AudioErrorBoundaryx Module (6 functions)]] | 6 | code |
+| 17 | [[../02_TOP_COMMUNITIES/COMMUNITY_17|SimpleErrorBoundaryx Module (6 functions)]] | 6 | code |
+| 18 | [[../02_TOP_COMMUNITIES/COMMUNITY_18|search Module (5 functions)]] | 5 | code |
+| 19 | [[../02_TOP_COMMUNITIES/COMMUNITY_19|exportService.js]] | 5 | code |
