@@ -10,6 +10,9 @@ const execAsync = util.promisify(exec);
 // Path to Venv Python
 const VENV_PYTHON = path.join(process.cwd(), 'venv', 'Scripts', 'python.exe');
 
+// Wrapper script: audio_separator.utils.cli has no __main__ guard
+const SEPARATOR_RUNNER = path.join(process.cwd(), 'server', 'splitter', 'run_audio_separator.py');
+
 // FFMPEG Path Injection (resolved from ffmpeg-static npm package)
 const FFMPEG_DIR = path.dirname(ffmpegPath);
 
@@ -58,7 +61,7 @@ export class AudioSeparatorAdapter {
         // For 2-stem (vocals only), use UVR-MDX-NET models or htdemucs with --two_stems
         // For simplicity, just run and let it output all stems, then pick what we need.
 
-        const cmd = `"${VENV_PYTHON}" -m audio_separator.utils.cli "${inputPath}" --model_filename "${modelId}" --output_dir "${outputRoot}"`;
+        const cmd = `"${VENV_PYTHON}" "${SEPARATOR_RUNNER}" "${inputPath}" --model_filename "${modelId}" --output_dir "${outputRoot}"`;
 
         console.log(`[AudioSeparator] Cmd: ${cmd}`);
         onProgress(0.01, `Starting Audio Separator (${modelId})...`);
