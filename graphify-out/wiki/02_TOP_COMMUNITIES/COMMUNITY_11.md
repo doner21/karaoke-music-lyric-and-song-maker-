@@ -11,6 +11,8 @@ character: code
 
 > **13 nodes** | **Cohesion: 0.23** | **Primary files:** `src/utils/lyricsPagination.js`, `src/components/lyrics/PaginatedLyricsDisplay.jsx`, `KaraokeLyricsDisplay.jsx`
 
+## For Humans
+
 Splits long karaoke songs into readable "pages" of lyrics (like a teleprompter). Calculates which lyrics lines fit on screen based on timing and line count, then provides page-forward/page-back navigation.
 
 ### Key Nodes

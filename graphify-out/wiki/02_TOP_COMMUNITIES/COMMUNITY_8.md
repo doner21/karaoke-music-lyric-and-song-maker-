@@ -11,6 +11,8 @@ character: code
 
 > **16 nodes** | **Cohesion: 0.25** | **Primary file:** `server/services/azlyrics.js`
 
+## For Humans
+
 Web scraper for AzLyrics.com. Fetches lyrics pages, parses the lyrics block from HTML, and extracts clean text. Uses rotating user agents and rate limiting to avoid blocking.
 
 ### Key Nodes
