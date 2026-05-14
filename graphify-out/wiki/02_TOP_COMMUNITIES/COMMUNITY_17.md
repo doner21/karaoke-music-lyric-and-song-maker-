@@ -1,40 +1,46 @@
 ---
 type: community/narrative
 community_id: 17
-label: "SimpleErrorBoundaryx Module (6 functions)"
+label: "Simple Error Boundary"
 size: 6
 cohesion: 0.00
 character: code
 ---
 
-# Community 17: SimpleErrorBoundaryx Module (6 functions)
+# Simple Error Boundary
 
-> **6 nodes** | **Cohesion: 0.00** (loosely connected) | **Character: code**
+> **6 nodes** | **Cohesion: 0.00** (single component) | **File:** `src/components/SimpleErrorBoundary.jsx`
 
 ## For Humans
 
-This community contains **6 functions** primarily in **SimpleErrorBoundary.jsx**.
+**Real-world analogy:** This is the **general-purpose safety net** — catches any React render errors (not just audio) and shows a clean fallback. Works alongside the AudioErrorBoundary for comprehensive error coverage across the app.
 
-The most connected function is **SimpleErrorBoundary** with 5 connections.
+```
+┌──────────────────────────────────────┐
+│      SimpleErrorBoundary             │
+│  ┌────────────────────────────────┐  │
+│  │ componentDidCatch(error)       │  │
+│  │  → setState({ error })         │  │
+│  └────────────────────────────────┘  │
+│  ┌────────────────────────────────┐  │
+│  │ render()                       │  │
+│  │  error? → error message        │  │
+│  │  else  → this.props.children   │  │
+│  └────────────────────────────────┘  │
+└──────────────────────────────────────┘
+```
+
+### Key Nodes
+- **SimpleErrorBoundary** → Catches generic React render errors
+- **.getDerivedStateFromError()** → Captures error info
+- **.render()** → Shows error UI or passes children through
+
+### Cohesion: 0.00 (single component)
+
+### Bridges
+- **Audio Error Boundary (C16):** Sibling — together cover all error types
 
 ## For LLMs
 
-### Data
-
-- **ID:** 17
-- **Label:** SimpleErrorBoundaryx Module (6 functions)
-- **Size:** 6 nodes
-- **Cohesion:** 0.00
-- **Character:** code
-- **Primary file:** SimpleErrorBoundary.jsx
-
-### Top Nodes by Connectivity
-
-- **SimpleErrorBoundary** -- 5 connections [code]
-- **SimpleErrorBoundary.jsx** -- 1 connections [code]
-- **.render()** -- 1 connections [code]
-- **.getDerivedStateFromError()** -- 1 connections [code]
-- **.constructor()** -- 1 connections [code]
-- **.componentDidCatch()** -- 1 connections [code]
-
-**No cross-community edges -- this community is self-contained.**
+- **ID:** 17 · **Size:** 6 · **Cohesion:** 0.00
+- **File:** `src/components/SimpleErrorBoundary.jsx`
