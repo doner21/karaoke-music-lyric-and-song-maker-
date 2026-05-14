@@ -11,6 +11,8 @@ character: code
 
 > **6 nodes** | **Cohesion: 0.60** | **Primary file:** `scripts/debug_separate.py`
 
+## For Humans
+
 A standalone Python debugging script for testing the audio separation pipeline independently of the Node.js server. Loads a track, configures logging, and runs a separation directly. Used for troubleshooting splitter issues without needing to start the full server.
 
 ### Key Nodes

@@ -11,6 +11,8 @@ character: code
 
 > **6 nodes** | **Cohesion: 0.00** | **Primary file:** `src/components/AudioErrorBoundary.jsx`
 
+## For Humans
+
 React error boundary that catches Web Audio API failures (missing codecs, permission denied, decode errors) and shows a user-friendly fallback instead of a white screen. Wrap any audio-playing component with this to prevent crashes from bubbling up.
 
 ### Key Nodes

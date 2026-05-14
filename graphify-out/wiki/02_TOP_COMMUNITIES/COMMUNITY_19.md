@@ -11,6 +11,8 @@ character: code
 
 > **5 nodes** | **Cohesion: 0.70** | **Primary file:** `server/services/exportService.js`
 
+## For Humans
+
 Generates ASS (Advanced SubStation Alpha) subtitle files from aligned lyrics data. ASS format supports karaoke-style per-syllable timing, colors, and positioning — used by video players and editing software for karaoke overlays.
 
 ### Key Nodes

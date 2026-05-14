@@ -11,6 +11,8 @@ character: code
 
 > **5 nodes** | **Cohesion: 0.00** | **Primary file:** `server/library/search.js`
 
+## For Humans
+
 Single search endpoint that queries both YouTube (via yt-dlp) and a local song library. Returns unified results for the search bar in the UI. Handles deduplication and result ranking.
 
 ### Key Nodes
