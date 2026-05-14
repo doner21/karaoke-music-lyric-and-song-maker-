@@ -1,46 +1,85 @@
 ---
 type: community/narrative
 community_id: 3
-label: "index.js, migrate_add_logs.js, repo.js"
+label: "Orchestrator & Job Manager"
 size: 31
 cohesion: 0.08
 character: code
 ---
 
-# Community 3: index.js, migrate_add_logs.js, repo.js
+# Orchestrator & Job Manager
 
-> **31 nodes** | **Cohesion: 0.08** (loosely connected) | **Character: code**
+> **31 nodes** | **Cohesion: 0.08** (loose) | **Files:** `orchestrator/index.js`, `db/repo.js`, `db/index.js`
 
 ## For Humans
 
-This community contains **31 functions** primarily in **index.js**.
+**Real-world analogy:** This is the **project manager with a photographic memory**. It keeps track of every background job (download, split, align) in a SQLite database. It knows which jobs are pending, which are running, and which are done — and it prevents duplicate work. Like a good PM, it checks in periodically (polling) to see if anything needs attention.
 
-The most connected function is **JobManager** with 14 connections.
+### Architecture
+
+```
+┌──────────────────────────────────────────────┐
+│                JobManager                     │
+│  ┌────────────────────────────────────────┐  │
+│  │  submit(kind, songId, params)          │  │
+│  │    → SQLite INSERT (if not duplicate)  │  │
+│  └────────────┬───────────────────────────┘  │
+│               ▼                               │
+│  ┌────────────────────────────────────────┐  │
+│  │  poll() — background interval          │  │
+│  │    → processNext()                     │  │
+│  │    → FIFO: oldest pending job first    │  │
+│  └────────────┬───────────────────────────┘  │
+│               ▼                               │
+│  ┌────────────────────────────────────────┐  │
+│  │  processNext()                         │  │
+│  │    → routes to kind-specific processor │  │
+│  │    → download → EngineManager          │  │
+│  │    → split    → SplitterQueue          │  │
+│  │    → align    → AlignmentJobQueue      │  │
+│  └────────────┬───────────────────────────┘  │
+│               ▼                               │
+│  ┌────────────────────────────────────────┐  │
+│  │  updateProgress() / fail() / complete()│  │
+│  │    → SQLite UPDATE                     │  │
+│  │    → SongRepository.saveArtifact()     │  │
+│  └────────────────────────────────────────┘  │
+└──────────────────────────────────────────────┘
+
+┌──────────────────────────────┐
+│        SongRepository        │
+│  ┌────────────────────────┐  │
+│  │ getById()              │  │
+│  │ getByVideoId()         │  │
+│  │ getArtifacts()         │  │
+│  │   → vocal_stem         │  │
+│  │   → band_stem          │  │
+│  │   → aligned_json       │  │
+│  └────────────────────────┘  │
+└──────────────────────────────┘
+```
+
+### Key Nodes
+
+| Node | Role |
+|------|------|
+| **JobManager** | Central coordinator: submit, poll, process, track |
+| **SongRepository** | SQLite CRUD for songs, artifacts, metadata |
+| **getDB()** | WAL-mode SQLite connection with FK constraints |
+| **.submit()** | Deduplicates by hash(songId + params), supports force re-queue |
+| **.processNext()** | FIFO dispatch to the correct kind processor |
+
+### Cohesion: 0.08 (loose)
+JobManager orchestrates independent subsystems — each processor is an external dependency. Loose cohesion is *by design*.
+
+### Bridges
+- **Download (C0):** Routes download jobs to EngineManager
+- **Splitter (C2):** Routes split jobs to SplitterQueue
+- **Alignment (C5):** Routes alignment jobs to AlignmentJobQueue
 
 ## For LLMs
 
-### Data
-
-- **ID:** 3
-- **Label:** index.js, migrate_add_logs.js, repo.js
-- **Size:** 31 nodes
-- **Cohesion:** 0.08
-- **Character:** code
-- **Primary file:** index.js
-
-### Top Nodes by Connectivity
-
-- **JobManager** -- 14 connections [code]
-- **SongRepository** -- 12 connections [code]
-- **getDB()** -- 7 connections [code]
-- **.processNext()** -- 4 connections [code]
-- **initDB()** -- 3 connections [code]
-- **repo.js** -- 2 connections [code]
-- **index.js** -- 2 connections [code]
-- **index.js** -- 2 connections [code]
-- **.submit()** -- 2 connections [code]
-- **.startPolling()** -- 2 connections [code]
-
-### Cross-Community Connections
-- **job-queue Module (10 functions)** (C12) -- 1 edge(s)
-  - JobManager -> .updateProgress() (method)
+- **ID:** 3 · **Size:** 31 · **Cohesion:** 0.08 · **Pattern:** Job Queue (SQLite-backed)
+- **Files:** `server/orchestrator/index.js`, `server/db/repo.js`, `server/db/index.js`
+- **Top nodes:** JobManager(14), SongRepository(12), getDB()(7), .processNext()(4)
+- **Cross-community:** C12 Alignment Queue (1 edge), C13 Splitter Queue (via submit)
