@@ -3,13 +3,13 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import crypto from 'crypto';
-import play from 'play-dl';
 import downloaderRouter from './server/downloader/index.js';
 import splitterRouter, { initSplitterService } from './server/splitter/index.js';
 import alignmentRouter, { initAlignmentService } from './server/alignment/index.js';
 import artifactsRouter from './server/artifacts/index.js';
 import path from 'path';
 import fs from 'fs';
+import { parseVideoTitle } from './server/utils/titleParser.js';
 import { checkForUpdate, performUpdate, checkAndUpdateOnStartup } from './server/services/ytdlp-updater.js';
 
 const app = express();
@@ -404,19 +404,7 @@ app.post('/audio/acquire', (req, res) => {
         const existing = SongRepo.getByVideoId(videoId);
         if (!existing) {
             try {
-                // Parse "Artist - Song" from YouTube title
-                let artistName = 'Unknown Artist';
-                let trackTitle = title || `Track ${videoId}`;
-                const rawTitle = title || '';
-
-                // Common patterns: "Artist - Song", "Artist – Song" (en-dash)
-                const delimiterMatch = rawTitle.match(/^(.+?)\s*[-–]\s*(.+)$/);
-                if (delimiterMatch) {
-                    artistName = delimiterMatch[1].trim();
-                    trackTitle = delimiterMatch[2].trim();
-                    // Remove common suffix patterns like "(Official Video)", "[Lyrics]"
-                    trackTitle = trackTitle.replace(/\s*[\(\[].*?[\)\]]$/g, '').trim();
-                }
+                const { artistName, trackTitle } = parseVideoTitle(title || '');
 
                 SongRepo.create({
                     videoId: videoId,

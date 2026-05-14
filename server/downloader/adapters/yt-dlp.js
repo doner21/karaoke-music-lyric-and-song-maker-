@@ -1,6 +1,10 @@
 import { exec } from 'child_process';
 import util from 'util';
+import path from 'path';
+import ffmpegPath from 'ffmpeg-static';
 import { DownloadEngine } from '../engine-interface.js';
+
+const ffmpegDir = path.dirname(ffmpegPath);
 
 const execAsync = util.promisify(exec);
 
@@ -94,8 +98,7 @@ export class YtDlpAdapter extends DownloadEngine {
         // Fixed filename 'audio.mp3' in the job folder
         const outputTemplate = storage.getAbsolutePath(jobId, 'audio.%(ext)s');
 
-        // FFMPEG Path Injection for MP3 conversion
-        const ffmpegDir = 'C:\\Users\\donald clark\\AppData\\Roaming\\Youka Desktop\\youka\\data\\binaries\\ffmpeg';
+        // FFMPEG Path Injection for MP3 conversion (ffmpegDir set at module level from ffmpeg-static)
 
         // Convert to MP3 using yt-dlp's --extract-audio --audio-format mp3
         // This requires ffmpeg, so we inject ffmpeg path

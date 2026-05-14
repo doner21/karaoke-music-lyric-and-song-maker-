@@ -2,25 +2,10 @@ import express from 'express';
 import { JobMgr } from '../orchestrator/index.js';
 import { SongRepo } from '../db/repo.js'; // Use Repo
 import { Queue } from './job-queue.js'; // Keep for engine registry access
-import { ContractAdapter } from './contract-adapter.js';
-import { AssetRegistry } from './asset-registry.js';
-import { LocalArchiveAdapter } from './adapters/local-archive.js';
-import { YtdlCoreAdapter } from './adapters/ytdl-core.js';
-import { MockReliableAdapter } from './adapters/mock-reliable.js';
-import { PlayDlAdapter } from './adapters/play-dl.js';
-import { YtDlpAdapter } from './adapters/yt-dlp.js';
+import { parseVideoTitle } from '../utils/titleParser.js';
 import { Storage } from './storage.js';
 
 const router = express.Router();
-const contractArgs = new ContractAdapter();
-const assetRegistry = new AssetRegistry();
-
-// Register Adapters
-Queue.registerEngine('local-archive', new LocalArchiveAdapter());
-Queue.registerEngine('yt-dlp', new YtDlpAdapter()); // The Heavy Lifter
-Queue.registerEngine('ytdl-core', new YtdlCoreAdapter(console));
-Queue.registerEngine('play-dl', new PlayDlAdapter());
-Queue.registerEngine('mock', new MockReliableAdapter());
 
 // ...
 
@@ -42,7 +27,6 @@ router.get('/download/health', async (req, res) => {
 // --- PARENT CONTRACT ENDPOINTS (Spec v1.0) ---
 
 // FR-002: Acquire Audio
-// FR-002: Acquire Audio
 router.post('/audio/acquire', async (req, res) => {
     try {
         const { selectedSong, options } = req.body;
@@ -54,20 +38,8 @@ router.post('/audio/acquire', async (req, res) => {
         // Use Repo to lookup or create
         let song = SongRepo.getByVideoId(selectedSong.videoId);
         if (!song) {
-            // Parse "Artist - Song" from YouTube title
             const rawTitle = selectedSong.title || '';
-            let artistName = 'Unknown Artist';
-            let trackTitle = rawTitle || `Track ${selectedSong.videoId}`;
-
-            // Common patterns: "Artist - Song", "Artist – Song" (en-dash)
-            const delimiterMatch = rawTitle.match(/^(.+?)\s*[-–]\s*(.+)$/);
-            if (delimiterMatch) {
-                artistName = delimiterMatch[1].trim();
-                trackTitle = delimiterMatch[2].trim();
-                // Remove common suffix patterns like "(Official Video)", "[Lyrics]", "(Audio)"
-                trackTitle = trackTitle.replace(/\s*[\(\[](?:Official|Lyric|Audio|Video|HD|HQ|Lyrics|Music Video|Official Video|Official Audio).*?[\)\]]\s*/gi, '').trim();
-            }
-
+            const { artistName, trackTitle } = parseVideoTitle(rawTitle);
             const canonicalDisplayName = `${artistName} - ${trackTitle}`;
             console.log(`[Downloader] Parsed title: "${rawTitle}" -> Artist: "${artistName}", Track: "${trackTitle}"`);
 
@@ -97,7 +69,7 @@ router.post('/audio/acquire', async (req, res) => {
             songId: song.id,
             kind: 'download',
             params,
-            force: false // TODO: Support force flag from UI
+            force: false
         });
 
         res.status(202).json({ jobId: result.jobId, existing: result.existing, songId: song.id });
@@ -107,7 +79,6 @@ router.post('/audio/acquire', async (req, res) => {
     }
 });
 
-// FR-002: Job Status
 // FR-002: Job Status
 router.get('/audio/status/:jobId', (req, res) => {
     const job = JobMgr.getJob(req.params.jobId); // Persistent Job
@@ -133,7 +104,6 @@ router.get('/audio/status/:jobId', (req, res) => {
 });
 
 // FR-002: Cancel Job
-// FR-002: Cancel Job
 router.post('/audio/cancel', async (req, res) => {
     const { jobId } = req.body;
     if (!jobId) return res.status(400).json({ ok: false });
@@ -153,20 +123,7 @@ router.post('/audio/cancel', async (req, res) => {
     res.json({ ok: true });
 });
 
-// FR-002: Query Asset
-router.get('/audio/byVideoId', (req, res) => {
-    const { videoId } = req.query;
-    if (!videoId) return res.status(400).json({ error: { kind: 'unknown', message: 'Missing videoId' } });
 
-    const asset = assetRegistry.findByVideoId(videoId);
-    if (asset) {
-        res.json(asset);
-    } else {
-        res.status(404).json({ error: { kind: 'unknown', message: 'Asset not found' } });
-    }
-});
-
-// --- INTERNAL ENDPOINTS (Extensions) ---
 
 // --- INTERNAL ENDPOINTS (Extensions) ---
 

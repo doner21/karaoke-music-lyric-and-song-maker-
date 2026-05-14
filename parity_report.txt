@@ -1,0 +1,74 @@
+CPU RUN:
+--- DEBUG CONFIG START ---
+[CONFIG_DIFF] ARGS | device: cpu
+[CONFIG_DIFF] ARGS | shifts: 1
+[CONFIG_DIFF] ARGS | overlap: 0.25
+[CONFIG_DIFF] ARGS | split: True
+[CONFIG_DIFF] ARGS | segment: None
+[CONFIG_DIFF] ARGS | stem: None
+[CONFIG_DIFF] ARGS | int24: False
+[CONFIG_DIFF] ARGS | float32: False
+[CONFIG_DIFF] ARGS | clip_mode: rescale
+[CONFIG_DIFF] ENV | torch_version: 2.11.0+cpu
+[CONFIG_DIFF] ENV | cuda_available: False
+[CONFIG_DIFF] ENV | default_dtype: torch.float32
+[CONFIG_DIFF] MODEL | type: BagOfModels
+[CONFIG_DIFF] MODEL | models_count: 1
+--- DEBUG CONFIG END ---
+Selected model is a bag of 1 models. You will see that many progress bars per track.
+Separated tracks will be stored in C:\Users\doner\kraokebox_song_generator\parity_test_output\htdemucs
+
+
+GPU RUN:
+--- DEBUG CONFIG START ---
+[CONFIG_DIFF] ARGS | device: cuda
+[CONFIG_DIFF] ARGS | shifts: 1
+[CONFIG_DIFF] ARGS | overlap: 0.25
+[CONFIG_DIFF] ARGS | split: True
+[CONFIG_DIFF] ARGS | segment: None
+[CONFIG_DIFF] ARGS | stem: None
+[CONFIG_DIFF] ARGS | int24: False
+[CONFIG_DIFF] ARGS | float32: False
+[CONFIG_DIFF] ARGS | clip_mode: rescale
+[CONFIG_DIFF] ENV | torch_version: 2.11.0+cpu
+[CONFIG_DIFF] ENV | cuda_available: False
+[CONFIG_DIFF] ENV | default_dtype: torch.float32
+[CONFIG_DIFF] MODEL | type: BagOfModels
+[CONFIG_DIFF] MODEL | models_count: 1
+--- DEBUG CONFIG END ---
+Selected model is a bag of 1 models. You will see that many progress bars per track.
+Separated tracks will be stored in C:\Users\doner\kraokebox_song_generator\parity_test_output\htdemucs
+
+
+DIFF ANALYSIS:
+CPU_CONFIG:
+[CONFIG_DIFF] ARGS | clip_mode: rescale
+[CONFIG_DIFF] ARGS | device: cpu
+[CONFIG_DIFF] ARGS | float32: False
+[CONFIG_DIFF] ARGS | int24: False
+[CONFIG_DIFF] ARGS | overlap: 0.25
+[CONFIG_DIFF] ARGS | segment: None
+[CONFIG_DIFF] ARGS | shifts: 1
+[CONFIG_DIFF] ARGS | split: True
+[CONFIG_DIFF] ARGS | stem: None
+[CONFIG_DIFF] ENV | cuda_available: False
+[CONFIG_DIFF] ENV | default_dtype: torch.float32
+[CONFIG_DIFF] ENV | torch_version: 2.11.0+cpu
+[CONFIG_DIFF] MODEL | models_count: 1
+[CONFIG_DIFF] MODEL | type: BagOfModels
+
+GPU_CONFIG:
+[CONFIG_DIFF] ARGS | clip_mode: rescale
+[CONFIG_DIFF] ARGS | device: cuda
+[CONFIG_DIFF] ARGS | float32: False
+[CONFIG_DIFF] ARGS | int24: False
+[CONFIG_DIFF] ARGS | overlap: 0.25
+[CONFIG_DIFF] ARGS | segment: None
+[CONFIG_DIFF] ARGS | shifts: 1
+[CONFIG_DIFF] ARGS | split: True
+[CONFIG_DIFF] ARGS | stem: None
+[CONFIG_DIFF] ENV | cuda_available: False
+[CONFIG_DIFF] ENV | default_dtype: torch.float32
+[CONFIG_DIFF] ENV | torch_version: 2.11.0+cpu
+[CONFIG_DIFF] MODEL | models_count: 1
+[CONFIG_DIFF] MODEL | type: BagOfModels

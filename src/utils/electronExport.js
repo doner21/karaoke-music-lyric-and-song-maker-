@@ -52,7 +52,7 @@ export async function exportToMp4Electron({
     onProgress,
     // GPU pipeline options (Phase 4/6/7)
     renderMode = 'canvas2d',  // 'canvas2d' | 'webgl2'
-    encoder = 'libx264'       // 'libx264' | 'h264_nvenc' | 'h264_qsv'
+    encoder = 'libx264'       // 'libx264' | 'h264_nvenc' | 'h264_amf' | 'h264_qsv'
 }) {
     // Check for Electron IPC
     const isElectron = typeof window !== 'undefined' && window.require;
@@ -198,6 +198,9 @@ export async function exportToMp4Electron({
             const gl = glRenderer.gl;
             const pixels = new Uint8Array(width * height * 4);
 
+            const RETRY_LIMIT = 20;
+            let retries = 0;
+
             for (let i = 0; i < totalFrames; i++) {
                 const t = i * frameDuration;
                 const state = getStateAt(t);
@@ -234,9 +237,15 @@ export async function exportToMp4Electron({
                 if (!frameResult.success) {
                     // Check for backpressure signal
                     if (frameResult.backpressure) {
+                        retries++;
+                        if (retries > RETRY_LIMIT) {
+                            throw new Error('Frame ' + i + ' retry limit exceeded. FFmpeg may have crashed.');
+                        }
                         await new Promise(r => setTimeout(r, 10));
                         i--; // Retry this frame
                         continue;
+                    } else {
+                        retries = 0;
                     }
                     throw new Error(frameResult.error || 'Failed to write frame');
                 }

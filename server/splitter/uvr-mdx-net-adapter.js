@@ -2,6 +2,7 @@ import { exec, spawn } from 'child_process';
 import util from 'util';
 import path from 'path';
 import fs from 'fs-extra';
+import ffmpegPath from 'ffmpeg-static';
 import { Storage } from '../downloader/storage.js';
 
 const execAsync = util.promisify(exec);
@@ -9,9 +10,12 @@ const execAsync = util.promisify(exec);
 // Path to Venv Python
 const VENV_PYTHON = path.join(process.cwd(), 'venv', 'Scripts', 'python.exe');
 
-// FFMPEG Path
-const FFMPEG_DIR = 'C:\\Users\\donald clark\\AppData\\Roaming\\Youka Desktop\\youka\\data\\binaries\\ffmpeg';
-const FFMPEG_PATH = path.join(FFMPEG_DIR, 'ffmpeg.exe');
+// Wrapper script: audio_separator.utils.cli has no __main__ guard
+const SEPARATOR_RUNNER = path.join(process.cwd(), 'server', 'splitter', 'run_audio_separator.py');
+
+// FFMPEG Path (resolved from ffmpeg-static npm package)
+const FFMPEG_PATH = ffmpegPath;
+const FFMPEG_DIR = path.dirname(ffmpegPath);
 
 export class UVRMDXNetAdapter {
     constructor() {
@@ -64,10 +68,11 @@ export class UVRMDXNetAdapter {
         const outputRoot = Storage.getFilePath(jobId, 'separated');
         await fs.ensureDir(outputRoot);
 
-        // Environment with FFmpeg in PATH
+        // Environment with FFmpeg in PATH (includes shared DLLs for torchcodec)
+        const ffmpegDllsDir = path.join(process.cwd(), 'ffmpeg-dlls');
         const env = {
             ...process.env,
-            PATH: `${FFMPEG_DIR};${process.env.PATH}`
+            PATH: `${ffmpegDllsDir};${FFMPEG_DIR};${process.env.PATH}`
         };
 
         // === CRITICAL: Pre-convert to 44.1kHz WAV for alignment integrity ===
@@ -91,10 +96,9 @@ export class UVRMDXNetAdapter {
         }
 
         // Build command with critical MDX parameters for alignment
-        // Use the audio-separator executable directly (not python -m)
-        const AUDIO_SEPARATOR_EXE = path.join(process.cwd(), 'venv', 'Scripts', 'audio-separator.exe');
-
+        // Use python -m (NOT the .exe wrapper — fragile on Windows spawn)
         const args = [
+            SEPARATOR_RUNNER,
             wavPath,
             '--model_filename', modelFilename,
             '--output_dir', outputRoot,
@@ -103,11 +107,11 @@ export class UVRMDXNetAdapter {
             '--output_format', 'MP3'
         ];
 
-        console.log(`[UVR-MDX-NET] Spawning: ${AUDIO_SEPARATOR_EXE} ${args.join(' ')}`);
+        console.log(`[UVR-MDX-NET] Spawning: ${VENV_PYTHON} ${args.join(' ')}`);
         onProgress(0.05, `Running UVR-MDX-NET (${modelFilename})...`);
 
         return new Promise((resolve, reject) => {
-            const child = spawn(AUDIO_SEPARATOR_EXE, args, { env });
+            const child = spawn(VENV_PYTHON, args, { env });
 
             let stderrOutput = '';
 

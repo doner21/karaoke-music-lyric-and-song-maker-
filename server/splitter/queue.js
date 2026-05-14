@@ -39,8 +39,7 @@ export class SplitterQueue {
         const songId = job.song_id;
         const song = SongRepo.getById(songId);
 
-        // DEBUG LOG
-        JobMgr.updateProgress(job.id, 0, `[Debug] Queue Params: ${JSON.stringify(params)}`);
+        JobMgr.updateProgress(job.id, 0, `[Splitter] Job params: ${JSON.stringify(params)}`);
 
         console.log(`[Splitter] Processing job ${job.id} for Song ${songId}`);
 
@@ -144,7 +143,8 @@ export class SplitterQueue {
             completed_at: Date.now(),
             error_json: null,
             result_json: null,
-            params_json: null
+            params_json: null,
+            updated_at: Date.now()
         });
         return true;
     }

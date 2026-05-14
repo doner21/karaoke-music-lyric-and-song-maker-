@@ -7,11 +7,12 @@ import fs from 'fs';
 import path from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import ffmpegPath from 'ffmpeg-static';
 
 const execAsync = promisify(exec);
 
-// FFmpeg path (same as other adapters)
-const FFMPEG_PATH = 'C:\\Users\\donald clark\\AppData\\Roaming\\Youka Desktop\\youka\\data\\binaries\\ffmpeg\\ffmpeg.exe';
+// FFmpeg path (resolved from ffmpeg-static npm package)
+const FFMPEG_PATH = ffmpegPath;
 
 /**
  * Convert hex color to ASS BGR format
@@ -43,7 +44,7 @@ function formatAssTime(seconds) {
 function generateKaraokeAss(lyricsData, highlightColor = '#7CB87C', durationSec = 180) {
     const highlightBgr = hexToAssBgr(highlightColor);
 
-    // DEBUG: Log what we receive
+    // Log what we receive for debugging
     console.log('[ASS Generator] Received lyricsData type:', typeof lyricsData);
     console.log('[ASS Generator] lyricsData structure:', JSON.stringify(lyricsData).substring(0, 500));
 

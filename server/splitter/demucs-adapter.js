@@ -2,6 +2,7 @@ import { exec, spawn } from 'child_process';
 import util from 'util';
 import path from 'path';
 import fs from 'fs-extra';
+import ffmpegPath from 'ffmpeg-static';
 import { Storage } from '../downloader/storage.js';
 
 const execAsync = util.promisify(exec);
@@ -9,9 +10,9 @@ const execAsync = util.promisify(exec);
 // Path to Venv Python
 const VENV_PYTHON = path.join(process.cwd(), 'venv', 'Scripts', 'python.exe');
 
-// FFMPEG Path
-const FFMPEG_DIR = 'C:\\Users\\donald clark\\AppData\\Roaming\\Youka Desktop\\youka\\data\\binaries\\ffmpeg';
-const FFMPEG_PATH = path.join(FFMPEG_DIR, 'ffmpeg.exe');
+// FFMPEG Path (resolved from ffmpeg-static npm package)
+const FFMPEG_PATH = ffmpegPath;
+const FFMPEG_DIR = path.dirname(ffmpegPath);
 
 export class DemucsAdapter {
     constructor() {
@@ -53,9 +54,10 @@ export class DemucsAdapter {
         const outputRoot = Storage.getFilePath(jobId, 'separated');
         await fs.ensureDir(outputRoot);
 
+        const ffmpegDllsDir = path.join(process.cwd(), 'ffmpeg-dlls');
         const env = {
             ...process.env,
-            PATH: `${FFMPEG_DIR};${process.env.PATH}`
+            PATH: `${ffmpegDllsDir};${FFMPEG_DIR};${process.env.PATH}`
         };
 
         // PRE-CONVERT: torchaudio can't load webm/opus. Convert to wav first.
@@ -83,6 +85,10 @@ export class DemucsAdapter {
 
         // Command Construction
         const deviceFlag = device === 'gpu' ? 'cuda' : 'cpu';
+        if (device === 'gpu') {
+            console.warn('[Demucs] GPU mode requested but CUDA may be unavailable on this machine.');
+            onProgress(0.01, 'GPU mode requested (CUDA may be unavailable on this machine)');
+        }
         const deviceMsg = `Active Device: ${deviceFlag.toUpperCase()}`;
         console.log(`[Demucs] ${deviceMsg}`);
         onProgress(0.01, deviceMsg);
@@ -119,7 +125,7 @@ export class DemucsAdapter {
             console.log(`[Demucs] Spawning: ${pythonExe} ${args.join(' ')}`);
             onProgress(0.05, `Running Demucs (${modelId})...`);
 
-            const child = spawn(pythonExe, args, { env });
+            const child = spawn(pythonExe, args, { env, cwd: process.cwd() });
 
             child.stdout.on('data', (d) => {
                 const s = d.toString();

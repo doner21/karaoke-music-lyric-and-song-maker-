@@ -69,6 +69,7 @@ export const initSplitterService = async () => {
     }
 
     // Fallback to FFmpeg (phase inversion)
+    let health;
     health = await ffmpegSplit.checkHealth();
     if (health.available) {
         console.log(`[SplitterService] Active Adapter: ${ffmpegSplit.name} (Phase Inversion)`);

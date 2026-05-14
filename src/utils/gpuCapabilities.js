@@ -10,7 +10,7 @@
  * - WebCodecs hardware encoding support
  * 
  * Fallback hierarchy:
- *   Encoder:     h264_nvenc → h264_qsv → libx264
+ *   Encoder:     h264_nvenc → h264_amf → h264_qsv → libx264
  *   Render mode: webgl2 → canvas2d
  */
 
@@ -60,14 +60,14 @@ function probeWebGL2() {
 
 /**
  * Probe FFmpeg GPU encoders via IPC to main process.
- * @returns {{ nvenc: boolean, qsv: boolean }}
+ * @returns {{ nvenc: boolean, amf: boolean, qsv: boolean }}
  */
 async function probeFFmpegEncoders() {
     try {
         const isElectron = typeof window !== 'undefined' && window.require;
         if (!isElectron) {
             console.warn('[GPU] Not in Electron — skipping FFmpeg encoder probe');
-            return { nvenc: false, qsv: false };
+            return { nvenc: false, amf: false, qsv: false };
         }
 
         const { ipcRenderer } = window.require('electron');
@@ -75,14 +75,14 @@ async function probeFFmpegEncoders() {
 
         if (!result.success) {
             console.warn('[GPU] FFmpeg encoder probe failed:', result.error);
-            return { nvenc: false, qsv: false };
+            return { nvenc: false, amf: false, qsv: false };
         }
 
-        console.log(`[GPU] FFmpeg encoders — NVENC: ${result.nvenc}, QSV: ${result.qsv}`);
-        return { nvenc: result.nvenc, qsv: result.qsv };
+        console.log(`[GPU] FFmpeg encoders — NVENC: ${result.nvenc}, AMF: ${result.amf}, QSV: ${result.qsv}`);
+        return { nvenc: result.nvenc, amf: result.amf, qsv: result.qsv };
     } catch (err) {
         console.warn('[GPU] FFmpeg encoder probe error:', err.message);
-        return { nvenc: false, qsv: false };
+        return { nvenc: false, amf: false, qsv: false };
     }
 }
 
@@ -120,12 +120,13 @@ async function probeWebCodecsHardware() {
  * 
  * @returns {Promise<{
  *   webgl2: boolean,
+ *   amf: boolean,
  *   nvenc: boolean,
  *   qsv: boolean,
  *   maxTextureSize: number,
  *   gpuRenderer: string,
  *   webCodecsHardware: boolean,
- *   preferredEncoder: 'h264_nvenc' | 'h264_qsv' | 'libx264',
+ *   preferredEncoder: 'h264_nvenc' | 'h264_amf' | 'h264_qsv' | 'libx264',
  *   preferredRenderMode: 'webgl2' | 'canvas2d'
  * }>}
  */
@@ -154,6 +155,8 @@ export async function detectGpuCapabilities() {
         let preferredEncoder = 'libx264';
         if (encoderInfo.nvenc) {
             preferredEncoder = 'h264_nvenc';
+        } else if (encoderInfo.amf) {
+            preferredEncoder = 'h264_amf';
         } else if (encoderInfo.qsv) {
             preferredEncoder = 'h264_qsv';
         }
@@ -165,6 +168,7 @@ export async function detectGpuCapabilities() {
         cachedCapabilities = {
             webgl2: webglInfo.webgl2,
             nvenc: encoderInfo.nvenc,
+            amf: encoderInfo.amf,
             qsv: encoderInfo.qsv,
             maxTextureSize: webglInfo.maxTextureSize,
             gpuRenderer: webglInfo.gpuRenderer,

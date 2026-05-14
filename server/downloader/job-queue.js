@@ -3,20 +3,14 @@ import { SongRepo } from '../db/repo.js';
 import { Storage } from './storage.js';
 import { EngineManager } from './engine-manager.js';
 import { YtDlpAdapter } from './adapters/yt-dlp.js';
-import { LocalArchiveAdapter } from './adapters/local-archive.js';
-import { YtdlCoreAdapter } from './adapters/ytdl-core.js';
 import { MockReliableAdapter } from './adapters/mock-reliable.js';
-import { PlayDlAdapter } from './adapters/play-dl.js';
 
 class JobQueue {
     constructor() {
         this.engines = new EngineManager();
         // Register engines (Order determines priority for 'auto')
         this.engines.register('yt-dlp', new YtDlpAdapter());
-        this.engines.register('ytdl-core', new YtdlCoreAdapter(console));
-        this.engines.register('play-dl', new PlayDlAdapter());
-        this.engines.register('local-archive', new LocalArchiveAdapter()); // Fallback/Mock
-        this.engines.register('mock', new MockReliableAdapter());
+        this.engines.register('mock', new MockReliableAdapter()); // Fallback
 
         // Register processor
         JobMgr.registerProcessor('download', this.processDownload.bind(this));
@@ -69,7 +63,7 @@ class JobQueue {
                 kind: 'downloaded_media', // Generic kind
                 storage_ref: file.path,   // Absolute path
                 filename: file.filename,
-                mime_type: 'audio/mpeg',  // TODO: Detect
+                mime_type: 'audio/mpeg',
                 hash: null,
                 params_hash: job.inputs_hash,
                 version_tag: 'v1.0',
