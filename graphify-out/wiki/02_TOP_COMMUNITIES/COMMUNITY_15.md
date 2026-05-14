@@ -1,40 +1,48 @@
 ---
 type: community/narrative
 community_id: 15
-label: "debug_separate.py"
+label: "Debug Separator Script"
 size: 6
 cohesion: 0.60
 character: code
 ---
 
-# Community 15: debug_separate.py
+# Debug Separator Script
 
-> **6 nodes** | **Cohesion: 0.60** (very tightly integrated) | **Character: code**
+> **6 nodes** | **Cohesion: 0.60** (tight) | **File:** `scripts/debug_separate.py`
 
 ## For Humans
 
-This community contains **6 functions** primarily in **debug_separate.py**.
+**Real-world analogy:** This is the **diagnostic tool** — like a mechanic's OBD scanner. It runs the audio separation pipeline standalone (without the Node.js server) to isolate and debug splitter issues. Load a track, configure logging, run separation — all from one script.
 
-The most connected function is **main()** with 5 connections.
+```
+┌──────────────────────────────────────┐
+│        debug_separate.py             │
+│  ┌────────────────────────────────┐  │
+│  │ main()                         │  │
+│  │  → log_config()                │  │
+│  │  → load_track(path)            │  │
+│  │  → separator.separate()        │  │
+│  └────────────────────────────────┘  │
+│                                      │
+│  Tight cohesion: all functions      │
+│  serve a single debug workflow      │
+└──────────────────────────────────────┘
+```
+
+### Key Nodes
+- **main()** → Entry point: configures logging, loads audio, runs separation
+- **log_config()** → Sets up debug-level logging
+- **load_track()** → Loads audio file for separation
+
+### Cohesion: 0.60 (tight)
+All functions serve a single script — the tightest community in the graph.
+
+### Bridges
+- **Splitter Service (C2):** Tests the same Python modules used by adapters
+- **Test scripts:** `test_cpu_baseline.js`, `test_gpu_split.js`, `test_parity.js`
 
 ## For LLMs
 
-### Data
-
-- **ID:** 15
-- **Label:** debug_separate.py
-- **Size:** 6 nodes
-- **Cohesion:** 0.60
-- **Character:** code
-- **Primary file:** debug_separate.py
-
-### Top Nodes by Connectivity
-
-- **main()** -- 5 connections [code]
-- **debug_separate.py** -- 5 connections [code]
-- **log_config()** -- 2 connections [code]
-- **load_track()** -- 2 connections [code]
-- **get_parser()** -- 2 connections [code]
-- **fatal()** -- 2 connections [code]
-
-**No cross-community edges -- this community is self-contained.**
+- **ID:** 15 · **Size:** 6 · **Cohesion:** 0.60
+- **File:** `scripts/debug_separate.py`
