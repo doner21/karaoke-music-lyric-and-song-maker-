@@ -198,6 +198,9 @@ export async function exportToMp4Electron({
             const gl = glRenderer.gl;
             const pixels = new Uint8Array(width * height * 4);
 
+            const RETRY_LIMIT = 20;
+            let retries = 0;
+
             for (let i = 0; i < totalFrames; i++) {
                 const t = i * frameDuration;
                 const state = getStateAt(t);
