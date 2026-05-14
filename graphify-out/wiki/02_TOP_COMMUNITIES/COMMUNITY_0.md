@@ -1,44 +1,68 @@
 ---
 type: community/narrative
 community_id: 0
-label: "engine-interface.js, engine-manager.js, job-queue.js"
+label: "Download Engine"
 size: 39
 cohesion: 0.06
 character: code
 ---
 
-# Community 0: engine-interface.js, engine-manager.js, job-queue.js
+# Download Engine
 
-> **39 nodes** | **Cohesion: 0.06** (loosely connected) | **Character: code**
+> **39 nodes** | **Cohesion: 0.06** (loose) | **Primary files:** `engine-manager.js`, `engine-interface.js`, `yt-dlp.js`, `mock-reliable.js`, `job-queue.js`
 
 ## For Humans
 
-This community contains **39 functions** primarily in **engine-manager.js**.
+**Real-world analogy:** This is the **shipping and receiving department**. When you order a song (paste a YouTube URL), this team fetches the audio, checks it's valid, and hands it off to the splitter. If one shipping carrier fails (yt-dlp crashes), they automatically try another (mock reliable fallback).
 
-The most connected function is **EngineManager** with 10 connections.
+### Architecture
+
+```
+┌──────────────────────────────────────┐
+│           EngineManager              │
+│  ┌────────────────────────────────┐  │
+│  │  getExecutionOrder()           │  │
+│  │  "Try yt-dlp first, then mock" │  │
+│  └───────────┬────────────────────┘  │
+│              │                       │
+│     ┌────────┴────────┐              │
+│     ▼                 ▼              │
+│  ┌──────────┐   ┌──────────────┐     │
+│  │YtDlp     │   │MockReliable  │     │
+│  │Adapter   │   │Adapter       │     │
+│  │          │   │              │     │
+│  │ spawns   │   │ returns      │     │
+│  │ python   │   │ cached file  │     │
+│  │ -m yt_dlp│   │ (dev mode)   │     │
+│  └────┬─────┘   └──────┬───────┘     │
+│       │                │             │
+│       └───────┬────────┘             │
+│               ▼                      │
+│       ┌──────────────┐              │
+│       │  audio.mp3    │              │
+│       └──────────────┘              │
+└──────────────────────────────────────┘
+```
+
+### Key Nodes
+
+| Node | Role |
+|------|------|
+| **EngineManager** | Strategy selector: tries yt-dlp, falls back to mock |
+| **DownloadEngine** | Interface contract all adapters must implement |
+| **YtDlpAdapter** | Spawns `python -m yt_dlp -x --audio-format mp3` |
+| **MockReliableAdapter** | Returns pre-cached audio for development/testing |
+| **JobQueue** | SQLite-backed deduplication (same song = skip) |
+
+### Cohesion: 0.06 (loose)
+The adapters share an interface but operate independently — they don't call each other. Low cohesion is *expected* for an adapter chain.
+
+### Bridges
+- **Orchestrator (C3):** JobManager submits download jobs via JobQueue
+- **Splitter (C2):** audio.mp3 output is the splitter's input
 
 ## For LLMs
 
-### Data
-
-- **ID:** 0
-- **Label:** engine-interface.js, engine-manager.js, job-queue.js
-- **Size:** 39 nodes
-- **Cohesion:** 0.06
-- **Character:** code
-- **Primary file:** engine-manager.js
-
-### Top Nodes by Connectivity
-
-- **EngineManager** -- 10 connections [code]
-- **DownloadEngine** -- 8 connections [code]
-- **YtDlpAdapter** -- 7 connections [code]
-- **MockReliableAdapter** -- 7 connections [code]
-- **JobQueue** -- 7 connections [code]
-- **job-queue.js** -- 4 connections [code]
-- **.getExecutionOrder()** -- 3 connections [code]
-- **yt-dlp.js** -- 2 connections [code]
-- **engine-manager.js** -- 2 connections [code]
-- **.getMetadata()** -- 2 connections [code]
-
-**No cross-community edges -- this community is self-contained.**
+- **ID:** 0 · **Size:** 39 · **Cohesion:** 0.06
+- **Files:** `server/downloader/engine-manager.js`, `engine-interface.js`, `job-queue.js`, `adapters/yt-dlp.js`, `adapters/mock-reliable.js`
+- **Top nodes:** EngineManager(10), DownloadEngine(8), YtDlpAdapter(7), MockReliableAdapter(7), JobQueue(7)

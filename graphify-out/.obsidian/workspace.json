@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "wiki/01_OVERVIEW/ARCHITECTURE_AT_A_GLANCE.md",
+                "file": "wiki/02_TOP_COMMUNITIES/_README.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ARCHITECTURE_AT_A_GLANCE"
+              "title": "_README"
             }
           }
         ]
@@ -183,6 +183,7 @@
   "active": "a996180cc1b937d6",
   "lastOpenFiles": [
     "wiki/01_OVERVIEW/_README.md",
+    "wiki/01_OVERVIEW/GLOSSARY.md",
     "wiki/01_OVERVIEW/ARCHITECTURE_AT_A_GLANCE.md",
     "wiki/_WIKI.md",
     "wiki/02_TOP_COMMUNITIES/COMMUNITY_16.md",
@@ -204,7 +205,6 @@
     "wiki/02_TOP_COMMUNITIES/COMMUNITY_12.md",
     "wiki/02_TOP_COMMUNITIES/COMMUNITY_9.md",
     "wiki/02_TOP_COMMUNITIES/COMMUNITY_13.md",
-    "wiki/01_OVERVIEW/GLOSSARY.md",
     "obsidian/graph.canvas",
     "obsidian/_COMMUNITY_main.jsx.md",
     "obsidian/_COMMUNITY_storage.js.md",
