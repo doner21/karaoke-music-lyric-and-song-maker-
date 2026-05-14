@@ -10,6 +10,9 @@ const execAsync = util.promisify(exec);
 // Path to Venv Python
 const VENV_PYTHON = path.join(process.cwd(), 'venv', 'Scripts', 'python.exe');
 
+// Wrapper script: audio_separator.utils.cli has no __main__ guard
+const SEPARATOR_RUNNER = path.join(process.cwd(), 'server', 'splitter', 'run_audio_separator.py');
+
 // FFMPEG Path (resolved from ffmpeg-static npm package)
 const FFMPEG_PATH = ffmpegPath;
 const FFMPEG_DIR = path.dirname(ffmpegPath);
@@ -95,7 +98,7 @@ export class UVRMDXNetAdapter {
         // Build command with critical MDX parameters for alignment
         // Use python -m (NOT the .exe wrapper — fragile on Windows spawn)
         const args = [
-            '-m', 'audio_separator.utils.cli',
+            SEPARATOR_RUNNER,
             wavPath,
             '--model_filename', modelFilename,
             '--output_dir', outputRoot,
