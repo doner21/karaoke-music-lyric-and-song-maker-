@@ -93,10 +93,9 @@ export class UVRMDXNetAdapter {
         }
 
         // Build command with critical MDX parameters for alignment
-        // Use the audio-separator executable directly (not python -m)
-        const AUDIO_SEPARATOR_EXE = path.join(process.cwd(), 'venv', 'Scripts', 'audio-separator.exe');
-
+        // Use python -m (NOT the .exe wrapper — fragile on Windows spawn)
         const args = [
+            '-m', 'audio_separator.separator',
             wavPath,
             '--model_filename', modelFilename,
             '--output_dir', outputRoot,
@@ -105,11 +104,11 @@ export class UVRMDXNetAdapter {
             '--output_format', 'MP3'
         ];
 
-        console.log(`[UVR-MDX-NET] Spawning: ${AUDIO_SEPARATOR_EXE} ${args.join(' ')}`);
+        console.log(`[UVR-MDX-NET] Spawning: ${VENV_PYTHON} ${args.join(' ')}`);
         onProgress(0.05, `Running UVR-MDX-NET (${modelFilename})...`);
 
         return new Promise((resolve, reject) => {
-            const child = spawn(AUDIO_SEPARATOR_EXE, args, { env });
+            const child = spawn(VENV_PYTHON, args, { env });
 
             let stderrOutput = '';
 
