@@ -1,39 +1,44 @@
 ---
 type: community/narrative
 community_id: 18
-label: "search Module (5 functions)"
+label: "Unified Search Service"
 size: 5
 cohesion: 0.00
 character: code
 ---
 
-# Community 18: search Module (5 functions)
+# Unified Search Service
 
-> **5 nodes** | **Cohesion: 0.00** (loosely connected) | **Character: code**
+> **5 nodes** | **Cohesion: 0.00** (single file) | **File:** `server/library/search.js`
 
 ## For Humans
 
-This community contains **5 functions** primarily in **search.js**.
+**Real-world analogy:** This is the **library catalog computer** — type in an artist or song name, and it searches both the local song database and YouTube simultaneously, merging results into one list. Handles deduplication and relevance ranking.
 
-The most connected function is **UnifiedSearchService** with 4 connections.
+```
+┌──────────────────────────────────────┐
+│       UnifiedSearchService           │
+│  ┌────────────────────────────────┐  │
+│  │ .search(query)                 │  │
+│  │  → .searchYouTube()            │  │
+│  │  → .searchLocalLibrary()       │  │
+│  │  → merge + deduplicate         │  │
+│  │  → return ranked results       │  │
+│  └────────────────────────────────┘  │
+└──────────────────────────────────────┘
+```
+
+### Key Nodes
+- **UnifiedSearchService** → Combined YouTube + local search
+- **.searchYouTube()** → yt-dlp search
+- **.search()** → Merged results with deduplication
+
+### Cohesion: 0.00 (single file)
+
+### Bridges
+- **Download Engine (C0):** Search results → download jobs
 
 ## For LLMs
 
-### Data
-
-- **ID:** 18
-- **Label:** search Module (5 functions)
-- **Size:** 5 nodes
-- **Cohesion:** 0.00
-- **Character:** code
-- **Primary file:** search.js
-
-### Top Nodes by Connectivity
-
-- **UnifiedSearchService** -- 4 connections [code]
-- **.searchYouTube()** -- 3 connections [code]
-- **.searchYtDlp()** -- 2 connections [code]
-- **.search()** -- 2 connections [code]
-- **search.js** -- 1 connections [code]
-
-**No cross-community edges -- this community is self-contained.**
+- **ID:** 18 · **Size:** 5 · **Cohesion:** 0.00
+- **File:** `server/library/search.js`
