@@ -52,7 +52,7 @@ export async function exportToMp4Electron({
     onProgress,
     // GPU pipeline options (Phase 4/6/7)
     renderMode = 'canvas2d',  // 'canvas2d' | 'webgl2'
-    encoder = 'libx264'       // 'libx264' | 'h264_nvenc' | 'h264_qsv'
+    encoder = 'libx264'       // 'libx264' | 'h264_nvenc' | 'h264_amf' | 'h264_qsv'
 }) {
     // Check for Electron IPC
     const isElectron = typeof window !== 'undefined' && window.require;
