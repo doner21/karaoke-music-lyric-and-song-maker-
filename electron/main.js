@@ -220,8 +220,8 @@ ipcMain.handle('export-start', async (event, options) => {
             frameCount: 0,
             bandStemPath,
             vocalStemPath,
-            bandVol: bandVol || 1,
-            vocalVol: vocalVol || 1,
+            bandVol: bandVol ?? 1,
+            vocalVol: vocalVol ?? 1,
             encoder: resolvedEncoder
         });
 
@@ -555,8 +555,8 @@ ipcMain.handle('export-start-streaming', async (event, options) => {
             frameCount: 0,
             bandStemPath,
             vocalStemPath,
-            bandVol: bandVol || 1,
-            vocalVol: vocalVol || 1,
+            bandVol: bandVol ?? 1,
+            vocalVol: vocalVol ?? 1,
             encoder: resolvedEncoder,
             ffmpegProcess,
             ffmpegStderr: () => ffmpegStderr,
