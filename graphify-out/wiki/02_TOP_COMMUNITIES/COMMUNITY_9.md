@@ -1,53 +1,56 @@
 ---
 type: community/narrative
 community_id: 9
-label: "index.js, server-proxy.js, titleParser.js"
+label: "yt-dlp Updater & Server Proxy"
 size: 15
 cohesion: 0.24
 character: code
 ---
 
-# Community 9: index.js, server-proxy.js, titleParser.js
+# yt-dlp Updater & Server Proxy
 
-> **15 nodes** | **Cohesion: 0.24** (moderately connected) | **Character: code**
+> **15 nodes** | **Cohesion: 0.24** (moderate) | **Files:** `ytdlp-updater.js`, `server-proxy.js`, `titleParser.js`
 
 ## For Humans
 
-This community contains **15 functions** primarily in **ytdlp-updater.js**.
+**Real-world analogy:** This is the **maintenance crew** — they make sure yt-dlp (the YouTube download tool) stays up to date. On server startup, they check the current version against PyPI and update if behind. The server-proxy provides a Node.js bridge to Python CLI commands.
 
-The most connected function is **server-proxy.js** with 11 connections.
+### Architecture
+
+```
+┌──────────────────────────────────────┐
+│         ytdlp-updater.js             │
+│  ┌────────────────────────────────┐  │
+│  │ checkForUpdate()               │  │
+│  │  → pip list yt-dlp             │  │
+│  │  → compare with PyPI latest    │  │
+│  └───────────┬────────────────────┘  │
+│              ▼                       │
+│  ┌────────────────────────────────┐  │
+│  │ performUpdate() (if needed)    │  │
+│  │  → pip install --upgrade       │  │
+│  └────────────────────────────────┘  │
+└──────────────────────────────────────┘
+     ▲
+     │ uses
+┌────────────────────────┐
+│    server-proxy.js     │
+│  Node.js ↔ Python CLI  │
+└────────────────────────┘
+```
+
+### Key Nodes
+- **checkForUpdate()** → Compares local yt-dlp version to PyPI
+- **performUpdate()** → Runs `pip install --upgrade yt-dlp`
+- **server-proxy.js** → Node bridge to Python CLI commands
+
+### Cohesion: 0.24 (moderate)
+Tightly focused on yt-dlp maintenance with shared CLI dependency.
+
+### Bridges
+- **Download Engine (C0):** yt-dlp is the primary download strategy
 
 ## For LLMs
 
-### Data
-
-- **ID:** 9
-- **Label:** index.js, server-proxy.js, titleParser.js
-- **Size:** 15 nodes
-- **Cohesion:** 0.24
-- **Character:** code
-- **Primary file:** ytdlp-updater.js
-
-### Top Nodes by Connectivity
-
-- **server-proxy.js** -- 11 connections [code]
-- **ytdlp-updater.js** -- 7 connections [code]
-- **checkForUpdate()** -- 6 connections [code]
-- **performUpdate()** -- 5 connections [code]
-- **runCommand()** -- 4 connections [code]
-- **getCurrentVersion()** -- 4 connections [code]
-- **checkAndUpdateOnStartup()** -- 4 connections [code]
-- **parseVideoTitle()** -- 3 connections [code]
-- **getLatestVersion()** -- 3 connections [code]
-- **isNewerVersion()** -- 2 connections [code]
-
-### Cross-Community Connections
-- **azlyrics.js, genius.js, lyricsParser.js** (C7) -- 2 edge(s)
-  - server-proxy.js -> searchSong() (imports)
-  - server-proxy.js -> getLyrics() (imports)
-- **audio-separator-adapter.js, demucs-adapter.js, ffmpeg-splitter-adapter.js** (C2) -- 1 edge(s)
-  - server-proxy.js -> initSplitterService() (imports)
-- **audioshake-adapter.js, canonicalizer.js, index.js** (C5) -- 1 edge(s)
-  - server-proxy.js -> initAlignmentService() (imports)
-- **index.js, migrate_add_logs.js, repo.js** (C3) -- 1 edge(s)
-  - server-proxy.js -> initDB() (imports)
+- **ID:** 9 · **Size:** 15 · **Cohesion:** 0.24
+- **Files:** `server/services/ytdlp-updater.js`, `server-proxy.js`
