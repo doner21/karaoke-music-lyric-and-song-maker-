@@ -1,44 +1,49 @@
 ---
 type: community/narrative
 community_id: 12
-label: "job-queue Module (10 functions)"
+label: "Alignment Job Queue"
 size: 10
 cohesion: 0.00
 character: code
 ---
 
-# Community 12: job-queue Module (10 functions)
+# Alignment Job Queue
 
-> **10 nodes** | **Cohesion: 0.00** (loosely connected) | **Character: code**
+> **10 nodes** | **Cohesion: 0.00** (single class) | **File:** `server/alignment/job-queue.js`
 
 ## For Humans
 
-This community contains **10 functions** primarily in **job-queue.js**.
+**Real-world analogy:** This is the **clipboard on the transcriptionist's desk** — a simple FIFO queue that holds alignment jobs waiting to be processed. Submit lyrics+audio, wait for AudioShake to finish, get back word timings. One job at a time.
 
-The most connected function is **AlignmentJobQueue** with 8 connections.
+```
+┌────────────────────────────────────┐
+│       AlignmentJobQueue           │
+│  ┌──────────────────────────────┐  │
+│  │ .processAlign()              │  │
+│  │  → submit to AudioShake      │  │
+│  │  → poll status until done    │  │
+│  │  → save aligned JSON         │  │
+│  └──────────────────────────────┘  │
+│  ┌──────────────────────────────┐  │
+│  │ .updateProgress()            │  │
+│  │  → callback during alignment │  │
+│  └──────────────────────────────┘  │
+└────────────────────────────────────┘
+```
+
+### Key Nodes
+- **AlignmentJobQueue** → FIFO queue for alignment operations
+- **.processAlign()** → Submit to AudioShake, poll, store result
+- **.updateProgress()** → Progress callback during processing
+
+### Cohesion: 0.00 (single class)
+All methods serve the AlignmentJobQueue object.
+
+### Bridges
+- **Alignment Service (C5):** AudioShakeAdapter processes jobs from this queue
+- **Orchestrator (C3):** JobManager submits alignment jobs here
 
 ## For LLMs
 
-### Data
-
-- **ID:** 12
-- **Label:** job-queue Module (10 functions)
-- **Size:** 10 nodes
-- **Cohesion:** 0.00
-- **Character:** code
-- **Primary file:** job-queue.js
-
-### Top Nodes by Connectivity
-
-- **AlignmentJobQueue** -- 8 connections [code]
-- **.updateProgress()** -- 2 connections [code]
-- **.processAlign()** -- 2 connections [code]
-- **job-queue.js** -- 1 connections [code]
-- **.submit()** -- 1 connections [code]
-- **.setCanonicalizer()** -- 1 connections [code]
-- **.setAdapter()** -- 1 connections [code]
-- **.getJob()** -- 1 connections [code]
-- **.constructor()** -- 1 connections [code]
-- **.cancel()** -- 1 connections [code]
-
-**No cross-community edges -- this community is self-contained.**
+- **ID:** 12 · **Size:** 10 · **Cohesion:** 0.00
+- **File:** `server/alignment/job-queue.js`
