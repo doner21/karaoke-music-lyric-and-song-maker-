@@ -5,7 +5,7 @@ community: "TokenEditorPanel.jsx, jsonAdapters.js, jsonAdapters.test.js"
 location: "L76"
 tags:
   - graphify/code
-  - graphify/INFERRED
+  - graphify/EXTRACTED
   - community/TokenEditorPaneljsx_jsonAdaptersjs_jsonAdapterstestjs
 ---
 
@@ -15,4 +15,4 @@ tags:
 - [[applySnap()]] - `calls` [INFERRED]
 - [[tokenTransforms.js]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/TokenEditorPaneljsx_jsonAdaptersjs_jsonAdapterstestjs
+#graphify/code #graphify/EXTRACTED #community/TokenEditorPaneljsx_jsonAdaptersjs_jsonAdapterstestjs

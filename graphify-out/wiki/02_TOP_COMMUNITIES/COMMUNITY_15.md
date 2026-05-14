@@ -1,26 +1,40 @@
 ---
 type: community/narrative
 community_id: 15
-label: "Debug Separator Script"
+label: "debug_separate.py"
 size: 6
 cohesion: 0.60
 character: code
 ---
 
-# Debug Separator Script
+# Community 15: debug_separate.py
 
-> **6 nodes** | **Cohesion: 0.60** | **Primary file:** `scripts/debug_separate.py`
+> **6 nodes** | **Cohesion: 0.60** (very tightly integrated) | **Character: code**
 
 ## For Humans
 
-A standalone Python debugging script for testing the audio separation pipeline independently of the Node.js server. Loads a track, configures logging, and runs a separation directly. Used for troubleshooting splitter issues without needing to start the full server.
+This community contains **6 functions** primarily in **debug_separate.py**.
 
-### Key Nodes
-- `main()` — entry point, sets up logging, loads track, runs separation
-- `log_config()` — configures debug-level logging
-- `load_track()` — loads audio file for separation
+The most connected function is **main()** with 5 connections.
 
 ## For LLMs
-- **ID:** 15 | **Size:** 6 nodes | **Cohesion:** 0.60 (tight — all functions serve a single script)
-- **Key file:** `scripts/debug_separate.py`
-- **Related:** `scripts/test_cpu_baseline.js`, `scripts/test_gpu_split.js`, `scripts/test_parity.js`
+
+### Data
+
+- **ID:** 15
+- **Label:** debug_separate.py
+- **Size:** 6 nodes
+- **Cohesion:** 0.60
+- **Character:** code
+- **Primary file:** debug_separate.py
+
+### Top Nodes by Connectivity
+
+- **main()** -- 5 connections [code]
+- **debug_separate.py** -- 5 connections [code]
+- **log_config()** -- 2 connections [code]
+- **load_track()** -- 2 connections [code]
+- **get_parser()** -- 2 connections [code]
+- **fatal()** -- 2 connections [code]
+
+**No cross-community edges -- this community is self-contained.**

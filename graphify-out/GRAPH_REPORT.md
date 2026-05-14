@@ -5,34 +5,50 @@
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 387 nodes · 512 edges · 48 communities (39 shown, 9 thin omitted)
-- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 25 edges (avg confidence: 0.8)
+- 407 nodes · 516 edges · 64 communities (40 shown, 24 thin omitted)
+- Extraction: 94% EXTRACTED · 6% INFERRED · 0% AMBIGUOUS · INFERRED: 29 edges (avg confidence: 0.82)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
-- [[_COMMUNITY_Community 0|Community 0]]
-- [[_COMMUNITY_Community 1|Community 1]]
-- [[_COMMUNITY_Community 2|Community 2]]
-- [[_COMMUNITY_Community 3|Community 3]]
-- [[_COMMUNITY_Community 4|Community 4]]
-- [[_COMMUNITY_Community 5|Community 5]]
-- [[_COMMUNITY_Community 6|Community 6]]
-- [[_COMMUNITY_Community 7|Community 7]]
-- [[_COMMUNITY_Community 8|Community 8]]
-- [[_COMMUNITY_Community 9|Community 9]]
-- [[_COMMUNITY_Community 10|Community 10]]
-- [[_COMMUNITY_Community 11|Community 11]]
-- [[_COMMUNITY_Community 12|Community 12]]
-- [[_COMMUNITY_Community 13|Community 13]]
-- [[_COMMUNITY_Community 14|Community 14]]
-- [[_COMMUNITY_Community 15|Community 15]]
-- [[_COMMUNITY_Community 16|Community 16]]
-- [[_COMMUNITY_Community 17|Community 17]]
-- [[_COMMUNITY_Community 18|Community 18]]
-- [[_COMMUNITY_Community 19|Community 19]]
-- [[_COMMUNITY_Community 20|Community 20]]
-- [[_COMMUNITY_Community 21|Community 21]]
-- [[_COMMUNITY_Community 26|Community 26]]
+- [[_COMMUNITY_engine-interface.js, engine-manager.js, job-queue.js|engine-interface.js, engine-manager.js, job-queue.js]]
+- [[_COMMUNITY_TokenEditorPanel.jsx, jsonAdapters.js, jsonAdapters.test.js|TokenEditorPanel.jsx, jsonAdapters.js, jsonAdapters.test.js]]
+- [[_COMMUNITY_audio-separator-adapter.js, demucs-adapter.js, ffmpeg-splitter-adapter.js|audio-separator-adapter.js, demucs-adapter.js, ffmpeg-splitter-adapter.js]]
+- [[_COMMUNITY_index.js, migrate_add_logs.js, repo.js|index.js, migrate_add_logs.js, repo.js]]
+- [[_COMMUNITY_KaraokeRenderer.jsx, VerificationPanel.jsx, electronExport.js|KaraokeRenderer.jsx, VerificationPanel.jsx, electronExport.js]]
+- [[_COMMUNITY_audioshake-adapter.js, canonicalizer.js, index.js|audioshake-adapter.js, canonicalizer.js, index.js]]
+- [[_COMMUNITY_AudioStemManager.js|AudioStemManager.js]]
+- [[_COMMUNITY_azlyrics.js, genius.js, lyricsParser.js|azlyrics.js, genius.js, lyricsParser.js]]
+- [[_COMMUNITY_TimelineBlockContent.jsx, karaokeHelpers.js|TimelineBlockContent.jsx, karaokeHelpers.js]]
+- [[_COMMUNITY_index.js, server-proxy.js, titleParser.js|index.js, server-proxy.js, titleParser.js]]
+- [[_COMMUNITY_IntegratedEcologicalOS.jsx, gpuCapabilities.js, useKaraokeExport.js|IntegratedEcologicalOS.jsx, gpuCapabilities.js, useKaraokeExport.js]]
+- [[_COMMUNITY_KaraokeLyricsDisplay.jsx, gapDetector.js, lyricsPagination.js|KaraokeLyricsDisplay.jsx, gapDetector.js, lyricsPagination.js]]
+- [[_COMMUNITY_index.js, job-queue.js|index.js, job-queue.js]]
+- [[_COMMUNITY_queue.js|queue.js]]
+- [[_COMMUNITY_LyricLine.jsx, PaginatedLyricsDisplay.jsx, wordHighlightCalculator.js|LyricLine.jsx, PaginatedLyricsDisplay.jsx, wordHighlightCalculator.js]]
+- [[_COMMUNITY_debug_separate.py|debug_separate.py]]
+- [[_COMMUNITY_AudioErrorBoundary.jsx|AudioErrorBoundary.jsx]]
+- [[_COMMUNITY_SimpleErrorBoundary.jsx|SimpleErrorBoundary.jsx]]
+- [[_COMMUNITY_search.js|search.js]]
+- [[_COMMUNITY_exportService.js|exportService.js]]
+- [[_COMMUNITY_KaraokeComposition.jsx, Root.jsx, index.jsx|KaraokeComposition.jsx, Root.jsx, index.jsx]]
+- [[_COMMUNITY_test_parity.js|test_parity.js]]
+- [[_COMMUNITY_ARCHITECTURE|ARCHITECTURE]]
+- [[_COMMUNITY_run_audio_separator.py|run_audio_separator.py]]
+- [[_COMMUNITY_ARCHITECTURE|ARCHITECTURE]]
+- [[_COMMUNITY_ARCHITECTURE|ARCHITECTURE]]
+- [[_COMMUNITY_ARCHITECTURE|ARCHITECTURE]]
+- [[_COMMUNITY_ARCHITECTURE|ARCHITECTURE]]
+- [[_COMMUNITY_ARCHITECTURE|ARCHITECTURE]]
+- [[_COMMUNITY_ARCHITECTURE|ARCHITECTURE]]
+- [[_COMMUNITY_ARCHITECTURE|ARCHITECTURE]]
+- [[_COMMUNITY_ARCHITECTURE|ARCHITECTURE]]
+- [[_COMMUNITY_ARCHITECTURE|ARCHITECTURE]]
+- [[_COMMUNITY_ARCHITECTURE|ARCHITECTURE]]
+- [[_COMMUNITY_ARCHITECTURE|ARCHITECTURE]]
+- [[_COMMUNITY_ARCHITECTURE|ARCHITECTURE]]
+- [[_COMMUNITY_ARCHITECTURE|ARCHITECTURE]]
+- [[_COMMUNITY_ARCHITECTURE|ARCHITECTURE]]
+- [[_COMMUNITY_ARCHITECTURE|ARCHITECTURE]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `AudioStemManager` - 21 edges
@@ -58,65 +74,74 @@
 - `TokenEditorPanel()` --calls--> `useTokenEditor()`  [INFERRED]
   src/components/editor/TokenEditorPanel.jsx → src/editor/useTokenEditor.js
 
-## Communities (48 total, 9 thin omitted)
+## Hyperedges (group relationships)
+- **KaraokeBox Pipeline** — pipeline_download, pipeline_split, pipeline_align, pipeline_render [INFERRED 0.95]
+- **Splitter Adapter Family** — DemucsAdapter, UVRMDXNetAdapter, FFmpegSplitterAdapter, AudioSeparatorAdapter, MockSplitterAdapter [INFERRED 0.90]
+- **Stem Alignment Conservation** — arch_canonicalization, concern_alignment_integrity, DemucsAdapter, UVRMDXNetAdapter [INFERRED 0.90]
 
-### Community 0 - "Community 0"
+## Communities (64 total, 24 thin omitted)
+
+### Community 0 - "engine-interface.js, engine-manager.js, job-queue.js"
 Cohesion: 0.06
 Nodes (5): MockReliableAdapter, YtDlpAdapter, DownloadEngine, EngineManager, JobQueue
 
-### Community 1 - "Community 1"
+### Community 1 - "TokenEditorPanel.jsx, jsonAdapters.js, jsonAdapters.test.js"
 Cohesion: 0.13
 Nodes (28): parseJSONToTokens(), tokensToExportJSON(), validateRoundtrip(), TokenEditorPanel(), applySnap(), clampMs(), createToken(), createTokenWithId() (+20 more)
 
-### Community 2 - "Community 2"
+### Community 2 - "audio-separator-adapter.js, demucs-adapter.js, ffmpeg-splitter-adapter.js"
 Cohesion: 0.06
 Nodes (7): AudioSeparatorAdapter, DemucsAdapter, FFmpegSplitterAdapter, initSplitterService(), log(), MockSplitterAdapter, UVRMDXNetAdapter
 
-### Community 3 - "Community 3"
+### Community 3 - "index.js, migrate_add_logs.js, repo.js"
 Cohesion: 0.08
 Nodes (4): getDB(), initDB(), SongRepository, JobManager
 
-### Community 4 - "Community 4"
+### Community 4 - "KaraokeRenderer.jsx, VerificationPanel.jsx, electronExport.js"
+Cohesion: 0.17
+Nodes (15): exportToMp4Electron(), flipVertical(), drawIntervalDisplay(), drawKaraokeFrame(), drawLyricsPage(), roundRect(), compileShader(), createProgram() (+7 more)
+
+### Community 5 - "audioshake-adapter.js, canonicalizer.js, index.js"
 Cohesion: 0.12
 Nodes (3): AudioShakeAdapter, Canonicalizer, initAlignmentService()
 
-### Community 5 - "Community 5"
-Cohesion: 0.18
-Nodes (14): exportToMp4Electron(), flipVertical(), drawIntervalDisplay(), drawKaraokeFrame(), drawLyricsPage(), roundRect(), compileShader(), createProgram() (+6 more)
-
-### Community 7 - "Community 7"
-Cohesion: 0.16
-Nodes (9): TimelineBlockContent(), audioBufferToWav(), clamp01(), encodeWAV(), floatTo16BitPCM(), interleave(), prettyTime(), writeFloat32() (+1 more)
-
-### Community 8 - "Community 8"
+### Community 7 - "azlyrics.js, genius.js, lyricsParser.js"
 Cohesion: 0.25
 Nodes (13): checkExists(), constructUrl(), generateUrlVariations(), getRandomUserAgent(), normalizeForUrl(), randomDelay(), scrapeFromUrl(), scrapeLyrics() (+5 more)
 
-### Community 9 - "Community 9"
+### Community 8 - "TimelineBlockContent.jsx, karaokeHelpers.js"
+Cohesion: 0.17
+Nodes (8): TimelineBlockContent(), audioBufferToWav(), clamp01(), encodeWAV(), floatTo16BitPCM(), interleave(), writeFloat32(), writeString()
+
+### Community 9 - "index.js, server-proxy.js, titleParser.js"
 Cohesion: 0.24
 Nodes (9): checkAndUpdateOnStartup(), checkForUpdate(), getCurrentVersion(), getLatestVersion(), isNewerVersion(), performUpdate(), runCommand(), parseVideoTitle() (+1 more)
 
-### Community 10 - "Community 10"
+### Community 10 - "IntegratedEcologicalOS.jsx, gpuCapabilities.js, useKaraokeExport.js"
 Cohesion: 0.19
 Nodes (5): useKaraokeExport(), fmtTime(), IntegratedEcologicalOS(), detectGpuCapabilities(), resolveGpuConfig()
 
-### Community 11 - "Community 11"
+### Community 11 - "KaraokeLyricsDisplay.jsx, gapDetector.js, lyricsPagination.js"
 Cohesion: 0.23
 Nodes (8): usePlaybackTime(), KaraokeLyricsDisplay(), getActiveGap(), calculatePages(), findNextHighlightableWord(), findPageContainingLine(), getCurrentPage(), normalizeLyrics()
 
-### Community 15 - "Community 15"
+### Community 15 - "debug_separate.py"
 Cohesion: 0.6
 Nodes (5): fatal(), get_parser(), load_track(), log_config(), main()
 
-### Community 19 - "Community 19"
+### Community 19 - "exportService.js"
 Cohesion: 0.7
 Nodes (4): exportKaraokeVideo(), formatAssTime(), generateKaraokeAss(), hexToAssBgr()
 
-### Community 21 - "Community 21"
+### Community 21 - "test_parity.js"
 Cohesion: 0.83
 Nodes (3): extractConfig(), main(), runSplit()
+
+### Community 22 - "ARCHITECTURE"
+Cohesion: 0.5
+Nodes (4): Alignment Pipeline, Download Pipeline, Render/Export Pipeline, Split Pipeline
 
 ## Knowledge Gaps
 - **1 isolated node(s):** `Wrapper script to run audio_separator CLI entry point.  The audio_separator.util`
   These have ≤1 connection - possible missing edges or undocumented components.
-- **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **24 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.

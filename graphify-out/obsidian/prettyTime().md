@@ -1,12 +1,12 @@
 ---
 source_file: "src/utils/karaokeHelpers.js"
 type: "code"
-community: "TimelineBlockContent.jsx, karaokeHelpers.js"
+community: "KaraokeRenderer.jsx, VerificationPanel.jsx, electronExport.js"
 location: "L4"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/TimelineBlockContentjsx_karaokeHelpersjs
+  - community/KaraokeRendererjsx_VerificationPaneljsx_electronExportjs
 ---
 
 # prettyTime()
@@ -15,4 +15,4 @@ tags:
 - [[karaokeDrawer.js]] - `imports` [EXTRACTED]
 - [[karaokeHelpers.js]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/TimelineBlockContentjsx_karaokeHelpersjs
+#graphify/code #graphify/EXTRACTED #community/KaraokeRendererjsx_VerificationPaneljsx_electronExportjs

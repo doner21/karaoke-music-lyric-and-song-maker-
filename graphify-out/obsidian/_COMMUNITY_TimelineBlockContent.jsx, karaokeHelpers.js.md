@@ -1,13 +1,13 @@
 ---
 type: community
-cohesion: 0.16
-members: 17
+cohesion: 0.17
+members: 16
 ---
 
 # TimelineBlockContent.jsx, karaokeHelpers.js
 
-**Cohesion:** 0.16 - loosely connected
-**Members:** 17 nodes
+**Cohesion:** 0.17 - loosely connected
+**Members:** 16 nodes
 
 ## Members
 - [[TimelineBlockContent()]] - code - src/components/TimelineBlockContent.jsx
@@ -23,7 +23,6 @@ members: 17
 - [[indexLyrics()]] - code - src/utils/karaokeHelpers.js
 - [[interleave()]] - code - src/utils/karaokeHelpers.js
 - [[karaokeHelpers.js]] - code - src/utils/karaokeHelpers.js
-- [[prettyTime()]] - code - src/utils/karaokeHelpers.js
 - [[wordKey()]] - code - src/utils/karaokeHelpers.js
 - [[writeFloat32()]] - code - src/utils/karaokeHelpers.js
 - [[writeString()]] - code - src/utils/karaokeHelpers.js
@@ -41,4 +40,3 @@ SORT file.name ASC
 ## Top bridge nodes
 - [[karaokeHelpers.js]] - degree 16, connects to 1 community
 - [[clamp01()]] - degree 4, connects to 1 community
-- [[prettyTime()]] - degree 2, connects to 1 community

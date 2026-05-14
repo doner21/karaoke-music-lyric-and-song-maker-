@@ -1,29 +1,44 @@
 ---
 type: community/narrative
 community_id: 12
-label: "Alignment Job Queue"
+label: "job-queue Module (10 functions)"
 size: 10
 cohesion: 0.00
 character: code
 ---
 
-# Alignment Job Queue
+# Community 12: job-queue Module (10 functions)
 
-> **10 nodes** | **Cohesion: 0.00** | **Primary file:** `server/alignment/job-queue.js`
+> **10 nodes** | **Cohesion: 0.00** (loosely connected) | **Character: code**
 
 ## For Humans
 
-Manages the lifecycle of AudioShake alignment jobs. Submits lyrics+audio, polls for completion, updates progress, and stores the resulting word-timing JSON. Simple FIFO queue with progress callbacks.
+This community contains **10 functions** primarily in **job-queue.js**.
 
-### Key Nodes
-- `AlignmentJobQueue` — queue manager for alignment jobs
-- `.updateProgress()` — progress callback during alignment
-- `.processAlign()` — submits to AudioShake, polls until done
+The most connected function is **AlignmentJobQueue** with 8 connections.
 
 ## For LLMs
-- **ID:** 12 | **Size:** 10 nodes | **Cohesion:** 0.00
-- **Key file:** `server/alignment/job-queue.js`
 
-### Cross-Community Connections
-- **Alignment Service (C4):** AudioShakeAdapter processes jobs from this queue
-- **Orchestrator (C3):** JobManager submits alignment jobs here
+### Data
+
+- **ID:** 12
+- **Label:** job-queue Module (10 functions)
+- **Size:** 10 nodes
+- **Cohesion:** 0.00
+- **Character:** code
+- **Primary file:** job-queue.js
+
+### Top Nodes by Connectivity
+
+- **AlignmentJobQueue** -- 8 connections [code]
+- **.updateProgress()** -- 2 connections [code]
+- **.processAlign()** -- 2 connections [code]
+- **job-queue.js** -- 1 connections [code]
+- **.submit()** -- 1 connections [code]
+- **.setCanonicalizer()** -- 1 connections [code]
+- **.setAdapter()** -- 1 connections [code]
+- **.getJob()** -- 1 connections [code]
+- **.constructor()** -- 1 connections [code]
+- **.cancel()** -- 1 connections [code]
+
+**No cross-community edges -- this community is self-contained.**

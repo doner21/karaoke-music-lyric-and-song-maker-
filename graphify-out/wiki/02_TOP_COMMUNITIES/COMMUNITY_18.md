@@ -1,25 +1,39 @@
 ---
 type: community/narrative
 community_id: 18
-label: "Unified Search Service"
+label: "search Module (5 functions)"
 size: 5
 cohesion: 0.00
 character: code
 ---
 
-# Unified Search Service
+# Community 18: search Module (5 functions)
 
-> **5 nodes** | **Cohesion: 0.00** | **Primary file:** `server/library/search.js`
+> **5 nodes** | **Cohesion: 0.00** (loosely connected) | **Character: code**
 
 ## For Humans
 
-Single search endpoint that queries both YouTube (via yt-dlp) and a local song library. Returns unified results for the search bar in the UI. Handles deduplication and result ranking.
+This community contains **5 functions** primarily in **search.js**.
 
-### Key Nodes
-- `UnifiedSearchService` — unified search across YouTube + local library
-- `.searchYouTube()` — yt-dlp YouTube search
-- `.search()` — combined search with result merging
+The most connected function is **UnifiedSearchService** with 4 connections.
 
 ## For LLMs
-- **ID:** 18 | **Size:** 5 nodes | **Cohesion:** 0.00
-- **Key file:** `server/library/search.js`
+
+### Data
+
+- **ID:** 18
+- **Label:** search Module (5 functions)
+- **Size:** 5 nodes
+- **Cohesion:** 0.00
+- **Character:** code
+- **Primary file:** search.js
+
+### Top Nodes by Connectivity
+
+- **UnifiedSearchService** -- 4 connections [code]
+- **.searchYouTube()** -- 3 connections [code]
+- **.searchYtDlp()** -- 2 connections [code]
+- **.search()** -- 2 connections [code]
+- **search.js** -- 1 connections [code]
+
+**No cross-community edges -- this community is self-contained.**

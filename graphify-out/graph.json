@@ -1,7 +1,53 @@
 {
   "directed": false,
   "multigraph": false,
-  "graph": {},
+  "graph": {
+    "hyperedges": [
+      {
+        "id": "pipeline_flow",
+        "label": "KaraokeBox Pipeline",
+        "nodes": [
+          "pipeline_download",
+          "pipeline_split",
+          "pipeline_align",
+          "pipeline_render"
+        ],
+        "relation": "form",
+        "confidence": "INFERRED",
+        "confidence_score": 0.95,
+        "source_file": "ARCHITECTURE"
+      },
+      {
+        "id": "splitter_adapters",
+        "label": "Splitter Adapter Family",
+        "nodes": [
+          "DemucsAdapter",
+          "UVRMDXNetAdapter",
+          "FFmpegSplitterAdapter",
+          "AudioSeparatorAdapter",
+          "MockSplitterAdapter"
+        ],
+        "relation": "form",
+        "confidence": "INFERRED",
+        "confidence_score": 0.9,
+        "source_file": "ARCHITECTURE"
+      },
+      {
+        "id": "alignment_conservation",
+        "label": "Stem Alignment Conservation",
+        "nodes": [
+          "arch_canonicalization",
+          "concern_alignment_integrity",
+          "DemucsAdapter",
+          "UVRMDXNetAdapter"
+        ],
+        "relation": "participate_in",
+        "confidence": "INFERRED",
+        "confidence_score": 0.9,
+        "source_file": "ARCHITECTURE"
+      }
+    ]
+  },
   "nodes": [
     {
       "label": "postcss.config.js",
@@ -9,7 +55,7 @@
       "source_file": "postcss.config.js",
       "source_location": "L1",
       "id": "postcss_config_js",
-      "community": 40,
+      "community": 42,
       "norm_label": "postcss.config.js"
     },
     {
@@ -36,7 +82,7 @@
       "source_file": "tailwind.config.js",
       "source_location": "L1",
       "id": "tailwind_config_js",
-      "community": 41,
+      "community": 43,
       "norm_label": "tailwind.config.js"
     },
     {
@@ -45,7 +91,7 @@
       "source_file": "vite.config.js",
       "source_location": "L1",
       "id": "vite_config_js",
-      "community": 42,
+      "community": 44,
       "norm_label": "vite.config.js"
     },
     {
@@ -54,7 +100,7 @@
       "source_file": "vite.config.js.timestamp-1765368324064-0a7d9dcf72a16.mjs",
       "source_location": "L1",
       "id": "vite_config_js_timestamp_1765368324064_0a7d9dcf72a16_mjs",
-      "community": 43,
+      "community": 45,
       "norm_label": "vite.config.js.timestamp-1765368324064-0a7d9dcf72a16.mjs"
     },
     {
@@ -63,7 +109,7 @@
       "source_file": "vitest.config.js",
       "source_location": "L1",
       "id": "vitest_config_js",
-      "community": 44,
+      "community": 46,
       "norm_label": "vitest.config.js"
     },
     {
@@ -72,7 +118,7 @@
       "source_file": "electron/main.js",
       "source_location": "L1",
       "id": "electron_main_js",
-      "community": 22,
+      "community": 23,
       "norm_label": "main.js"
     },
     {
@@ -81,7 +127,7 @@
       "source_file": "electron/main.js",
       "source_location": "L28",
       "id": "electron_main_createwindow",
-      "community": 22,
+      "community": 23,
       "norm_label": "createwindow()"
     },
     {
@@ -90,7 +136,7 @@
       "source_file": "electron/main.js",
       "source_location": "L142",
       "id": "electron_main_testencoder",
-      "community": 22,
+      "community": 23,
       "norm_label": "testencoder()"
     },
     {
@@ -99,7 +145,7 @@
       "source_file": "scripts/cleanup.ps1",
       "source_location": "L1",
       "id": "scripts_cleanup_ps1",
-      "community": 45,
+      "community": 47,
       "norm_label": "cleanup.ps1"
     },
     {
@@ -162,7 +208,7 @@
       "source_file": "scripts/inspect_demucs_config.py",
       "source_location": "L1",
       "id": "scripts_inspect_demucs_config_py",
-      "community": 24,
+      "community": 25,
       "norm_label": "inspect_demucs_config.py"
     },
     {
@@ -171,7 +217,7 @@
       "source_file": "scripts/inspect_demucs_config.py",
       "source_location": "L7",
       "id": "scripts_inspect_demucs_config_inspect_device",
-      "community": 24,
+      "community": 25,
       "norm_label": "inspect_device()"
     },
     {
@@ -261,7 +307,7 @@
       "source_file": "scripts/verify-rendering.js",
       "source_location": "L1",
       "id": "scripts_verify_rendering_js",
-      "community": 25,
+      "community": 26,
       "norm_label": "verify-rendering.js"
     },
     {
@@ -270,7 +316,7 @@
       "source_file": "scripts/verify-rendering.js",
       "source_location": "L30",
       "id": "scripts_verify_rendering_main",
-      "community": 25,
+      "community": 26,
       "norm_label": "main()"
     },
     {
@@ -279,7 +325,7 @@
       "source_file": "server/alignment/audioshake-adapter.js",
       "source_location": "L1",
       "id": "server_alignment_audioshake_adapter_js",
-      "community": 4,
+      "community": 5,
       "norm_label": "audioshake-adapter.js"
     },
     {
@@ -288,7 +334,7 @@
       "source_file": "server/alignment/audioshake-adapter.js",
       "source_location": "L18",
       "id": "alignment_audioshake_adapter_audioshakeadapter",
-      "community": 4,
+      "community": 5,
       "norm_label": "audioshakeadapter"
     },
     {
@@ -297,7 +343,7 @@
       "source_file": "server/alignment/audioshake-adapter.js",
       "source_location": "L19",
       "id": "alignment_audioshake_adapter_audioshakeadapter_constructor",
-      "community": 4,
+      "community": 5,
       "norm_label": ".constructor()"
     },
     {
@@ -306,7 +352,7 @@
       "source_file": "server/alignment/audioshake-adapter.js",
       "source_location": "L24",
       "id": "alignment_audioshake_adapter_audioshakeadapter_checkhealth",
-      "community": 4,
+      "community": 5,
       "norm_label": ".checkhealth()"
     },
     {
@@ -315,7 +361,7 @@
       "source_file": "server/alignment/audioshake-adapter.js",
       "source_location": "L47",
       "id": "alignment_audioshake_adapter_audioshakeadapter_submitalignment",
-      "community": 4,
+      "community": 5,
       "norm_label": ".submitalignment()"
     },
     {
@@ -324,7 +370,7 @@
       "source_file": "server/alignment/audioshake-adapter.js",
       "source_location": "L114",
       "id": "alignment_audioshake_adapter_audioshakeadapter_uploadlyricsasset",
-      "community": 4,
+      "community": 5,
       "norm_label": ".uploadlyricsasset()"
     },
     {
@@ -333,7 +379,7 @@
       "source_file": "server/alignment/audioshake-adapter.js",
       "source_location": "L136",
       "id": "alignment_audioshake_adapter_audioshakeadapter_uploadasset",
-      "community": 4,
+      "community": 5,
       "norm_label": ".uploadasset()"
     },
     {
@@ -342,7 +388,7 @@
       "source_file": "server/alignment/audioshake-adapter.js",
       "source_location": "L199",
       "id": "alignment_audioshake_adapter_audioshakeadapter_poll",
-      "community": 4,
+      "community": 5,
       "norm_label": ".poll()"
     },
     {
@@ -351,7 +397,7 @@
       "source_file": "server/alignment/audioshake-adapter.js",
       "source_location": "L259",
       "id": "alignment_audioshake_adapter_audioshakeadapter_fetchresult",
-      "community": 4,
+      "community": 5,
       "norm_label": ".fetchresult()"
     },
     {
@@ -360,7 +406,7 @@
       "source_file": "server/alignment/audioshake-adapter.js",
       "source_location": "L292",
       "id": "alignment_audioshake_adapter_audioshakeadapter_cancel",
-      "community": 4,
+      "community": 5,
       "norm_label": ".cancel()"
     },
     {
@@ -369,7 +415,7 @@
       "source_file": "server/alignment/audioshake-adapter.js",
       "source_location": "L297",
       "id": "alignment_audioshake_adapter_audioshakeadapter_getmimetype",
-      "community": 4,
+      "community": 5,
       "norm_label": ".getmimetype()"
     },
     {
@@ -378,7 +424,7 @@
       "source_file": "server/alignment/canonicalizer.js",
       "source_location": "L1",
       "id": "server_alignment_canonicalizer_js",
-      "community": 4,
+      "community": 5,
       "norm_label": "canonicalizer.js"
     },
     {
@@ -387,7 +433,7 @@
       "source_file": "server/alignment/canonicalizer.js",
       "source_location": "L7",
       "id": "alignment_canonicalizer_canonicalizer",
-      "community": 4,
+      "community": 5,
       "norm_label": "canonicalizer"
     },
     {
@@ -396,7 +442,7 @@
       "source_file": "server/alignment/canonicalizer.js",
       "source_location": "L8",
       "id": "alignment_canonicalizer_canonicalizer_constructor",
-      "community": 4,
+      "community": 5,
       "norm_label": ".constructor()"
     },
     {
@@ -405,7 +451,7 @@
       "source_file": "server/alignment/canonicalizer.js",
       "source_location": "L19",
       "id": "alignment_canonicalizer_canonicalizer_transform",
-      "community": 4,
+      "community": 5,
       "norm_label": ".transform()"
     },
     {
@@ -414,7 +460,7 @@
       "source_file": "server/alignment/canonicalizer.js",
       "source_location": "L68",
       "id": "alignment_canonicalizer_canonicalizer_normalizeformatching",
-      "community": 4,
+      "community": 5,
       "norm_label": ".normalizeformatching()"
     },
     {
@@ -423,7 +469,7 @@
       "source_file": "server/alignment/canonicalizer.js",
       "source_location": "L80",
       "id": "alignment_canonicalizer_canonicalizer_extracttokens",
-      "community": 4,
+      "community": 5,
       "norm_label": ".extracttokens()"
     },
     {
@@ -432,7 +478,7 @@
       "source_file": "server/alignment/canonicalizer.js",
       "source_location": "L140",
       "id": "alignment_canonicalizer_canonicalizer_extractlines",
-      "community": 4,
+      "community": 5,
       "norm_label": ".extractlines()"
     },
     {
@@ -441,7 +487,7 @@
       "source_file": "server/alignment/canonicalizer.js",
       "source_location": "L174",
       "id": "alignment_canonicalizer_canonicalizer_toms",
-      "community": 4,
+      "community": 5,
       "norm_label": ".toms()"
     },
     {
@@ -450,7 +496,7 @@
       "source_file": "server/alignment/index.js",
       "source_location": "L1",
       "id": "server_alignment_index_js",
-      "community": 4,
+      "community": 5,
       "norm_label": "index.js"
     },
     {
@@ -459,7 +505,7 @@
       "source_file": "server/alignment/index.js",
       "source_location": "L22",
       "id": "alignment_index_initalignmentservice",
-      "community": 4,
+      "community": 5,
       "norm_label": "initalignmentservice()"
     },
     {
@@ -468,7 +514,7 @@
       "source_file": "server/alignment/index.js",
       "source_location": "L211",
       "id": "alignment_index_resolvesplitjobvocal",
-      "community": 4,
+      "community": 5,
       "norm_label": "resolvesplitjobvocal()"
     },
     {
@@ -558,7 +604,7 @@
       "source_file": "server/artifacts/index.js",
       "source_location": "L1",
       "id": "server_artifacts_index_js",
-      "community": 23,
+      "community": 24,
       "norm_label": "index.js"
     },
     {
@@ -567,7 +613,7 @@
       "source_file": "server/artifacts/index.js",
       "source_location": "L8",
       "id": "artifacts_index_log",
-      "community": 23,
+      "community": 24,
       "norm_label": "log()"
     },
     {
@@ -576,7 +622,7 @@
       "source_file": "server/artifacts/index.js",
       "source_location": "L9",
       "id": "artifacts_index_logerror",
-      "community": 23,
+      "community": 24,
       "norm_label": "logerror()"
     },
     {
@@ -963,7 +1009,7 @@
       "source_file": "server/downloader/storage.js",
       "source_location": "L1",
       "id": "server_downloader_storage_js",
-      "community": 46,
+      "community": 48,
       "norm_label": "storage.js"
     },
     {
@@ -1278,7 +1324,7 @@
       "source_file": "server/services/azlyrics.js",
       "source_location": "L1",
       "id": "server_services_azlyrics_js",
-      "community": 8,
+      "community": 7,
       "norm_label": "azlyrics.js"
     },
     {
@@ -1287,7 +1333,7 @@
       "source_file": "server/services/azlyrics.js",
       "source_location": "L31",
       "id": "services_azlyrics_normalizeforurl",
-      "community": 8,
+      "community": 7,
       "norm_label": "normalizeforurl()"
     },
     {
@@ -1296,7 +1342,7 @@
       "source_file": "server/services/azlyrics.js",
       "source_location": "L43",
       "id": "services_azlyrics_randomdelay",
-      "community": 8,
+      "community": 7,
       "norm_label": "randomdelay()"
     },
     {
@@ -1305,7 +1351,7 @@
       "source_file": "server/services/azlyrics.js",
       "source_location": "L52",
       "id": "services_azlyrics_getrandomuseragent",
-      "community": 8,
+      "community": 7,
       "norm_label": "getrandomuseragent()"
     },
     {
@@ -1314,7 +1360,7 @@
       "source_file": "server/services/azlyrics.js",
       "source_location": "L62",
       "id": "services_azlyrics_constructurl",
-      "community": 8,
+      "community": 7,
       "norm_label": "constructurl()"
     },
     {
@@ -1323,7 +1369,7 @@
       "source_file": "server/services/azlyrics.js",
       "source_location": "L75",
       "id": "services_azlyrics_scrapelyrics",
-      "community": 8,
+      "community": 7,
       "norm_label": "scrapelyrics()"
     },
     {
@@ -1332,7 +1378,7 @@
       "source_file": "server/services/azlyrics.js",
       "source_location": "L192",
       "id": "services_azlyrics_searchlyrics",
-      "community": 8,
+      "community": 7,
       "norm_label": "searchlyrics()"
     },
     {
@@ -1341,7 +1387,7 @@
       "source_file": "server/services/azlyrics.js",
       "source_location": "L243",
       "id": "services_azlyrics_scrapefromurl",
-      "community": 8,
+      "community": 7,
       "norm_label": "scrapefromurl()"
     },
     {
@@ -1350,7 +1396,7 @@
       "source_file": "server/services/azlyrics.js",
       "source_location": "L277",
       "id": "services_azlyrics_checkexists",
-      "community": 8,
+      "community": 7,
       "norm_label": "checkexists()"
     },
     {
@@ -1359,7 +1405,7 @@
       "source_file": "server/services/azlyrics.js",
       "source_location": "L297",
       "id": "services_azlyrics_generateurlvariations",
-      "community": 8,
+      "community": 7,
       "norm_label": "generateurlvariations()"
     },
     {
@@ -1413,7 +1459,7 @@
       "source_file": "server/services/genius.js",
       "source_location": "L1",
       "id": "server_services_genius_js",
-      "community": 8,
+      "community": 7,
       "norm_label": "genius.js"
     },
     {
@@ -1422,7 +1468,7 @@
       "source_file": "server/services/genius.js",
       "source_location": "L14",
       "id": "services_genius_attemptslugify",
-      "community": 8,
+      "community": 7,
       "norm_label": "attemptslugify()"
     },
     {
@@ -1431,7 +1477,7 @@
       "source_file": "server/services/genius.js",
       "source_location": "L28",
       "id": "services_genius_searchsong",
-      "community": 8,
+      "community": 7,
       "norm_label": "searchsong()"
     },
     {
@@ -1440,7 +1486,7 @@
       "source_file": "server/services/genius.js",
       "source_location": "L101",
       "id": "services_genius_getlyrics",
-      "community": 8,
+      "community": 7,
       "norm_label": "getlyrics()"
     },
     {
@@ -1809,7 +1855,7 @@
       "source_file": "server/splitter/run_audio_separator.py",
       "source_location": "L1",
       "id": "server_splitter_run_audio_separator_py",
-      "community": 26,
+      "community": 27,
       "norm_label": "run_audio_separator.py"
     },
     {
@@ -1818,7 +1864,7 @@
       "source_file": "server/splitter/run_audio_separator.py",
       "source_location": "L1",
       "id": "splitter_run_audio_separator_rationale_1",
-      "community": 26,
+      "community": 27,
       "norm_label": "wrapper script to run audio_separator cli entry point.  the audio_separator.util"
     },
     {
@@ -1872,7 +1918,7 @@
       "source_file": "server/utils/lyricsParser.js",
       "source_location": "L1",
       "id": "server_utils_lyricsparser_js",
-      "community": 8,
+      "community": 7,
       "norm_label": "lyricsparser.js"
     },
     {
@@ -1881,7 +1927,7 @@
       "source_file": "server/utils/lyricsParser.js",
       "source_location": "L6",
       "id": "utils_lyricsparser_parselyrics",
-      "community": 8,
+      "community": 7,
       "norm_label": "parselyrics()"
     },
     {
@@ -1926,7 +1972,7 @@
       "source_file": "src/App.jsx",
       "source_location": "L1",
       "id": "src_app_jsx",
-      "community": 27,
+      "community": 28,
       "norm_label": "app.jsx"
     },
     {
@@ -1935,7 +1981,7 @@
       "source_file": "src/App.jsx",
       "source_location": "L7",
       "id": "src_app_app",
-      "community": 27,
+      "community": 28,
       "norm_label": "app()"
     },
     {
@@ -1944,7 +1990,7 @@
       "source_file": "src/main.jsx",
       "source_location": "L1",
       "id": "src_main_jsx",
-      "community": 47,
+      "community": 49,
       "norm_label": "main.jsx"
     },
     {
@@ -2007,7 +2053,7 @@
       "source_file": "src/components/ElectronYouTubePlayer.jsx",
       "source_location": "L1",
       "id": "src_components_electronyoutubeplayer_jsx",
-      "community": 28,
+      "community": 29,
       "norm_label": "electronyoutubeplayer.jsx"
     },
     {
@@ -2016,7 +2062,7 @@
       "source_file": "src/components/ElectronYouTubePlayer.jsx",
       "source_location": "L20",
       "id": "components_electronyoutubeplayer_extractvideoid",
-      "community": 28,
+      "community": 29,
       "norm_label": "extractvideoid()"
     },
     {
@@ -2025,7 +2071,7 @@
       "source_file": "src/components/KaraokeRenderer.jsx",
       "source_location": "L1",
       "id": "src_components_karaokerenderer_jsx",
-      "community": 5,
+      "community": 4,
       "norm_label": "karaokerenderer.jsx"
     },
     {
@@ -2088,7 +2134,7 @@
       "source_file": "src/components/TimelineBlockContent.jsx",
       "source_location": "L1",
       "id": "src_components_timelineblockcontent_jsx",
-      "community": 7,
+      "community": 8,
       "norm_label": "timelineblockcontent.jsx"
     },
     {
@@ -2097,7 +2143,7 @@
       "source_file": "src/components/TimelineBlockContent.jsx",
       "source_location": "L4",
       "id": "components_timelineblockcontent_timelineblockcontent",
-      "community": 7,
+      "community": 8,
       "norm_label": "timelineblockcontent()"
     },
     {
@@ -2106,7 +2152,7 @@
       "source_file": "src/components/editor/InlineTextEditor.jsx",
       "source_location": "L1",
       "id": "src_components_editor_inlinetexteditor_jsx",
-      "community": 29,
+      "community": 30,
       "norm_label": "inlinetexteditor.jsx"
     },
     {
@@ -2115,7 +2161,7 @@
       "source_file": "src/components/editor/InlineTextEditor.jsx",
       "source_location": "L16",
       "id": "editor_inlinetexteditor_inlinetexteditor",
-      "community": 29,
+      "community": 30,
       "norm_label": "inlinetexteditor()"
     },
     {
@@ -2124,7 +2170,7 @@
       "source_file": "src/components/editor/TokenBlock.jsx",
       "source_location": "L1",
       "id": "src_components_editor_tokenblock_jsx",
-      "community": 30,
+      "community": 31,
       "norm_label": "tokenblock.jsx"
     },
     {
@@ -2133,7 +2179,7 @@
       "source_file": "src/components/editor/TokenBlock.jsx",
       "source_location": "L21",
       "id": "editor_tokenblock_tokenblock",
-      "community": 30,
+      "community": 31,
       "norm_label": "tokenblock()"
     },
     {
@@ -2142,7 +2188,7 @@
       "source_file": "src/components/editor/TokenContextMenu.jsx",
       "source_location": "L1",
       "id": "src_components_editor_tokencontextmenu_jsx",
-      "community": 31,
+      "community": 32,
       "norm_label": "tokencontextmenu.jsx"
     },
     {
@@ -2151,7 +2197,7 @@
       "source_file": "src/components/editor/TokenContextMenu.jsx",
       "source_location": "L21",
       "id": "editor_tokencontextmenu_tokencontextmenu",
-      "community": 31,
+      "community": 32,
       "norm_label": "tokencontextmenu()"
     },
     {
@@ -2178,7 +2224,7 @@
       "source_file": "src/components/editor/TokenTimeline.jsx",
       "source_location": "L1",
       "id": "src_components_editor_tokentimeline_jsx",
-      "community": 32,
+      "community": 33,
       "norm_label": "tokentimeline.jsx"
     },
     {
@@ -2187,7 +2233,7 @@
       "source_file": "src/components/editor/TokenTimeline.jsx",
       "source_location": "L32",
       "id": "editor_tokentimeline_tokentimeline",
-      "community": 32,
+      "community": 33,
       "norm_label": "tokentimeline()"
     },
     {
@@ -2196,7 +2242,7 @@
       "source_file": "src/components/editor/ValidationPanel.jsx",
       "source_location": "L1",
       "id": "src_components_editor_validationpanel_jsx",
-      "community": 33,
+      "community": 34,
       "norm_label": "validationpanel.jsx"
     },
     {
@@ -2205,7 +2251,7 @@
       "source_file": "src/components/editor/ValidationPanel.jsx",
       "source_location": "L17",
       "id": "editor_validationpanel_validationpanel",
-      "community": 33,
+      "community": 34,
       "norm_label": "validationpanel()"
     },
     {
@@ -2214,7 +2260,7 @@
       "source_file": "src/components/editor/VocalWaveform.jsx",
       "source_location": "L1",
       "id": "src_components_editor_vocalwaveform_jsx",
-      "community": 34,
+      "community": 35,
       "norm_label": "vocalwaveform.jsx"
     },
     {
@@ -2223,7 +2269,7 @@
       "source_file": "src/components/editor/VocalWaveform.jsx",
       "source_location": "L17",
       "id": "editor_vocalwaveform_vocalwaveform",
-      "community": 34,
+      "community": 35,
       "norm_label": "vocalwaveform()"
     },
     {
@@ -2259,7 +2305,7 @@
       "source_file": "src/components/lyrics/CountdownBar.jsx",
       "source_location": "L1",
       "id": "src_components_lyrics_countdownbar_jsx",
-      "community": 35,
+      "community": 36,
       "norm_label": "countdownbar.jsx"
     },
     {
@@ -2268,7 +2314,7 @@
       "source_file": "src/components/lyrics/CountdownBar.jsx",
       "source_location": "L4",
       "id": "lyrics_countdownbar_countdownbar",
-      "community": 35,
+      "community": 36,
       "norm_label": "countdownbar()"
     },
     {
@@ -2295,7 +2341,7 @@
       "source_file": "src/components/lyrics/LetterFillWord.jsx",
       "source_location": "L1",
       "id": "src_components_lyrics_letterfillword_jsx",
-      "community": 36,
+      "community": 37,
       "norm_label": "letterfillword.jsx"
     },
     {
@@ -2304,7 +2350,7 @@
       "source_file": "src/components/lyrics/LetterFillWord.jsx",
       "source_location": "L4",
       "id": "lyrics_letterfillword_letterfillword",
-      "community": 36,
+      "community": 37,
       "norm_label": "letterfillword()"
     },
     {
@@ -2331,7 +2377,7 @@
       "source_file": "src/components/lyrics/LyricsControls.jsx",
       "source_location": "L1",
       "id": "src_components_lyrics_lyricscontrols_jsx",
-      "community": 37,
+      "community": 38,
       "norm_label": "lyricscontrols.jsx"
     },
     {
@@ -2340,7 +2386,7 @@
       "source_file": "src/components/lyrics/LyricsControls.jsx",
       "source_location": "L4",
       "id": "lyrics_lyricscontrols_lyricscontrols",
-      "community": 37,
+      "community": 38,
       "norm_label": "lyricscontrols()"
     },
     {
@@ -2349,7 +2395,7 @@
       "source_file": "src/components/lyrics/NoLyricsIntervalDisplay.jsx",
       "source_location": "L1",
       "id": "src_components_lyrics_nolyricsintervaldisplay_jsx",
-      "community": 38,
+      "community": 39,
       "norm_label": "nolyricsintervaldisplay.jsx"
     },
     {
@@ -2358,7 +2404,7 @@
       "source_file": "src/components/lyrics/NoLyricsIntervalDisplay.jsx",
       "source_location": "L12",
       "id": "lyrics_nolyricsintervaldisplay_nolyricsintervaldisplay",
-      "community": 38,
+      "community": 39,
       "norm_label": "nolyricsintervaldisplay()"
     },
     {
@@ -2385,7 +2431,7 @@
       "source_file": "src/components/verify/VerificationLoader.jsx",
       "source_location": "L1",
       "id": "src_components_verify_verificationloader_jsx",
-      "community": 39,
+      "community": 40,
       "norm_label": "verificationloader.jsx"
     },
     {
@@ -2394,7 +2440,7 @@
       "source_file": "src/components/verify/VerificationLoader.jsx",
       "source_location": "L12",
       "id": "verify_verificationloader_verificationloader",
-      "community": 39,
+      "community": 40,
       "norm_label": "verificationloader()"
     },
     {
@@ -2403,7 +2449,7 @@
       "source_file": "src/components/verify/VerificationPanel.jsx",
       "source_location": "L1",
       "id": "src_components_verify_verificationpanel_jsx",
-      "community": 5,
+      "community": 4,
       "norm_label": "verificationpanel.jsx"
     },
     {
@@ -2412,7 +2458,7 @@
       "source_file": "src/components/verify/VerificationPanel.jsx",
       "source_location": "L18",
       "id": "verify_verificationpanel_verificationpanel",
-      "community": 5,
+      "community": 4,
       "norm_label": "verificationpanel()"
     },
     {
@@ -3006,7 +3052,7 @@
       "source_file": "src/utils/electronExport.js",
       "source_location": "L1",
       "id": "src_utils_electronexport_js",
-      "community": 5,
+      "community": 4,
       "norm_label": "electronexport.js"
     },
     {
@@ -3015,7 +3061,7 @@
       "source_file": "src/utils/electronExport.js",
       "source_location": "L11",
       "id": "utils_electronexport_flipvertical",
-      "community": 5,
+      "community": 4,
       "norm_label": "flipvertical()"
     },
     {
@@ -3024,7 +3070,7 @@
       "source_file": "src/utils/electronExport.js",
       "source_location": "L38",
       "id": "utils_electronexport_exporttomp4electron",
-      "community": 5,
+      "community": 4,
       "norm_label": "exporttomp4electron()"
     },
     {
@@ -3033,7 +3079,7 @@
       "source_file": "src/utils/fastExport.js",
       "source_location": "L1",
       "id": "src_utils_fastexport_js",
-      "community": 5,
+      "community": 4,
       "norm_label": "fastexport.js"
     },
     {
@@ -3042,7 +3088,7 @@
       "source_file": "src/utils/fastExport.js",
       "source_location": "L4",
       "id": "utils_fastexport_exporttomp4",
-      "community": 5,
+      "community": 4,
       "norm_label": "exporttomp4()"
     },
     {
@@ -3141,7 +3187,7 @@
       "source_file": "src/utils/karaokeDrawer.js",
       "source_location": "L1",
       "id": "src_utils_karaokedrawer_js",
-      "community": 5,
+      "community": 4,
       "norm_label": "karaokedrawer.js"
     },
     {
@@ -3150,7 +3196,7 @@
       "source_file": "src/utils/karaokeDrawer.js",
       "source_location": "L26",
       "id": "utils_karaokedrawer_drawkaraokeframe",
-      "community": 5,
+      "community": 4,
       "norm_label": "drawkaraokeframe()"
     },
     {
@@ -3159,7 +3205,7 @@
       "source_file": "src/utils/karaokeDrawer.js",
       "source_location": "L92",
       "id": "utils_karaokedrawer_drawintervaldisplay",
-      "community": 5,
+      "community": 4,
       "norm_label": "drawintervaldisplay()"
     },
     {
@@ -3168,7 +3214,7 @@
       "source_file": "src/utils/karaokeDrawer.js",
       "source_location": "L156",
       "id": "utils_karaokedrawer_drawlyricspage",
-      "community": 5,
+      "community": 4,
       "norm_label": "drawlyricspage()"
     },
     {
@@ -3177,7 +3223,7 @@
       "source_file": "src/utils/karaokeDrawer.js",
       "source_location": "L254",
       "id": "utils_karaokedrawer_roundrect",
-      "community": 5,
+      "community": 4,
       "norm_label": "roundrect()"
     },
     {
@@ -3186,7 +3232,7 @@
       "source_file": "src/utils/karaokeDrawerGL.js",
       "source_location": "L1",
       "id": "src_utils_karaokedrawergl_js",
-      "community": 5,
+      "community": 4,
       "norm_label": "karaokedrawergl.js"
     },
     {
@@ -3195,7 +3241,7 @@
       "source_file": "src/utils/karaokeDrawerGL.js",
       "source_location": "L64",
       "id": "utils_karaokedrawergl_getgpuinfo",
-      "community": 5,
+      "community": 4,
       "norm_label": "getgpuinfo()"
     },
     {
@@ -3204,7 +3250,7 @@
       "source_file": "src/utils/karaokeDrawerGL.js",
       "source_location": "L81",
       "id": "utils_karaokedrawergl_compileshader",
-      "community": 5,
+      "community": 4,
       "norm_label": "compileshader()"
     },
     {
@@ -3213,7 +3259,7 @@
       "source_file": "src/utils/karaokeDrawerGL.js",
       "source_location": "L108",
       "id": "utils_karaokedrawergl_createprogram",
-      "community": 5,
+      "community": 4,
       "norm_label": "createprogram()"
     },
     {
@@ -3222,7 +3268,7 @@
       "source_file": "src/utils/karaokeDrawerGL.js",
       "source_location": "L141",
       "id": "utils_karaokedrawergl_initgl",
-      "community": 5,
+      "community": 4,
       "norm_label": "initgl()"
     },
     {
@@ -3231,7 +3277,7 @@
       "source_file": "src/utils/karaokeDrawerGL.js",
       "source_location": "L241",
       "id": "utils_karaokedrawergl_drawkaraokeframegl",
-      "community": 5,
+      "community": 4,
       "norm_label": "drawkaraokeframegl()"
     },
     {
@@ -3240,7 +3286,7 @@
       "source_file": "src/utils/karaokeDrawerGL.js",
       "source_location": "L279",
       "id": "utils_karaokedrawergl_destroygl",
-      "community": 5,
+      "community": 4,
       "norm_label": "destroygl()"
     },
     {
@@ -3249,7 +3295,7 @@
       "source_file": "src/utils/karaokeHelpers.js",
       "source_location": "L1",
       "id": "src_utils_karaokehelpers_js",
-      "community": 7,
+      "community": 8,
       "norm_label": "karaokehelpers.js"
     },
     {
@@ -3258,7 +3304,7 @@
       "source_file": "src/utils/karaokeHelpers.js",
       "source_location": "L1",
       "id": "utils_karaokehelpers_clamp01",
-      "community": 7,
+      "community": 8,
       "norm_label": "clamp01()"
     },
     {
@@ -3267,7 +3313,7 @@
       "source_file": "src/utils/karaokeHelpers.js",
       "source_location": "L2",
       "id": "utils_karaokehelpers_clamp",
-      "community": 7,
+      "community": 8,
       "norm_label": "clamp()"
     },
     {
@@ -3276,7 +3322,7 @@
       "source_file": "src/utils/karaokeHelpers.js",
       "source_location": "L4",
       "id": "utils_karaokehelpers_prettytime",
-      "community": 7,
+      "community": 4,
       "norm_label": "prettytime()"
     },
     {
@@ -3285,7 +3331,7 @@
       "source_file": "src/utils/karaokeHelpers.js",
       "source_location": "L11",
       "id": "utils_karaokehelpers_cleanfilename",
-      "community": 7,
+      "community": 8,
       "norm_label": "cleanfilename()"
     },
     {
@@ -3294,7 +3340,7 @@
       "source_file": "src/utils/karaokeHelpers.js",
       "source_location": "L22",
       "id": "utils_karaokehelpers_bystart",
-      "community": 7,
+      "community": 8,
       "norm_label": "bystart()"
     },
     {
@@ -3303,7 +3349,7 @@
       "source_file": "src/utils/karaokeHelpers.js",
       "source_location": "L24",
       "id": "utils_karaokehelpers_computeinstrumentalgap",
-      "community": 5,
+      "community": 4,
       "norm_label": "computeinstrumentalgap()"
     },
     {
@@ -3312,7 +3358,7 @@
       "source_file": "src/utils/karaokeHelpers.js",
       "source_location": "L52",
       "id": "utils_karaokehelpers_computeoutrogap",
-      "community": 5,
+      "community": 4,
       "norm_label": "computeoutrogap()"
     },
     {
@@ -3321,7 +3367,7 @@
       "source_file": "src/utils/karaokeHelpers.js",
       "source_location": "L65",
       "id": "utils_karaokehelpers_wordkey",
-      "community": 7,
+      "community": 8,
       "norm_label": "wordkey()"
     },
     {
@@ -3330,7 +3376,7 @@
       "source_file": "src/utils/karaokeHelpers.js",
       "source_location": "L67",
       "id": "utils_karaokehelpers_indexlyrics",
-      "community": 7,
+      "community": 8,
       "norm_label": "indexlyrics()"
     },
     {
@@ -3339,7 +3385,7 @@
       "source_file": "src/utils/karaokeHelpers.js",
       "source_location": "L76",
       "id": "utils_karaokehelpers_computeadjustedsentences",
-      "community": 7,
+      "community": 8,
       "norm_label": "computeadjustedsentences()"
     },
     {
@@ -3348,7 +3394,7 @@
       "source_file": "src/utils/karaokeHelpers.js",
       "source_location": "L111",
       "id": "utils_karaokehelpers_audiobuffertowav",
-      "community": 7,
+      "community": 8,
       "norm_label": "audiobuffertowav()"
     },
     {
@@ -3357,7 +3403,7 @@
       "source_file": "src/utils/karaokeHelpers.js",
       "source_location": "L126",
       "id": "utils_karaokehelpers_encodewav",
-      "community": 7,
+      "community": 8,
       "norm_label": "encodewav()"
     },
     {
@@ -3366,7 +3412,7 @@
       "source_file": "src/utils/karaokeHelpers.js",
       "source_location": "L165",
       "id": "utils_karaokehelpers_interleave",
-      "community": 7,
+      "community": 8,
       "norm_label": "interleave()"
     },
     {
@@ -3375,7 +3421,7 @@
       "source_file": "src/utils/karaokeHelpers.js",
       "source_location": "L178",
       "id": "utils_karaokehelpers_writestring",
-      "community": 7,
+      "community": 8,
       "norm_label": "writestring()"
     },
     {
@@ -3384,7 +3430,7 @@
       "source_file": "src/utils/karaokeHelpers.js",
       "source_location": "L184",
       "id": "utils_karaokehelpers_floatto16bitpcm",
-      "community": 7,
+      "community": 8,
       "norm_label": "floatto16bitpcm()"
     },
     {
@@ -3393,7 +3439,7 @@
       "source_file": "src/utils/karaokeHelpers.js",
       "source_location": "L191",
       "id": "utils_karaokehelpers_writefloat32",
-      "community": 7,
+      "community": 8,
       "norm_label": "writefloat32()"
     },
     {
@@ -3485,6 +3531,166 @@
       "id": "utils_wordhighlightcalculator_calculatebatchhighlights",
       "community": 14,
       "norm_label": "calculatebatchhighlights()"
+    },
+    {
+      "label": "Adapter Pattern",
+      "file_type": "rationale",
+      "source_file": "ARCHITECTURE",
+      "id": "arch_adapter_pattern",
+      "community": 50,
+      "norm_label": "adapter pattern"
+    },
+    {
+      "label": "Strategy Pattern (Engine Selection)",
+      "file_type": "rationale",
+      "source_file": "ARCHITECTURE",
+      "id": "arch_strategy_pattern",
+      "community": 51,
+      "norm_label": "strategy pattern (engine selection)"
+    },
+    {
+      "label": "Smart Router Pattern",
+      "file_type": "rationale",
+      "source_file": "ARCHITECTURE",
+      "id": "arch_smart_router",
+      "community": 52,
+      "norm_label": "smart router pattern"
+    },
+    {
+      "label": "Job Queue Pattern (SQLite-backed)",
+      "file_type": "rationale",
+      "source_file": "ARCHITECTURE",
+      "id": "arch_job_queue_pattern",
+      "community": 53,
+      "norm_label": "job queue pattern (sqlite-backed)"
+    },
+    {
+      "label": "Audio Canonicalization (44.1kHz WAV)",
+      "file_type": "rationale",
+      "source_file": "ARCHITECTURE",
+      "id": "arch_canonicalization",
+      "community": 41,
+      "norm_label": "audio canonicalization (44.1khz wav)"
+    },
+    {
+      "label": "Download Pipeline",
+      "file_type": "rationale",
+      "source_file": "ARCHITECTURE",
+      "id": "pipeline_download",
+      "community": 22,
+      "norm_label": "download pipeline"
+    },
+    {
+      "label": "Split Pipeline",
+      "file_type": "rationale",
+      "source_file": "ARCHITECTURE",
+      "id": "pipeline_split",
+      "community": 22,
+      "norm_label": "split pipeline"
+    },
+    {
+      "label": "Alignment Pipeline",
+      "file_type": "rationale",
+      "source_file": "ARCHITECTURE",
+      "id": "pipeline_align",
+      "community": 22,
+      "norm_label": "alignment pipeline"
+    },
+    {
+      "label": "Render/Export Pipeline",
+      "file_type": "rationale",
+      "source_file": "ARCHITECTURE",
+      "id": "pipeline_render",
+      "community": 22,
+      "norm_label": "render/export pipeline"
+    },
+    {
+      "label": "GPU/CPU Fallback",
+      "file_type": "rationale",
+      "source_file": "ARCHITECTURE",
+      "id": "concern_gpu_cpu_fallback",
+      "community": 54,
+      "norm_label": "gpu/cpu fallback"
+    },
+    {
+      "label": "Stem Alignment Integrity",
+      "file_type": "rationale",
+      "source_file": "ARCHITECTURE",
+      "id": "concern_alignment_integrity",
+      "community": 41,
+      "norm_label": "stem alignment integrity"
+    },
+    {
+      "label": "Windows Process Spawning",
+      "file_type": "rationale",
+      "source_file": "ARCHITECTURE",
+      "id": "concern_windows_spawn",
+      "community": 55,
+      "norm_label": "windows process spawning"
+    },
+    {
+      "label": "Python venv Isolation",
+      "file_type": "rationale",
+      "source_file": "ARCHITECTURE",
+      "id": "concern_venv_isolation",
+      "community": 56,
+      "norm_label": "python venv isolation"
+    },
+    {
+      "label": "yt-dlp (YouTube Download CLI)",
+      "file_type": "rationale",
+      "source_file": "ARCHITECTURE",
+      "id": "ext_ytdlp",
+      "community": 57,
+      "norm_label": "yt-dlp (youtube download cli)"
+    },
+    {
+      "label": "AudioShake API",
+      "file_type": "rationale",
+      "source_file": "ARCHITECTURE",
+      "id": "ext_audioshake",
+      "community": 58,
+      "norm_label": "audioshake api"
+    },
+    {
+      "label": "FFmpeg (Audio/Video Processing)",
+      "file_type": "rationale",
+      "source_file": "ARCHITECTURE",
+      "id": "ext_ffmpeg",
+      "community": 59,
+      "norm_label": "ffmpeg (audio/video processing)"
+    },
+    {
+      "label": "Genius Lyrics API",
+      "file_type": "rationale",
+      "source_file": "ARCHITECTURE",
+      "id": "ext_genius",
+      "community": 60,
+      "norm_label": "genius lyrics api"
+    },
+    {
+      "label": "ONNX Runtime",
+      "file_type": "rationale",
+      "source_file": "ARCHITECTURE",
+      "id": "ext_onnx",
+      "community": 61,
+      "norm_label": "onnx runtime"
+    },
+    {
+      "label": "Demucs htdemucs Model",
+      "file_type": "rationale",
+      "source_file": "ARCHITECTURE",
+      "id": "ext_demucs_model",
+      "community": 62,
+      "norm_label": "demucs htdemucs model"
+    },
+    {
+      "label": "UVR-MDX-NET-Inst_Main Model",
+      "file_type": "rationale",
+      "source_file": "ARCHITECTURE",
+      "id": "ext_uvr_model",
+      "community": 63,
+      "norm_label": "uvr-mdx-net-inst_main model"
     }
   ],
   "links": [
@@ -8826,8 +9032,84 @@
       "source": "src_utils_wordhighlightcalculator_js",
       "target": "utils_wordhighlightcalculator_calculatebatchhighlights",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "addressed_by",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "ARCHITECTURE",
+      "source": "concern_alignment_integrity",
+      "target": "arch_canonicalization"
+    },
+    {
+      "relation": "feeds_into",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "ARCHITECTURE",
+      "source": "pipeline_download",
+      "target": "pipeline_split"
+    },
+    {
+      "relation": "feeds_into",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "ARCHITECTURE",
+      "source": "pipeline_split",
+      "target": "pipeline_align"
+    },
+    {
+      "relation": "feeds_into",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "ARCHITECTURE",
+      "source": "pipeline_align",
+      "target": "pipeline_render"
     }
   ],
-  "hyperedges": [],
-  "built_at_commit": "10b85b61ce618c293c42ff23c665e8de6f214bd4"
+  "hyperedges": [
+    {
+      "id": "pipeline_flow",
+      "label": "KaraokeBox Pipeline",
+      "nodes": [
+        "pipeline_download",
+        "pipeline_split",
+        "pipeline_align",
+        "pipeline_render"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "ARCHITECTURE"
+    },
+    {
+      "id": "splitter_adapters",
+      "label": "Splitter Adapter Family",
+      "nodes": [
+        "DemucsAdapter",
+        "UVRMDXNetAdapter",
+        "FFmpegSplitterAdapter",
+        "AudioSeparatorAdapter",
+        "MockSplitterAdapter"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "ARCHITECTURE"
+    },
+    {
+      "id": "alignment_conservation",
+      "label": "Stem Alignment Conservation",
+      "nodes": [
+        "arch_canonicalization",
+        "concern_alignment_integrity",
+        "DemucsAdapter",
+        "UVRMDXNetAdapter"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "ARCHITECTURE"
+    }
+  ],
+  "built_at_commit": "1ae1f2f04644259cb37541e77c2e9d9901175b4b"
 }

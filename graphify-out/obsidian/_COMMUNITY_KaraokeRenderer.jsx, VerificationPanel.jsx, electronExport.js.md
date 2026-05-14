@@ -1,13 +1,13 @@
 ---
 type: community
-cohesion: 0.18
-members: 22
+cohesion: 0.17
+members: 23
 ---
 
 # KaraokeRenderer.jsx, VerificationPanel.jsx, electronExport.js
 
-**Cohesion:** 0.18 - loosely connected
-**Members:** 22 nodes
+**Cohesion:** 0.17 - loosely connected
+**Members:** 23 nodes
 
 ## Members
 - [[KaraokeRenderer.jsx]] - code - src/components/KaraokeRenderer.jsx
@@ -31,6 +31,7 @@ members: 22
 - [[initGL()]] - code - src/utils/karaokeDrawerGL.js
 - [[karaokeDrawer.js]] - code - src/utils/karaokeDrawer.js
 - [[karaokeDrawerGL.js]] - code - src/utils/karaokeDrawerGL.js
+- [[prettyTime()]] - code - src/utils/karaokeHelpers.js
 - [[roundRect()]] - code - src/utils/karaokeDrawer.js
 
 ## Live Query (requires Dataview plugin)
@@ -49,3 +50,4 @@ SORT file.name ASC
 - [[karaokeDrawer.js]] - degree 6, connects to 1 community
 - [[computeInstrumentalGap()]] - degree 3, connects to 1 community
 - [[computeOutroGap()]] - degree 3, connects to 1 community
+- [[prettyTime()]] - degree 2, connects to 1 community

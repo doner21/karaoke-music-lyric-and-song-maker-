@@ -1,42 +1,46 @@
 ---
 type: community/narrative
 community_id: 4
-label: "Audio Alignment Service"
-size: 22
-cohesion: 0.12
+label: "KaraokeRenderer.jsx, VerificationPanel.jsx, electronExport.js"
+size: 23
+cohesion: 0.17
 character: code
 ---
 
-# Audio Alignment Service
+# Community 4: KaraokeRenderer.jsx, VerificationPanel.jsx, electronExport.js
 
-> **22 nodes** | **Cohesion: 0.12** | **Primary files:** `alignment/index.js`, `audioshake-adapter.js`, `canonicalizer.js`, `job-queue.js`
+> **23 nodes** | **Cohesion: 0.17** (moderately connected) | **Character: code**
 
 ## For Humans
 
-This service syncs lyrics text with precise audio timestamps. It sends audio + lyrics to the **AudioShake API**, which returns word-level timing data (each word gets a start_ms and end_ms). Think of it as a professional transcriptionist that tells you exactly when each word is sung.
+This community contains **23 functions** primarily in **karaokeDrawerGL.js**.
 
-```
-Lyrics text + audio → Canonicalizer (44.1kHz WAV)
-                           ↓
-                     AudioShakeAdapter.uploadLyricsAsset()
-                           ↓
-                     AudioShake API → word-level alignment JSON
-                           ↓
-                     AlignmentJobQueue.processAlign()
-                           ↓
-                     { tokens: [{ text: "Hello", start_ms: 1000, end_ms: 1500 }, ...] }
-```
-
-The **Canonicalizer** ensures audio is exactly 44.1kHz stereo WAV before upload — AudioShake rejects non-standard formats.
-
-### Key Nodes
-- `AudioShakeAdapter` — API client for lyrics-to-audio alignment
-- `Canonicalizer` — ffmpeg pre-conversion for format compliance
-- `AlignmentJobQueue` — manages alignment jobs with progress tracking
-- `.uploadLyricsAsset()` — sends lyrics text + audio to AudioShake
-- `.processAlign()` — polls alignment status until complete
+The most connected function is **drawKaraokeFrame()** with 10 connections.
 
 ## For LLMs
-- **ID:** 4 | **Size:** 22 nodes | **Cohesion:** 0.12
-- **Key files:** `server/alignment/index.js`, `audioshake-adapter.js`, `canonicalizer.js`, `job-queue.js`
-- **External API:** AudioShake (lyrics alignment)
+
+### Data
+
+- **ID:** 4
+- **Label:** KaraokeRenderer.jsx, VerificationPanel.jsx, electronExport.js
+- **Size:** 23 nodes
+- **Cohesion:** 0.17
+- **Character:** code
+- **Primary file:** karaokeDrawerGL.js
+
+### Top Nodes by Connectivity
+
+- **drawKaraokeFrame()** -- 10 connections [code]
+- **electronExport.js** -- 8 connections [code]
+- **karaokeDrawerGL.js** -- 7 connections [code]
+- **exportToMp4Electron()** -- 7 connections [code]
+- **VerificationPanel.jsx** -- 7 connections [code]
+- **karaokeDrawer.js** -- 6 connections [code]
+- **initGL()** -- 6 connections [code]
+- **drawKaraokeFrameGL()** -- 5 connections [code]
+- **destroyGL()** -- 4 connections [code]
+- **getGPUInfo()** -- 3 connections [code]
+
+### Cross-Community Connections
+- **TimelineBlockContent.jsx, karaokeHelpers.js** (C8) -- 1 edge(s)
+  - karaokeDrawer.js -> clamp01() (imports)

@@ -1,30 +1,42 @@
 ---
 type: community/narrative
 community_id: 13
-label: "Splitter Job Queue"
+label: "queue Module (8 functions)"
 size: 8
 cohesion: 0.00
 character: code
 ---
 
-# Splitter Job Queue
+# Community 13: queue Module (8 functions)
 
-> **8 nodes** | **Cohesion: 0.00** | **Primary file:** `server/splitter/queue.js`
+> **8 nodes** | **Cohesion: 0.00** (loosely connected) | **Character: code**
 
 ## For Humans
 
-Manages the lifecycle of vocal split jobs. Accepts submissions with deduplication, sets a processor function (the split adapter), and provides status polling. The processor is set once during init by the Smart Router and handles all incoming jobs.
+This community contains **8 functions** primarily in **queue.js**.
 
-### Key Nodes
-- `SplitterQueue` — job queue for split operations
-- `.submit()` — queues a split job (deprecated, JobMgr.submit is preferred)
-- `.setProcessor()` — binds the smart router's processor function
-- `.getJob()` — retrieves job status by ID
+The most connected function is **SplitterQueue** with 7 connections.
 
 ## For LLMs
-- **ID:** 13 | **Size:** 8 nodes | **Cohesion:** 0.00
-- **Key file:** `server/splitter/queue.js`
 
-### Cross-Community Connections
-- **Splitter Service (C2):** initSplitterService sets the processor
-- **Orchestrator (C3):** JobManager calls Queue.submit for split jobs
+### Data
+
+- **ID:** 13
+- **Label:** queue Module (8 functions)
+- **Size:** 8 nodes
+- **Cohesion:** 0.00
+- **Character:** code
+- **Primary file:** queue.js
+
+### Top Nodes by Connectivity
+
+- **SplitterQueue** -- 7 connections [code]
+- **queue.js** -- 1 connections [code]
+- **.submit()** -- 1 connections [code]
+- **.setProcessor()** -- 1 connections [code]
+- **.processSplit()** -- 1 connections [code]
+- **.getJob()** -- 1 connections [code]
+- **.constructor()** -- 1 connections [code]
+- **.cancel()** -- 1 connections [code]
+
+**No cross-community edges -- this community is self-contained.**

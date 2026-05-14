@@ -1,27 +1,47 @@
 ---
 type: community/narrative
 community_id: 8
-label: "AzLyrics Scraper"
+label: "TimelineBlockContent.jsx, karaokeHelpers.js"
 size: 16
-cohesion: 0.25
+cohesion: 0.17
 character: code
 ---
 
-# AzLyrics Scraper
+# Community 8: TimelineBlockContent.jsx, karaokeHelpers.js
 
-> **16 nodes** | **Cohesion: 0.25** | **Primary file:** `server/services/azlyrics.js`
+> **16 nodes** | **Cohesion: 0.17** (moderately connected) | **Character: code**
 
 ## For Humans
 
-Web scraper for AzLyrics.com. Fetches lyrics pages, parses the lyrics block from HTML, and extracts clean text. Uses rotating user agents and rate limiting to avoid blocking.
+This community contains **16 functions** primarily in **karaokeHelpers.js**.
 
-### Key Nodes
-- `scrapeLyrics()` — fetches and parses a single lyrics page
-- `parseLyrics()` — extracts lyric text from AzLyrics HTML structure
-- `getRandomUserAgent()` — rotates browser UA strings
-- `search()` — finds lyrics URLs by artist + song title
+The most connected function is **karaokeHelpers.js** with 16 connections.
 
 ## For LLMs
-- **ID:** 8 | **Size:** 16 nodes | **Cohesion:** 0.25
-- **Key file:** `server/services/azlyrics.js`
-- **External dependency:** AzLyrics.com (no API, HTML scraping)
+
+### Data
+
+- **ID:** 8
+- **Label:** TimelineBlockContent.jsx, karaokeHelpers.js
+- **Size:** 16 nodes
+- **Cohesion:** 0.17
+- **Character:** code
+- **Primary file:** karaokeHelpers.js
+
+### Top Nodes by Connectivity
+
+- **karaokeHelpers.js** -- 16 connections [code]
+- **encodeWAV()** -- 5 connections [code]
+- **clamp01()** -- 4 connections [code]
+- **audioBufferToWav()** -- 3 connections [code]
+- **writeString()** -- 2 connections [code]
+- **writeFloat32()** -- 2 connections [code]
+- **interleave()** -- 2 connections [code]
+- **floatTo16BitPCM()** -- 2 connections [code]
+- **TimelineBlockContent.jsx** -- 2 connections [code]
+- **TimelineBlockContent()** -- 2 connections [code]
+
+### Cross-Community Connections
+- **KaraokeRenderer.jsx, VerificationPanel.jsx, electronExport.js** (C4) -- 3 edge(s)
+  - karaokeHelpers.js -> prettyTime() (contains)
+  - karaokeHelpers.js -> computeInstrumentalGap() (contains)

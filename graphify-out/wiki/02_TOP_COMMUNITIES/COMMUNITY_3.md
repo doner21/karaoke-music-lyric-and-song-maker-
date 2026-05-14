@@ -1,54 +1,46 @@
 ---
 type: community/narrative
 community_id: 3
-label: "Orchestrator & Job Manager"
+label: "index.js, migrate_add_logs.js, repo.js"
 size: 31
 cohesion: 0.08
 character: code
 ---
 
-# Orchestrator & Job Manager
+# Community 3: index.js, migrate_add_logs.js, repo.js
 
-> **31 nodes** | **Cohesion: 0.08** | **Primary files:** `orchestrator/index.js`, `db/repo.js`, `db/index.js`
+> **31 nodes** | **Cohesion: 0.08** (loosely connected) | **Character: code**
 
 ## For Humans
 
-This is the **central nervous system** of KaraokeBox — it coordinates all background jobs (download, split, align) with SQLite-backed persistence. Think of it as the project manager that never sleeps.
+This community contains **31 functions** primarily in **index.js**.
 
-### How it works
-
-```
-POST /split/start → JobManager.submit(kind, songId, params)
-                        ↓
-                  SQLite INSERT → job record (pending)
-                        ↓
-                  JobManager.poll() → picks next pending job
-                        ↓
-                  JobManager.processNext() → dispatches to correct processor
-                        ↓
-                  Progress updates → /split/status/:jobId
-                        ↓
-                  Completion → job marked 'done', artifacts saved
-```
-
-**JobManager** handles: deduplication (same song + same params = skip), force re-queue (reset existing job), progress tracking, and background polling. **SongRepository** stores song metadata (artist, title, video ID) and artifacts (vocal stem, band stem, aligned JSON). **getDB()** initializes the SQLite connection with WAL mode for concurrent reads during writes.
-
-### Key Nodes
-- `JobManager.submit()` — queues a new job, deduplicates by songId+params hash
-- `JobManager.processNext()` — FIFO job dispatch to the correct processor
-- `JobManager.poll()` — background interval that checks for pending jobs
-- `SongRepository.getArtifacts()` — retrieves output files (stems, JSON) by song
-- `initDB()` — schema creation with foreign keys and indexes
+The most connected function is **JobManager** with 14 connections.
 
 ## For LLMs
 
+### Data
+
 - **ID:** 3
+- **Label:** index.js, migrate_add_logs.js, repo.js
 - **Size:** 31 nodes
-- **Cohesion:** 0.08 (loose — JobManager orchestrates independent processors)
-- **Key files:** `server/orchestrator/index.js`, `server/db/repo.js`, `server/db/index.js`
+- **Cohesion:** 0.08
+- **Character:** code
+- **Primary file:** index.js
+
+### Top Nodes by Connectivity
+
+- **JobManager** -- 14 connections [code]
+- **SongRepository** -- 12 connections [code]
+- **getDB()** -- 7 connections [code]
+- **.processNext()** -- 4 connections [code]
+- **initDB()** -- 3 connections [code]
+- **repo.js** -- 2 connections [code]
+- **index.js** -- 2 connections [code]
+- **index.js** -- 2 connections [code]
+- **.submit()** -- 2 connections [code]
+- **.startPolling()** -- 2 connections [code]
 
 ### Cross-Community Connections
-- **Download Engine (C0):** JobManager routes download jobs
-- **Splitter Service (C2):** JobManager routes split jobs to Queue
-- **Alignment (C4):** routes alignment jobs
-- **Splitter Queue (C13):** Queue.submit() called by JobManager
+- **job-queue Module (10 functions)** (C12) -- 1 edge(s)
+  - JobManager -> .updateProgress() (method)

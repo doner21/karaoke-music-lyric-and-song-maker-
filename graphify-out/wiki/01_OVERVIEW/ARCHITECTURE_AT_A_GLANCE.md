@@ -4,42 +4,42 @@ type: overview/architecture
 
 # Architecture at a Glance
 
-KaraokeBox is a full-stack application that downloads songs from YouTube, separates vocals from instrumentals using AI (Demucs/UVR-MDX-NET), syncs lyrics, and renders karaoke videos for export.
+## Core Concepts (God Nodes)
 
-## Pipeline Flow
+The most connected concepts form the backbone:
 
-```
-YouTube URL → [Download Engine] → audio.mp3
-                                    ↓
-                           [Splitter Service] → vocals.mp3 + band.mp3
-                                    ↓
-                           [Lyrics Fetcher] → synced lyrics JSON
-                                    ↓
-                           [Karaoke Renderer] → MP4 export
-```
+- **AudioStemManager** (21 connections)
+- **JobManager** (14 connections)
+- **SongRepository** (12 connections)
+- **AudioShakeAdapter** (11 connections)
+- **EngineManager** (10 connections)
+- **drawKaraokeFrame()** (10 connections)
+- **insertToken()** (9 connections)
+- **Canonicalizer** (8 connections)
+- **AlignmentJobQueue** (8 connections)
+- **DownloadEngine** (8 connections)
 
-## Core Systems
+## Community Map
 
-### 1. Download Engine (Community 0)
-Downloads audio from YouTube using yt-dlp. Has a strategy-based engine manager that tries yt-dlp first, falls back to mock/reliable downloaders. Manages job queues with deduplication.
-
-### 2. Splitter Service (Community 2)
-AI-powered vocal separation. Routes to Demucs (htdemucs model) for hybrid real splitting or UVR-MDX-NET for instrument-focused separation. Includes phase-inversion FFmpeg fallback and mock adapter for testing. Uses a wrapper script (`run_audio_separator.py`) to invoke Python audio-separator CLI reliably on Windows.
-
-### 3. Orchestrator / Job Manager (Community 3)
-Central job management. Handles download and split jobs with SQLite-backed persistence, deduplication, force re-queue, progress tracking, and polling. The SongRepository manages song metadata and artifacts.
-
-### 4. Alignment Service (Community 4)
-Syncs lyrics timing with audio using AudioShake API. Canonicalizes audio format before submission, processes alignment jobs with progress tracking.
-
-### 5. Karaoke Renderer (Community 5)
-GPU-accelerated WebGL karaoke frame rendering. Draws animated lyrics overlays with word highlighting, exports to MP4 via ffmpeg pipe. Used by both Electron and web export paths.
-
-### 6. Audio Stem Manager (Community 6)
-Coordinates playback of multiple audio stems (vocals, band, drums, bass). Handles loading, pausing, time synchronization between stems.
-
-### 7. Lyrics Pipeline (Communities 1, 11, 14)
-Token-based lyrics editor with undo stack, validation, pagination, and word-level highlight calculation. Fetches lyrics from Genius/AzLyrics.
-
-### 8. Frontend UI (Communities 10, 16, 17)
-React components for the karaoke maker interface, GPU capability detection, error boundaries, and the Integrated Ecological OS karaoke design system.
+| # | Community | Nodes | Character |
+|---|-----------|-------|-----------|
+| 0 | [[../02_TOP_COMMUNITIES/COMMUNITY_0|engine-interface.js, engine-manager.js, jo...]] | 39 | code |
+| 1 | [[../02_TOP_COMMUNITIES/COMMUNITY_1|TokenEditorPanel.jsx, jsonAdapters.js, jso...]] | 37 | code |
+| 2 | [[../02_TOP_COMMUNITIES/COMMUNITY_2|audio-separator-adapter.js, demucs-adapter...]] | 33 | code |
+| 3 | [[../02_TOP_COMMUNITIES/COMMUNITY_3|index.js, migrate_add_logs.js, repo.js]] | 31 | code |
+| 4 | [[../02_TOP_COMMUNITIES/COMMUNITY_4|KaraokeRenderer.jsx, VerificationPanel.jsx...]] | 23 | code |
+| 5 | [[../02_TOP_COMMUNITIES/COMMUNITY_5|audioshake-adapter.js, canonicalizer.js, i...]] | 22 | code |
+| 6 | [[../02_TOP_COMMUNITIES/COMMUNITY_6|AudioStemManager Module (21 functions)]] | 21 | code |
+| 7 | [[../02_TOP_COMMUNITIES/COMMUNITY_7|azlyrics.js, genius.js, lyricsParser.js]] | 16 | code |
+| 8 | [[../02_TOP_COMMUNITIES/COMMUNITY_8|TimelineBlockContent.jsx, karaokeHelpers.js]] | 16 | code |
+| 9 | [[../02_TOP_COMMUNITIES/COMMUNITY_9|index.js, server-proxy.js, titleParser.js]] | 15 | code |
+| 10 | [[../02_TOP_COMMUNITIES/COMMUNITY_10|IntegratedEcologicalOS.jsx, gpuCapabilitie...]] | 13 | code |
+| 11 | [[../02_TOP_COMMUNITIES/COMMUNITY_11|KaraokeLyricsDisplay.jsx, gapDetector.js, ...]] | 13 | code |
+| 12 | [[../02_TOP_COMMUNITIES/COMMUNITY_12|job-queue Module (10 functions)]] | 10 | code |
+| 13 | [[../02_TOP_COMMUNITIES/COMMUNITY_13|queue Module (8 functions)]] | 8 | code |
+| 14 | [[../02_TOP_COMMUNITIES/COMMUNITY_14|wordHighlightCalculator Module (7 functions)]] | 7 | code |
+| 15 | [[../02_TOP_COMMUNITIES/COMMUNITY_15|debug_separate.py]] | 6 | code |
+| 16 | [[../02_TOP_COMMUNITIES/COMMUNITY_16|AudioErrorBoundaryx Module (6 functions)]] | 6 | code |
+| 17 | [[../02_TOP_COMMUNITIES/COMMUNITY_17|SimpleErrorBoundaryx Module (6 functions)]] | 6 | code |
+| 18 | [[../02_TOP_COMMUNITIES/COMMUNITY_18|search Module (5 functions)]] | 5 | code |
+| 19 | [[../02_TOP_COMMUNITIES/COMMUNITY_19|exportService.js]] | 5 | code |

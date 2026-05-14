@@ -29,14 +29,14 @@
       }
     },
     {
-      "query": "tag:#community/audioshake-adapter.js,_canonicalizer.js,_index.js",
+      "query": "tag:#community/KaraokeRenderer.jsx,_VerificationPanel.jsx,_electronExport.js",
       "color": {
         "a": 1,
         "rgb": 5873999
       }
     },
     {
-      "query": "tag:#community/KaraokeRenderer.jsx,_VerificationPanel.jsx,_electronExport.js",
+      "query": "tag:#community/audioshake-adapter.js,_canonicalizer.js,_index.js",
       "color": {
         "a": 1,
         "rgb": 15583560
@@ -50,14 +50,14 @@
       }
     },
     {
-      "query": "tag:#community/TimelineBlockContent.jsx,_karaokeHelpers.js",
+      "query": "tag:#community/azlyrics.js,_genius.js,_lyricsParser.js",
       "color": {
         "a": 1,
         "rgb": 16752039
       }
     },
     {
-      "query": "tag:#community/azlyrics.js,_genius.js,_lyricsParser.js",
+      "query": "tag:#community/TimelineBlockContent.jsx,_karaokeHelpers.js",
       "color": {
         "a": 1,
         "rgb": 10253663
@@ -155,185 +155,297 @@
       }
     },
     {
-      "query": "tag:#community/main.js",
+      "query": "tag:#community/ARCHITECTURE",
       "color": {
         "a": 1,
         "rgb": 14767961
+      }
+    },
+    {
+      "query": "tag:#community/main.js",
+      "color": {
+        "a": 1,
+        "rgb": 7780274
       }
     },
     {
       "query": "tag:#community/index.js",
       "color": {
         "a": 1,
-        "rgb": 7780274
+        "rgb": 5873999
       }
     },
     {
       "query": "tag:#community/inspect_demucs_config.py",
       "color": {
         "a": 1,
-        "rgb": 5873999
+        "rgb": 15583560
       }
     },
     {
       "query": "tag:#community/verify-rendering.js",
       "color": {
         "a": 1,
-        "rgb": 15583560
+        "rgb": 11565729
       }
     },
     {
       "query": "tag:#community/run_audio_separator.py",
       "color": {
         "a": 1,
-        "rgb": 11565729
+        "rgb": 16752039
       }
     },
     {
       "query": "tag:#community/App.jsx",
       "color": {
         "a": 1,
-        "rgb": 16752039
+        "rgb": 10253663
       }
     },
     {
       "query": "tag:#community/ElectronYouTubePlayer.jsx",
       "color": {
         "a": 1,
-        "rgb": 10253663
+        "rgb": 12234924
       }
     },
     {
       "query": "tag:#community/InlineTextEditor.jsx",
       "color": {
         "a": 1,
-        "rgb": 12234924
+        "rgb": 5142951
       }
     },
     {
       "query": "tag:#community/TokenBlock.jsx",
       "color": {
         "a": 1,
-        "rgb": 5142951
+        "rgb": 15896107
       }
     },
     {
       "query": "tag:#community/TokenContextMenu.jsx",
       "color": {
         "a": 1,
-        "rgb": 15896107
+        "rgb": 14767961
       }
     },
     {
       "query": "tag:#community/TokenTimeline.jsx",
       "color": {
         "a": 1,
-        "rgb": 14767961
+        "rgb": 7780274
       }
     },
     {
       "query": "tag:#community/ValidationPanel.jsx",
       "color": {
         "a": 1,
-        "rgb": 7780274
+        "rgb": 5873999
       }
     },
     {
       "query": "tag:#community/VocalWaveform.jsx",
       "color": {
         "a": 1,
-        "rgb": 5873999
+        "rgb": 15583560
       }
     },
     {
       "query": "tag:#community/CountdownBar.jsx",
       "color": {
         "a": 1,
-        "rgb": 15583560
+        "rgb": 11565729
       }
     },
     {
       "query": "tag:#community/LetterFillWord.jsx",
       "color": {
         "a": 1,
-        "rgb": 11565729
+        "rgb": 16752039
       }
     },
     {
       "query": "tag:#community/LyricsControls.jsx",
       "color": {
         "a": 1,
-        "rgb": 16752039
+        "rgb": 10253663
       }
     },
     {
       "query": "tag:#community/NoLyricsIntervalDisplay.jsx",
       "color": {
         "a": 1,
-        "rgb": 10253663
+        "rgb": 12234924
       }
     },
     {
       "query": "tag:#community/VerificationLoader.jsx",
       "color": {
         "a": 1,
-        "rgb": 12234924
-      }
-    },
-    {
-      "query": "tag:#community/postcss.config.js",
-      "color": {
-        "a": 1,
         "rgb": 5142951
       }
     },
     {
-      "query": "tag:#community/tailwind.config.js",
+      "query": "tag:#community/ARCHITECTURE",
       "color": {
         "a": 1,
         "rgb": 15896107
       }
     },
     {
-      "query": "tag:#community/vite.config.js",
+      "query": "tag:#community/postcss.config.js",
       "color": {
         "a": 1,
         "rgb": 14767961
       }
     },
     {
-      "query": "tag:#community/vite.config.js.timestamp-1765368324064-0a7d9dcf72a16.mjs",
+      "query": "tag:#community/tailwind.config.js",
       "color": {
         "a": 1,
         "rgb": 7780274
       }
     },
     {
-      "query": "tag:#community/vitest.config.js",
+      "query": "tag:#community/vite.config.js",
       "color": {
         "a": 1,
         "rgb": 5873999
       }
     },
     {
-      "query": "tag:#community/cleanup.ps1",
+      "query": "tag:#community/vite.config.js.timestamp-1765368324064-0a7d9dcf72a16.mjs",
       "color": {
         "a": 1,
         "rgb": 15583560
       }
     },
     {
-      "query": "tag:#community/storage.js",
+      "query": "tag:#community/vitest.config.js",
       "color": {
         "a": 1,
         "rgb": 11565729
       }
     },
     {
-      "query": "tag:#community/main.jsx",
+      "query": "tag:#community/cleanup.ps1",
       "color": {
         "a": 1,
         "rgb": 16752039
+      }
+    },
+    {
+      "query": "tag:#community/storage.js",
+      "color": {
+        "a": 1,
+        "rgb": 10253663
+      }
+    },
+    {
+      "query": "tag:#community/main.jsx",
+      "color": {
+        "a": 1,
+        "rgb": 12234924
+      }
+    },
+    {
+      "query": "tag:#community/ARCHITECTURE",
+      "color": {
+        "a": 1,
+        "rgb": 5142951
+      }
+    },
+    {
+      "query": "tag:#community/ARCHITECTURE",
+      "color": {
+        "a": 1,
+        "rgb": 15896107
+      }
+    },
+    {
+      "query": "tag:#community/ARCHITECTURE",
+      "color": {
+        "a": 1,
+        "rgb": 14767961
+      }
+    },
+    {
+      "query": "tag:#community/ARCHITECTURE",
+      "color": {
+        "a": 1,
+        "rgb": 7780274
+      }
+    },
+    {
+      "query": "tag:#community/ARCHITECTURE",
+      "color": {
+        "a": 1,
+        "rgb": 5873999
+      }
+    },
+    {
+      "query": "tag:#community/ARCHITECTURE",
+      "color": {
+        "a": 1,
+        "rgb": 15583560
+      }
+    },
+    {
+      "query": "tag:#community/ARCHITECTURE",
+      "color": {
+        "a": 1,
+        "rgb": 11565729
+      }
+    },
+    {
+      "query": "tag:#community/ARCHITECTURE",
+      "color": {
+        "a": 1,
+        "rgb": 16752039
+      }
+    },
+    {
+      "query": "tag:#community/ARCHITECTURE",
+      "color": {
+        "a": 1,
+        "rgb": 10253663
+      }
+    },
+    {
+      "query": "tag:#community/ARCHITECTURE",
+      "color": {
+        "a": 1,
+        "rgb": 12234924
+      }
+    },
+    {
+      "query": "tag:#community/ARCHITECTURE",
+      "color": {
+        "a": 1,
+        "rgb": 5142951
+      }
+    },
+    {
+      "query": "tag:#community/ARCHITECTURE",
+      "color": {
+        "a": 1,
+        "rgb": 15896107
+      }
+    },
+    {
+      "query": "tag:#community/ARCHITECTURE",
+      "color": {
+        "a": 1,
+        "rgb": 14767961
+      }
+    },
+    {
+      "query": "tag:#community/ARCHITECTURE",
+      "color": {
+        "a": 1,
+        "rgb": 7780274
       }
     }
   ]

@@ -1,25 +1,44 @@
 ---
 type: community/narrative
 community_id: 7
-label: "Audio Utilities"
-size: 17
-cohesion: 0.16
+label: "azlyrics.js, genius.js, lyricsParser.js"
+size: 16
+cohesion: 0.25
 character: code
 ---
 
-# Audio Utilities
+# Community 7: azlyrics.js, genius.js, lyricsParser.js
 
-> **17 nodes** | **Cohesion: 0.16** | **Primary file:** `src/utils/karaokeHelpers.js`
+> **16 nodes** | **Cohesion: 0.25** (moderately connected) | **Character: code**
 
 ## For Humans
 
-Audio encoding/decoding helpers used across the app. Provides WAV encoding (`encodeWAV`, `audioBufferToWav`), audio level clamping (`clamp01`), and CDG color palette utilities. These are pure utility functions with no side effects — the "toolbox" that other components reach into.
+This community contains **16 functions** primarily in **azlyrics.js**.
 
-### Key Nodes
-- `encodeWAV()` — converts AudioBuffer to WAV byte array for ffmpeg
-- `audioBufferToWav()` — AudioBuffer → Blob with WAV header
-- `clamp01()` — clamps audio sample values to [-1, 1] range
+The most connected function is **azlyrics.js** with 10 connections.
 
 ## For LLMs
-- **ID:** 7 | **Size:** 17 nodes | **Cohesion:** 0.16
-- **Key file:** `src/utils/karaokeHelpers.js`
+
+### Data
+
+- **ID:** 7
+- **Label:** azlyrics.js, genius.js, lyricsParser.js
+- **Size:** 16 nodes
+- **Cohesion:** 0.25
+- **Character:** code
+- **Primary file:** azlyrics.js
+
+### Top Nodes by Connectivity
+
+- **azlyrics.js** -- 10 connections [code]
+- **parseLyrics()** -- 6 connections [code]
+- **scrapeLyrics()** -- 5 connections [code]
+- **getRandomUserAgent()** -- 5 connections [code]
+- **constructUrl()** -- 5 connections [code]
+- **scrapeFromUrl()** -- 4 connections [code]
+- **randomDelay()** -- 4 connections [code]
+- **genius.js** -- 4 connections [code]
+- **searchSong()** -- 3 connections [code]
+- **searchLyrics()** -- 3 connections [code]
+
+**No cross-community edges -- this community is self-contained.**

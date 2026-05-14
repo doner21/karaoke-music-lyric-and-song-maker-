@@ -1,25 +1,40 @@
 ---
 type: community/narrative
 community_id: 17
-label: "Simple Error Boundary"
+label: "SimpleErrorBoundaryx Module (6 functions)"
 size: 6
 cohesion: 0.00
 character: code
 ---
 
-# Simple Error Boundary
+# Community 17: SimpleErrorBoundaryx Module (6 functions)
 
-> **6 nodes** | **Cohesion: 0.00** | **Primary file:** `src/components/SimpleErrorBoundary.jsx`
+> **6 nodes** | **Cohesion: 0.00** (loosely connected) | **Character: code**
 
 ## For Humans
 
-Generic React error boundary for catching non-audio runtime errors in the UI. Provides a clean fallback message instead of crashing the entire React tree. Works alongside the AudioErrorBoundary (Community 16) for comprehensive error coverage.
+This community contains **6 functions** primarily in **SimpleErrorBoundary.jsx**.
 
-### Key Nodes
-- `SimpleErrorBoundary` — catches generic React errors
-- `.getDerivedStateFromError()` — captures error details
-- `.render()` — shows error fallback UI
+The most connected function is **SimpleErrorBoundary** with 5 connections.
 
 ## For LLMs
-- **ID:** 17 | **Size:** 6 nodes | **Cohesion:** 0.00
-- **Key file:** `src/components/SimpleErrorBoundary.jsx`
+
+### Data
+
+- **ID:** 17
+- **Label:** SimpleErrorBoundaryx Module (6 functions)
+- **Size:** 6 nodes
+- **Cohesion:** 0.00
+- **Character:** code
+- **Primary file:** SimpleErrorBoundary.jsx
+
+### Top Nodes by Connectivity
+
+- **SimpleErrorBoundary** -- 5 connections [code]
+- **SimpleErrorBoundary.jsx** -- 1 connections [code]
+- **.render()** -- 1 connections [code]
+- **.getDerivedStateFromError()** -- 1 connections [code]
+- **.constructor()** -- 1 connections [code]
+- **.componentDidCatch()** -- 1 connections [code]
+
+**No cross-community edges -- this community is self-contained.**

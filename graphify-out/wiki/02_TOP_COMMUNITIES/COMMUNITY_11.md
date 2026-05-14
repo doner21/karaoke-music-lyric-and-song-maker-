@@ -1,26 +1,44 @@
 ---
 type: community/narrative
 community_id: 11
-label: "Lyrics Pagination"
+label: "KaraokeLyricsDisplay.jsx, gapDetector.js, lyricsPagination.js"
 size: 13
 cohesion: 0.23
 character: code
 ---
 
-# Lyrics Pagination
+# Community 11: KaraokeLyricsDisplay.jsx, gapDetector.js, lyricsPagination.js
 
-> **13 nodes** | **Cohesion: 0.23** | **Primary files:** `src/utils/lyricsPagination.js`, `src/components/lyrics/PaginatedLyricsDisplay.jsx`, `KaraokeLyricsDisplay.jsx`
+> **13 nodes** | **Cohesion: 0.23** (moderately connected) | **Character: code**
 
 ## For Humans
 
-Splits long karaoke songs into readable "pages" of lyrics (like a teleprompter). Calculates which lyrics lines fit on screen based on timing and line count, then provides page-forward/page-back navigation.
+This community contains **13 functions** primarily in **lyricsPagination.js**.
 
-### Key Nodes
-- `getCurrentPage()` — determines which page of lyrics is currently visible
-- `lyricsPagination.js` — page calculation with line grouping
-- `PaginatedLyricsDisplay` — renders current page with animations
-- `KaraokeLyricsDisplay` — full-screen lyrics overlay with word highlighting
+The most connected function is **KaraokeLyricsDisplay.jsx** with 6 connections.
 
 ## For LLMs
-- **ID:** 11 | **Size:** 13 nodes | **Cohesion:** 0.23
-- **Key files:** `src/utils/lyricsPagination.js`, `src/components/lyrics/PaginatedLyricsDisplay.jsx`, `KaraokeLyricsDisplay.jsx`
+
+### Data
+
+- **ID:** 11
+- **Label:** KaraokeLyricsDisplay.jsx, gapDetector.js, lyricsPagination.js
+- **Size:** 13 nodes
+- **Cohesion:** 0.23
+- **Character:** code
+- **Primary file:** lyricsPagination.js
+
+### Top Nodes by Connectivity
+
+- **KaraokeLyricsDisplay.jsx** -- 6 connections [code]
+- **getCurrentPage()** -- 5 connections [code]
+- **lyricsPagination.js** -- 4 connections [code]
+- **KaraokeLyricsDisplay()** -- 4 connections [code]
+- **usePlaybackTime()** -- 3 connections [code]
+- **normalizeLyrics()** -- 3 connections [code]
+- **getActiveGap()** -- 3 connections [code]
+- **findPageContainingLine()** -- 2 connections [code]
+- **findNextHighlightableWord()** -- 2 connections [code]
+- **calculatePages()** -- 2 connections [code]
+
+**No cross-community edges -- this community is self-contained.**

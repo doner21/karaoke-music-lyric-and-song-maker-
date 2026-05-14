@@ -1,26 +1,39 @@
 ---
 type: community/narrative
 community_id: 19
-label: "ASS Subtitle Export Service"
+label: "exportService.js"
 size: 5
 cohesion: 0.70
 character: code
 ---
 
-# ASS Subtitle Export Service
+# Community 19: exportService.js
 
-> **5 nodes** | **Cohesion: 0.70** | **Primary file:** `server/services/exportService.js`
+> **5 nodes** | **Cohesion: 0.70** (very tightly integrated) | **Character: code**
 
 ## For Humans
 
-Generates ASS (Advanced SubStation Alpha) subtitle files from aligned lyrics data. ASS format supports karaoke-style per-syllable timing, colors, and positioning — used by video players and editing software for karaoke overlays.
+This community contains **5 functions** primarily in **exportService.js**.
 
-### Key Nodes
-- `generateKaraokeAss()` — produces ASS subtitle content from token data
-- `hexToAssBgr()` — converts hex colors to ASS BGR format
-- `formatAssTime()` — formats millisecond times as ASS timestamps (H:MM:SS.cc)
+The most connected function is **generateKaraokeAss()** with 4 connections.
 
 ## For LLMs
-- **ID:** 19 | **Size:** 5 nodes | **Cohesion:** 0.70 (tight — tightly focused utility)
-- **Key file:** `server/services/exportService.js`
-- **Format:** Advanced SubStation Alpha (.ass)
+
+### Data
+
+- **ID:** 19
+- **Label:** exportService.js
+- **Size:** 5 nodes
+- **Cohesion:** 0.70
+- **Character:** code
+- **Primary file:** exportService.js
+
+### Top Nodes by Connectivity
+
+- **generateKaraokeAss()** -- 4 connections [code]
+- **exportService.js** -- 4 connections [code]
+- **hexToAssBgr()** -- 2 connections [code]
+- **formatAssTime()** -- 2 connections [code]
+- **exportKaraokeVideo()** -- 2 connections [code]
+
+**No cross-community edges -- this community is self-contained.**

@@ -1,26 +1,40 @@
 ---
 type: community/narrative
 community_id: 16
-label: "Audio Error Boundary"
+label: "AudioErrorBoundaryx Module (6 functions)"
 size: 6
 cohesion: 0.00
 character: code
 ---
 
-# Audio Error Boundary
+# Community 16: AudioErrorBoundaryx Module (6 functions)
 
-> **6 nodes** | **Cohesion: 0.00** | **Primary file:** `src/components/AudioErrorBoundary.jsx`
+> **6 nodes** | **Cohesion: 0.00** (loosely connected) | **Character: code**
 
 ## For Humans
 
-React error boundary that catches Web Audio API failures (missing codecs, permission denied, decode errors) and shows a user-friendly fallback instead of a white screen. Wrap any audio-playing component with this to prevent crashes from bubbling up.
+This community contains **6 functions** primarily in **AudioErrorBoundary.jsx**.
 
-### Key Nodes
-- `AudioErrorBoundary` — catches audio errors in child component tree
-- `.getDerivedStateFromError()` — updates state on error
-- `.render()` — shows fallback UI when error caught
+The most connected function is **AudioErrorBoundary** with 5 connections.
 
 ## For LLMs
-- **ID:** 16 | **Size:** 6 nodes | **Cohesion:** 0.00
-- **Key file:** `src/components/AudioErrorBoundary.jsx`
-- **Related:** Community 17 (SimpleErrorBoundary) — generic error boundary for non-audio errors
+
+### Data
+
+- **ID:** 16
+- **Label:** AudioErrorBoundaryx Module (6 functions)
+- **Size:** 6 nodes
+- **Cohesion:** 0.00
+- **Character:** code
+- **Primary file:** AudioErrorBoundary.jsx
+
+### Top Nodes by Connectivity
+
+- **AudioErrorBoundary** -- 5 connections [code]
+- **AudioErrorBoundary.jsx** -- 1 connections [code]
+- **.render()** -- 1 connections [code]
+- **.getDerivedStateFromError()** -- 1 connections [code]
+- **.constructor()** -- 1 connections [code]
+- **.componentDidCatch()** -- 1 connections [code]
+
+**No cross-community edges -- this community is self-contained.**
