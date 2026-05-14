@@ -1,42 +1,52 @@
 ---
 type: community/narrative
 community_id: 13
-label: "queue Module (8 functions)"
+label: "Splitter Job Queue"
 size: 8
 cohesion: 0.00
 character: code
 ---
 
-# Community 13: queue Module (8 functions)
+# Splitter Job Queue
 
-> **8 nodes** | **Cohesion: 0.00** (loosely connected) | **Character: code**
+> **8 nodes** | **Cohesion: 0.00** (single class) | **File:** `server/splitter/queue.js`
 
 ## For Humans
 
-This community contains **8 functions** primarily in **queue.js**.
+**Real-world analogy:** This is the **mixing engineer's appointment book**. It accepts split job requests, avoids scheduling the same song twice (deduplication), assigns the right engineer (processor function), and lets you check the status of any job. Simple FIFO with progress tracking.
 
-The most connected function is **SplitterQueue** with 7 connections.
+```
+┌────────────────────────────────────┐
+│         SplitterQueue              │
+│  ┌──────────────────────────────┐  │
+│  │ .submit(songId, params)      │  │
+│  │  → dedup: same song = skip   │  │
+│  │  → force: re-queue if needed │  │
+│  └──────────────────────────────┘  │
+│  ┌──────────────────────────────┐  │
+│  │ .setProcessor(fn)            │  │
+│  │  → Smart Router binds here   │  │
+│  │  → all jobs use this fn      │  │
+│  └──────────────────────────────┘  │
+│  ┌──────────────────────────────┐  │
+│  │ .getJob(jobId) → status      │  │
+│  └──────────────────────────────┘  │
+└────────────────────────────────────┘
+```
+
+### Key Nodes
+- **SplitterQueue** → Job queue for split operations
+- **.submit()** → Queues with deduplication (deprecated, use JobMgr)
+- **.setProcessor()** → Binds the Smart Router's processor
+
+### Cohesion: 0.00 (single class)
+All methods serve the SplitterQueue object.
+
+### Bridges
+- **Splitter Service (C2):** initSplitterService() sets processor
+- **Orchestrator (C3):** JobManager calls .submit() for split jobs
 
 ## For LLMs
 
-### Data
-
-- **ID:** 13
-- **Label:** queue Module (8 functions)
-- **Size:** 8 nodes
-- **Cohesion:** 0.00
-- **Character:** code
-- **Primary file:** queue.js
-
-### Top Nodes by Connectivity
-
-- **SplitterQueue** -- 7 connections [code]
-- **queue.js** -- 1 connections [code]
-- **.submit()** -- 1 connections [code]
-- **.setProcessor()** -- 1 connections [code]
-- **.processSplit()** -- 1 connections [code]
-- **.getJob()** -- 1 connections [code]
-- **.constructor()** -- 1 connections [code]
-- **.cancel()** -- 1 connections [code]
-
-**No cross-community edges -- this community is self-contained.**
+- **ID:** 13 · **Size:** 8 · **Cohesion:** 0.00
+- **File:** `server/splitter/queue.js`
