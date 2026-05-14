@@ -136,28 +136,52 @@ ipcMain.handle('copy-file', async (event, { sourcePath, destPath }) => {
 
 ipcMain.handle('probe-gpu-encoders', async () => {
     try {
-        const result = await new Promise((resolve, reject) => {
-            const proc = spawn(FFMPEG_PATH, ['-encoders'], { stdio: 'pipe' });
-            let stdout = '';
-            let stderr = '';
-            proc.stdout.on('data', (data) => { stdout += data.toString(); });
-            proc.stderr.on('data', (data) => { stderr += data.toString(); });
-            proc.on('close', (code) => {
-                // FFmpeg -encoders exits with 0 on success
-                resolve(stdout);
-            });
-            proc.on('error', (err) => {
-                reject(err);
-            });
-        });
+        const ENCODERS = ['h264_nvenc', 'h264_amf', 'h264_qsv'];
+        const PROBE_TIMEOUT_MS = 5000;
 
-        const nvenc = result.includes('h264_nvenc');
-        const qsv = result.includes('h264_qsv');
-        console.log(`[GPU Probe] NVENC: ${nvenc}, QSV: ${qsv}`);
-        return { success: true, nvenc, qsv };
+        const testEncoder = (encoder) => {
+            return new Promise((resolve) => {
+                const args = [
+                    '-y',
+                    '-f', 'lavfi',
+                    '-i', 'color=black:size=16x16:d=0.1',
+                    '-c:v', encoder,
+                    '-f', 'null',
+                    '-'
+                ];
+                let killed = false;
+                const proc = spawn(FFMPEG_PATH, args, { stdio: 'pipe' });
+                const timer = setTimeout(() => {
+                    if (!killed) {
+                        killed = true;
+                        try { proc.kill(); } catch (e) { /* ignore */ }
+                        resolve(false);
+                    }
+                }, PROBE_TIMEOUT_MS);
+                proc.on('close', (code) => {
+                    if (!killed) {
+                        clearTimeout(timer);
+                        resolve(code === 0);
+                    }
+                });
+                proc.on('error', () => {
+                    if (!killed) {
+                        clearTimeout(timer);
+                        resolve(false);
+                    }
+                });
+                // Drain stdout/stderr to prevent backpressure
+                proc.stdout.on('data', () => {});
+                proc.stderr.on('data', () => {});
+            });
+        };
+
+        const [nvenc, amf, qsv] = await Promise.all(ENCODERS.map(testEncoder));
+        console.log(`[GPU Probe] NVENC: ${nvenc}, AMF: ${amf}, QSV: ${qsv}`);
+        return { success: true, nvenc, amf, qsv };
     } catch (err) {
         console.error('[GPU Probe] Failed:', err.message);
-        return { success: false, nvenc: false, qsv: false, error: err.message };
+        return { success: false, nvenc: false, amf: false, qsv: false, error: err.message };
     }
 });
 
@@ -181,7 +205,7 @@ ipcMain.handle('export-start', async (event, options) => {
         await fs.promises.mkdir(framesDir, { recursive: true });
 
         // Validate encoder — default to libx264 if not specified or invalid
-        const validEncoders = ['h264_nvenc', 'h264_qsv', 'libx264'];
+        const validEncoders = ['h264_nvenc', 'h264_amf', 'h264_qsv', 'libx264'];
         const resolvedEncoder = validEncoders.includes(encoder) ? encoder : 'libx264';
 
         // Store export state
@@ -285,6 +309,24 @@ ipcMain.handle('export-finalize', async (event, { exportId }) => {
                 videoOnlyPath
             ];
             console.log('[Export] Step 1: Encoding video frames with QSV (Intel GPU)...');
+        } else if (encoder === 'h264_amf') {
+            // AMF: GPU-accelerated encoding (AMD)
+            // CQP mode at qp_i=18/qp_p=20 approximates x264 CRF 17
+            videoEncodeArgs = [
+                '-y',
+                '-framerate', String(exp.fps),
+                '-i', inputPattern,
+                '-c:v', 'h264_amf',
+                '-usage', 'transcoding',
+                '-quality', 'quality',
+                '-rc', 'cqp',
+                '-qp_i', '18',
+                '-qp_p', '20',
+                '-profile:v', 'high',
+                '-pix_fmt', 'yuv420p',
+                videoOnlyPath
+            ];
+            console.log('[Export] Step 1: Encoding video frames with AMF (AMD GPU)...');
         } else {
             // CPU fallback: libx264 (unchanged from original)
             // CRF 17 = visually lossless for synthetic/text content
@@ -432,7 +474,7 @@ ipcMain.handle('export-start-streaming', async (event, options) => {
         const videoOnlyPath = path.join(tempDir, 'video_only.mp4');
 
         // Validate encoder
-        const validEncoders = ['h264_nvenc', 'h264_qsv', 'libx264'];
+        const validEncoders = ['h264_nvenc', 'h264_amf', 'h264_qsv', 'libx264'];
         const resolvedEncoder = validEncoders.includes(encoder) ? encoder : 'libx264';
 
         // Build FFmpeg args for raw video input via stdin pipe
@@ -461,6 +503,17 @@ ipcMain.handle('export-start-streaming', async (event, options) => {
                 '-c:v', 'h264_qsv',
                 '-preset', 'veryslow',
                 '-global_quality', '19',
+                '-profile:v', 'high',
+                '-pix_fmt', 'yuv420p'
+            );
+        } else if (resolvedEncoder === 'h264_amf') {
+            videoArgs.push(
+                '-c:v', 'h264_amf',
+                '-usage', 'transcoding',
+                '-quality', 'quality',
+                '-rc', 'cqp',
+                '-qp_i', '18',
+                '-qp_p', '20',
                 '-profile:v', 'high',
                 '-pix_fmt', 'yuv420p'
             );
@@ -625,8 +678,9 @@ ipcMain.handle('export-finalize-streaming', async (event, { exportId }) => {
                     await fs.promises.rename(fallbackVideoPath, exp.videoOnlyPath);
                 } catch (fallbackErr) {
                     throw new Error(
-                        'Video encode failed: ' + exp.encoder + ' error. ' +
-                        'CPU fallback also failed. Try disabling GPU acceleration.'
+                        'GPU encoder (' + exp.encoder + ') failed. ' +
+                        'The output file is incomplete. ' +
+                        'Please retry with CPU encoding (disable GPU acceleration).'
                     );
                 }
             } else {
