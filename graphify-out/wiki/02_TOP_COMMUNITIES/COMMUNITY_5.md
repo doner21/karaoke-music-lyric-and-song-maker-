@@ -1,44 +1,80 @@
 ---
 type: community/narrative
 community_id: 5
-label: "audioshake-adapter.js, canonicalizer.js, index.js"
+label: "Audio Alignment Service"
 size: 22
 cohesion: 0.12
 character: code
 ---
 
-# Community 5: audioshake-adapter.js, canonicalizer.js, index.js
+# Audio Alignment Service
 
-> **22 nodes** | **Cohesion: 0.12** (loosely connected) | **Character: code**
+> **22 nodes** | **Cohesion: 0.12** (loose) | **Files:** `alignment/index.js`, `audioshake-adapter.js`, `canonicalizer.js`, `job-queue.js`
 
 ## For Humans
 
-This community contains **22 functions** primarily in **audioshake-adapter.js**.
+**Real-world analogy:** This is the **transcriptionist who timestamps every word**. You give them a song and its lyrics text, and they return a precise timeline: "the word 'Hello' starts at 1.032 seconds and ends at 1.547 seconds." They use the AudioShake API (a professional alignment service) and make sure the audio is in exactly the right format before sending.
 
-The most connected function is **AudioShakeAdapter** with 11 connections.
+### Architecture
+
+```
+┌─────────────────────────────────────────┐
+│        AlignmentJobQueue                │
+│  ┌───────────────────────────────────┐  │
+│  │  .processAlign()                 │  │
+│  │    → submit to AudioShake        │  │
+│  │    → poll until complete         │  │
+│  │    → save aligned JSON           │  │
+│  └──────────┬────────────────────────┘  │
+│             │                            │
+│             ▼                            │
+│  ┌───────────────────────────────────┐  │
+│  │      AudioShakeAdapter            │  │
+│  │  ┌─────────────────────────────┐  │  │
+│  │  │ .uploadLyricsAsset()        │  │  │
+│  │  │   → POST lyrics + audio     │  │  │
+│  │  │   → receive alignment job   │  │  │
+│  │  └─────────────────────────────┘  │  │
+│  └──────────┬────────────────────────┘  │
+│             │                            │
+│             ▼                            │
+│  ┌───────────────────────────────────┐  │
+│  │        Canonicalizer              │  │
+│  │  ┌─────────────────────────────┐  │  │
+│  │  │ ffmpeg -ar 44100 -ac 2      │  │  │
+│  │  │ → input_canonical.wav       │  │  │
+│  │  └─────────────────────────────┘  │  │
+│  └───────────────────────────────────┘  │
+└─────────────────────────────────────────┘
+
+     ┌────────────────────────┐
+     │    AudioShake API      │
+     │    (external service)  │
+     │                        │
+     │    lyrics + audio →    │
+     │    word-level timings  │
+     └────────────────────────┘
+```
+
+### Key Nodes
+
+| Node | Role |
+|------|------|
+| **AudioShakeAdapter** | API client for lyrics-to-audio alignment |
+| **Canonicalizer** | FFmpeg pre-conversion: 44.1kHz stereo WAV |
+| **AlignmentJobQueue** | FIFO queue with progress polling |
+| **.uploadLyricsAsset()** | Sends lyrics + audio to AudioShake |
+
+### Cohesion: 0.12 (loose)
+Adapter, queue, and canonicalizer are loosely coupled stages in a linear pipeline.
+
+### Bridges
+- **Orchestrator (C3):** JobManager submits alignment jobs
+- **Lyrics Services (C7):** Provides lyrics text
+- **Token Editor (C1):** Consumes aligned JSON for editing
 
 ## For LLMs
 
-### Data
-
-- **ID:** 5
-- **Label:** audioshake-adapter.js, canonicalizer.js, index.js
-- **Size:** 22 nodes
-- **Cohesion:** 0.12
-- **Character:** code
-- **Primary file:** audioshake-adapter.js
-
-### Top Nodes by Connectivity
-
-- **AudioShakeAdapter** -- 11 connections [code]
-- **Canonicalizer** -- 8 connections [code]
-- **index.js** -- 4 connections [code]
-- **.uploadLyricsAsset()** -- 3 connections [code]
-- **.uploadAsset()** -- 3 connections [code]
-- **.transform()** -- 3 connections [code]
-- **.submitAlignment()** -- 3 connections [code]
-- **initAlignmentService()** -- 2 connections [code]
-- **.poll()** -- 2 connections [code]
-- **.fetchResult()** -- 2 connections [code]
-
-**No cross-community edges -- this community is self-contained.**
+- **ID:** 5 · **Size:** 22 · **Cohesion:** 0.12
+- **Files:** `server/alignment/index.js`, `audioshake-adapter.js`, `canonicalizer.js`, `job-queue.js`
+- **Top nodes:** AudioShakeAdapter(7), Canonicalizer(5), .uploadLyricsAsset()(4)
