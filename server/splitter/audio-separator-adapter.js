@@ -58,7 +58,7 @@ export class AudioSeparatorAdapter {
         // For 2-stem (vocals only), use UVR-MDX-NET models or htdemucs with --two_stems
         // For simplicity, just run and let it output all stems, then pick what we need.
 
-        const cmd = `"${VENV_PYTHON}" -m audio_separator.separator "${inputPath}" --model_filename "${modelId}" --output_dir "${outputRoot}"`;
+        const cmd = `"${VENV_PYTHON}" -m audio_separator.utils.cli "${inputPath}" --model_filename "${modelId}" --output_dir "${outputRoot}"`;
 
         console.log(`[AudioSeparator] Cmd: ${cmd}`);
         onProgress(0.01, `Starting Audio Separator (${modelId})...`);

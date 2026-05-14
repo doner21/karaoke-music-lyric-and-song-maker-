@@ -95,7 +95,7 @@ export class UVRMDXNetAdapter {
         // Build command with critical MDX parameters for alignment
         // Use python -m (NOT the .exe wrapper — fragile on Windows spawn)
         const args = [
-            '-m', 'audio_separator.separator',
+            '-m', 'audio_separator.utils.cli',
             wavPath,
             '--model_filename', modelFilename,
             '--output_dir', outputRoot,
