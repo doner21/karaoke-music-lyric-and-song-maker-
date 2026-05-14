@@ -1,54 +1,46 @@
-# Intake: Vocal Splitters — Correct Python Entry Point Discovery
+# Intake: Full Splitter Verification Sweep (CPU + GPU)
 
 **Date**: 2026-05-14
-**Status**: INTAKE — requires Research → Plan → Execute workflow
-**Severity**: HIGH — splitters non-functional, core pipeline blocked
+**Branch**: `fix/splitter-cli-entry-point`
+**Workflow**: NenFlow PEV — Researcher → Planner → Executor (no Verifier)
 
 ---
 
-## Problem
+## Current State
 
-The UVR-MDX-NET splitter (and potentially Demucs/Hybrid Real) fails at the Python invocation level.
-After fixing the `spawn UNKNOWN` error (`.exe` wrapper → `python.exe -m`), the new error is:
+The vocal splitters have been fixed:
 
-```
-No module named audio_separator.separator.__main__
-'audio_separator.separator' is a package and cannot be directly executed
-```
+| Component | Status |
+|-----------|--------|
+| `uvr-mdx-net-adapter.js` | Uses `SEPARATOR_RUNNER` wrapper script |
+| `audio-separator-adapter.js` | Uses `SEPARATOR_RUNNER` wrapper script |
+| `server/splitter/run_audio_separator.py` | Wrapper calling `audio_separator.utils.cli.main()` |
+| Demucs adapter | Unchanged, known-working |
+| `venv/Lib/.../cli.py` | Reverted to original (no venv modifications) |
 
-## Root Hypothesis
+All changes are committed and tracked in git. The wrapper script is permanent — survives venv rebuilds and branch switches.
 
-The `-m audio_separator.separator` invocation is wrong — `audio_separator.separator` is a **package** (directory with `__init__.py`), not a runnable module with `__main__`. The correct entry point module or script needs to be discovered.
+## What Needs Verification
 
-The fix was previously solved in an earlier branch before a "cleanup refactor". Git history of main/previous branches may contain the correct invocation pattern.
+1. **UVR-MDX-NET (Inst Main) on CPU** — split an audio file, verify vocals + instrumental stems are produced
+2. **UVR-MDX-NET (Inst Main) on GPU** — same test with CUDA (if available)
+3. **Demucs (htdemucs) on CPU** — regression test, verify still works
+4. **Demucs (htdemucs) on GPU** — regression test with CUDA (if available)
+5. **Full server integration** — start server, submit split job, poll status, verify output
 
-## What Success Looks Like
+## Success Criteria
 
-- Both UVR-MDX-NET (Inst Main) and Demucs (Hybrid Real) splitters successfully separate vocals from band stems
-- Works on CPU and GPU
-- Nothing else in the app is affected
-- Verified with real-world test (actual split job)
+- Real audio file passes through the full pipeline: download → pre-convert → split → output stems
+- Vocals stem file exists, non-zero, playable
+- Instrumental/band stem file exists, non-zero, playable
+- No errors in server logs
+- Progress callbacks fire throughout
+- GPU path tested if CUDA available (skip otherwise with note)
 
 ## Workflow
 
-This uses the NenFlow v3 PEV workflow:
-1. **Researcher** — investigate codebase, git history, Python package structure to find correct entry point
-2. **Planner** — produce structured plan with invariants and success criteria
-3. **Executor** — implement fix with real-world tests to verify CPU + GPU splitting works
+1. **Researcher** — verify current codebase state, confirm no regressions, check GPU availability
+2. **Planner** — produce structured test plan with exact commands and verification points
+3. **Executor** — run all tests, iterate until passing, build real-world validation
 
-**Verifier is NOT required** — the Executor will verify via real-world tests.
-
-## Key Artifacts to Investigate
-
-- `server/splitter/uvr-mdx-net-adapter.js` — the failing adapter
-- `server/splitter/demucs-adapter.js` — may have similar issues
-- `venv/Lib/site-packages/audio_separator/` — Python package structure
-- `venv/Scripts/audio-separator.exe` — what does the wrapper actually run?
-- Git history: `git log --all -- server/splitter/` for previous fixes
-- The `audio-separator-adapter.js` fallback adapter — it also references `audio_separator.separator`
-
-## Constraints
-
-- Must not break Demucs path
-- Must work on Windows (PATH, spawn, environment quirks)
-- Must preserve all existing functionality: progress reporting, output file discovery, timeout, error handling
+**No Verifier** — Executor self-verifies with real tests against the actual splitter.
