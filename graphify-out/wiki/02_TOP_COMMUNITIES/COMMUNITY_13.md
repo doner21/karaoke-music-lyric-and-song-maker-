@@ -11,6 +11,8 @@ character: code
 
 > **8 nodes** | **Cohesion: 0.00** | **Primary file:** `server/splitter/queue.js`
 
+## For Humans
+
 Manages the lifecycle of vocal split jobs. Accepts submissions with deduplication, sets a processor function (the split adapter), and provides status polling. The processor is set once during init by the Smart Router and handles all incoming jobs.
 
 ### Key Nodes

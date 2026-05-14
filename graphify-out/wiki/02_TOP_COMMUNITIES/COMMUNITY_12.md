@@ -11,6 +11,8 @@ character: code
 
 > **10 nodes** | **Cohesion: 0.00** | **Primary file:** `server/alignment/job-queue.js`
 
+## For Humans
+
 Manages the lifecycle of AudioShake alignment jobs. Submits lyrics+audio, polls for completion, updates progress, and stores the resulting word-timing JSON. Simple FIFO queue with progress callbacks.
 
 ### Key Nodes
