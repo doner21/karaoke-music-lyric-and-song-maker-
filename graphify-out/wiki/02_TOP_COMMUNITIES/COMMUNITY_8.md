@@ -1,47 +1,60 @@
 ---
 type: community/narrative
 community_id: 8
-label: "TimelineBlockContent.jsx, karaokeHelpers.js"
+label: "Audio Utilities"
 size: 16
 cohesion: 0.17
 character: code
 ---
 
-# Community 8: TimelineBlockContent.jsx, karaokeHelpers.js
+# Audio Utilities
 
-> **16 nodes** | **Cohesion: 0.17** (moderately connected) | **Character: code**
+> **16 nodes** | **Cohesion: 0.17** (moderate) | **Files:** `karaokeHelpers.js`, `TimelineBlockContent.jsx`
 
 ## For Humans
 
-This community contains **16 functions** primarily in **karaokeHelpers.js**.
+**Real-world analogy:** This is the **toolbox hanging on the studio wall** — a collection of pure utility functions that every other component reaches for. Need to convert an audio buffer to WAV? There's a function for that. Need to clamp sample values? Right here. No side effects, no state — just reliable tools.
 
-The most connected function is **karaokeHelpers.js** with 16 connections.
+### Architecture
+
+```
+┌────────────────────────────────────┐
+│        Audio Utility Toolbox       │
+│                                    │
+│  ┌──────────────────────────────┐  │
+│  │ encodeWAV()                  │  │
+│  │ AudioBuffer → WAV byte[]     │  │
+│  │ → writes RIFF header + PCM   │  │
+│  └──────────────────────────────┘  │
+│                                    │
+│  ┌──────────────────────────────┐  │
+│  │ audioBufferToWav()           │  │
+│  │ AudioBuffer → Blob (.wav)    │  │
+│  └──────────────────────────────┘  │
+│                                    │
+│  ┌──────────────────────────────┐  │
+│  │ clamp01()                    │  │
+│  │ sample → clamped to [-1, 1]  │  │
+│  └──────────────────────────────┘  │
+│                                    │
+│  ┌──────────────────────────────┐  │
+│  │ CDG Color Palette Utils      │  │
+│  └──────────────────────────────┘  │
+└────────────────────────────────────┘
+```
+
+### Key Nodes
+- **encodeWAV()** → AudioBuffer to WAV bytes for ffmpeg muxing
+- **audioBufferToWav()** → AudioBuffer to downloadable Blob
+- **clamp01()** → Prevents audio clipping distortion
+
+### Cohesion: 0.17 (moderate)
+All functions operate on audio data — shared domain, independent implementations.
+
+### Bridges
+- **Karaoke Renderer (C4):** encodeWAV() used in export pipeline
 
 ## For LLMs
 
-### Data
-
-- **ID:** 8
-- **Label:** TimelineBlockContent.jsx, karaokeHelpers.js
-- **Size:** 16 nodes
-- **Cohesion:** 0.17
-- **Character:** code
-- **Primary file:** karaokeHelpers.js
-
-### Top Nodes by Connectivity
-
-- **karaokeHelpers.js** -- 16 connections [code]
-- **encodeWAV()** -- 5 connections [code]
-- **clamp01()** -- 4 connections [code]
-- **audioBufferToWav()** -- 3 connections [code]
-- **writeString()** -- 2 connections [code]
-- **writeFloat32()** -- 2 connections [code]
-- **interleave()** -- 2 connections [code]
-- **floatTo16BitPCM()** -- 2 connections [code]
-- **TimelineBlockContent.jsx** -- 2 connections [code]
-- **TimelineBlockContent()** -- 2 connections [code]
-
-### Cross-Community Connections
-- **KaraokeRenderer.jsx, VerificationPanel.jsx, electronExport.js** (C4) -- 3 edge(s)
-  - karaokeHelpers.js -> prettyTime() (contains)
-  - karaokeHelpers.js -> computeInstrumentalGap() (contains)
+- **ID:** 8 · **Size:** 16 · **Cohesion:** 0.17
+- **Files:** `src/utils/karaokeHelpers.js`, `src/components/TimelineBlockContent.jsx`
